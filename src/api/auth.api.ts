@@ -1,15 +1,21 @@
 import apiClient from "@/lib/apiClient";
-import {
+import type {
+  ApiResponse,
   IForgotPasswordPayload,
   IGoogleLoginPayload,
   ILoginPayload,
   IRegisterPayload,
   IResetPasswordPayload,
   IVerifyEmailPayload,
+  LoginResponse,
+  MeUser,
 } from "@/types";
 
 export function userLogin(payload: ILoginPayload) {
-  return apiClient("/auth/login", { method: "POST", body: payload });
+  return apiClient<ApiResponse<LoginResponse>>("/auth/login", {
+    method: "POST",
+    body: payload,
+  });
 }
 
 export function verifyAccount(payload: IVerifyEmailPayload) {
@@ -25,7 +31,7 @@ export function userLogout() {
 }
 
 export function getMe() {
-  return apiClient("/auth/me");
+  return apiClient<ApiResponse<MeUser>>("/auth/me");
 }
 
 export function googleOAuth(payload: IGoogleLoginPayload) {

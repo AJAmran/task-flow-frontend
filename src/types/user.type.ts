@@ -18,3 +18,23 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface LoginResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface MeMembership {
+  role: OrgRole;
+  organization: {
+    id: string;
+    name: string;
+    slug: string;
+    status: string;
+  };
+}
+
+export interface MeUser extends User {
+  memberships: MeMembership[];
+}

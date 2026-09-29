@@ -11,7 +11,7 @@ import {
   FieldSeparator,
 } from "../ui/field";
 import { useState } from "react";
-import { Eye, EyeClosed } from "lucide-react";
+import { Crown, Eye, EyeClosed, ShieldCheck, User } from "lucide-react";
 import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
@@ -19,12 +19,71 @@ import { Spinner } from "../ui/spinner";
 import Link from "next/link";
 import { loginSchema } from "@/validation/auth.validation";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
+import { useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent } from "../ui/card";
+
+const demoAccounts = [
+  {
+    label: "Super Admin",
+    email: "superadmin@gmail.com",
+    password: "Super@admin12345",
+    redirect: "/admin",
+    icon: ShieldCheck,
+  },
+  {
+    label: "Org Owner",
+    email: "amran.xgroup@gmail.com",
+    password: "Owner@123",
+    redirect: "/dashboard",
+    icon: Crown,
+  },
+  {
+    label: "Member",
+    email: "mdamranhossen77@gmail.com",
+    password: "Member@123",
+    redirect: "/dashboard",
+    icon: User,
+  },
+] as const;
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [demoEmail, setDemoEmail] = useState<string | null>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { mutate: login, isPending: loginPending } = useLogin();
+
+  const handleSuccess = (platformRole?: string, fallback = "/dashboard") => {
+    queryClient.invalidateQueries({ queryKey: ["user"] });
+    toast.add({
+      title: "Login Success",
+      description: "Welcome back",
+      type: "success",
+    });
+    router.push(platformRole === "SUPER_ADMIN" ? "/admin" : fallback);
+  };
+
+  const handleError = (err: Error) => {
+    setDemoEmail(null);
+    toast.add({
+      title: "Authorization failure",
+      description: err.message || "Something went wrong. Please try again",
+      type: "error",
+    });
+  };
+
+  const handleDemoLogin = (account: (typeof demoAccounts)[number]) => {
+    setDemoEmail(account.email);
+    login(
+      { email: account.email, password: account.password },
+      {
+        onSuccess: (res) =>
+          handleSuccess(res.data?.user?.platformRole, account.redirect),
+        onError: handleError,
+      },
+    );
+  };
 
   const form = useForm({
     defaultValues: {
@@ -41,22 +100,8 @@ export default function LoginForm() {
       };
 
       login(loginData, {
-        onSuccess: (res) => {
-          toast.add({
-            title: "Login Success",
-            description: "Welcome back",
-            type: "success",
-          });
-          router.push("/dashboard");
-        },
-        onError: (err) => {
-          toast.add({
-            title: "Authorization failure",
-            description:
-              err.message || "Something went wrong. Please try again",
-            type: "error",
-          });
-        },
+        onSuccess: (res) => handleSuccess(res.data?.user?.platformRole),
+        onError: handleError,
       });
     },
   });
@@ -140,7 +185,7 @@ export default function LoginForm() {
           </form.Field>
 
           <Button disabled={loginPending} type="submit">
-            {loginPending ? (
+            {loginPending && !demoEmail ? (
               <>
                 <Spinner /> submitting
               </>
@@ -154,6 +199,46 @@ export default function LoginForm() {
       <FieldSeparator>Or continue with</FieldSeparator>
 
       <GoogleLoginComponent />
+
+      <FieldSeparator>Quick Demo Login</FieldSeparator>
+
+      <div className="grid gap-2">
+        {demoAccounts.map((account) => {
+          const Icon = account.icon;
+          const isLoading = loginPending && demoEmail === account.email;
+          return (
+            <Card key={account.email}>
+              <CardContent className="flex items-center gap-3 p-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                  <Icon className="size-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium">
+                    {account.label}
+                  </span>
+                  <span className="block truncate text-xs text-muted-foreground">
+                    {account.email}
+                  </span>
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={loginPending}
+                  onClick={() => handleDemoLogin(account)}
+                >
+                  {isLoading ? (
+                    <>
+                      <Spinner /> login
+                    </>
+                  ) : (
+                    "Demo Login"
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
       <div className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}

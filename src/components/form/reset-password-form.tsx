@@ -30,6 +30,7 @@ function ResetPasswordFormContent() {
 
   const form = useForm({
     defaultValues: {
+      email,
       otp: "",
       newPassword: "",
       confirmPassword: "",

@@ -8,7 +8,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "../ui/field";
-import { useVerifyAccount } from "@/hooks";
+import { useResendOtp, useVerifyAccount } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -21,6 +21,7 @@ function VerifyEmailFormContent() {
   const email = searchParams.get("email") || "";
 
   const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
+  const { mutate: resendOtp, isPending: resendPending } = useResendOtp();
 
   const form = useForm({
     defaultValues: {
@@ -115,6 +116,43 @@ function VerifyEmailFormContent() {
             </>
           ) : (
             "Verify Email"
+          )}
+        </Button>
+
+        <Button
+          disabled={resendPending || !email}
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() =>
+            resendOtp(
+              { email },
+              {
+                onSuccess: () => {
+                  toast.add({
+                    title: "OTP resent",
+                    description: "Please check your email for a new code",
+                    type: "success",
+                  });
+                },
+                onError: (err) => {
+                  toast.add({
+                    title: "Resend failed",
+                    description:
+                      err.message || "Something went wrong. Please try again",
+                    type: "error",
+                  });
+                },
+              },
+            )
+          }
+        >
+          {resendPending ? (
+            <>
+              <Spinner /> resending
+            </>
+          ) : (
+            "Resend OTP"
           )}
         </Button>
       </FieldGroup>
