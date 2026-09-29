@@ -1,13 +1,16 @@
 import {
+  changePassword,
   getMe,
   googleOAuth,
+  refreshToken,
+  resendOtp,
   userLogin,
   userLogout,
   userRegistration,
   verifyAccount,
   forgotPassword,
   resetPassword,
-} from "@/api/auth.api";
+} from "@/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useLogin() {
@@ -57,5 +60,23 @@ export function useForgotPassword() {
 export function useResetPassword() {
   return useMutation({
     mutationFn: resetPassword,
+  });
+}
+
+export function useResendOtp() {
+  return useMutation({
+    mutationFn: resendOtp,
+  });
+}
+
+export function useRefreshToken() {
+  return useMutation({
+    mutationFn: refreshToken,
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: changePassword,
   });
 }

@@ -32,6 +32,20 @@ export function googleOAuth(payload: IGoogleLoginPayload) {
   return apiClient("/auth/google", { method: "POST", body: payload });
 }
 
+export function resendOtp(payload: { email: string }) {
+  return apiClient("/auth/resend-otp", { method: "POST", body: payload });
+}
+
+export function refreshToken() {
+  return apiClient("/auth/refresh-token", { method: "POST" });
+}
+
+export function changePassword(
+  payload: import("@/types").IChangePasswordPayload,
+) {
+  return apiClient("/auth/change-password", { method: "POST", body: payload });
+}
+
 export function forgotPassword(payload: IForgotPasswordPayload) {
   return apiClient("/auth/forgot-password", { method: "POST", body: payload });
 }
