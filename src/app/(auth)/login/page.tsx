@@ -1,6 +1,7 @@
 import { Logo } from "@/assets/logo";
 import LoginForm from "@/components/form/login-form";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
@@ -9,7 +10,7 @@ export default function LoginPage() {
         <div className="flex justify-center gap-2 md:justify-start">
           <Link href="/" className="flex items-center gap-2 font-medium">
             <div className="flex items-center gap-2">
-              <Logo />
+              <Logo href="" />
               <span>Taskflow</span>
             </div>
           </Link>
@@ -21,10 +22,12 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <img
+        <Image
           src="/login.jpg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          alt="TaskFlow illustration"
+          fill
+          className="object-cover dark:brightness-[0.2] dark:grayscale"
+          priority
         />
       </div>
     </div>

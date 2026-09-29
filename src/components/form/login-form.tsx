@@ -12,7 +12,7 @@ import {
 } from "../ui/field";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useGoogleOAuth, useLogin } from "@/hooks";
+import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
@@ -28,13 +28,9 @@ export default function LoginForm() {
 
   const form = useForm({
     defaultValues: {
-      email: "mirhussain@gmail.com",
-      password: "@Doctor123456",
+      email: "",
+      password: "",
     },
-    // defaultValues: {
-    //   email: "superadmin@gmail.com",
-    //   password: "Super@admin12345",
-    // },
     validators: {
       onSubmit: loginSchema,
     },
@@ -51,7 +47,7 @@ export default function LoginForm() {
             description: "Welcome back",
             type: "success",
           });
-          router.push("/");
+          router.push("/dashboard");
         },
         onError: (err) => {
           toast.add({

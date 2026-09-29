@@ -35,7 +35,7 @@ export default function GoogleLoginComponent() {
             description: "Welcome back",
             type: "success",
           });
-          router.push("/");
+          router.push("/dashboard");
         },
         onError: (err) => {
           toast.add({
