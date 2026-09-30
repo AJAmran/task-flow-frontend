@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import OrgAnalytics, {
+  OrgAnalyticsSkeleton,
+} from "@/components/modules/organization/org-analytics";
 import OrganizationOverview, {
   OrganizationOverviewSkeleton,
 } from "@/components/modules/organization/organization-overview";
@@ -18,8 +21,13 @@ export default async function OrganizationDetailPage({
   const { organizationId } = await params;
 
   return (
-    <Suspense fallback={<OrganizationOverviewSkeleton />}>
-      <OrganizationOverview organizationId={organizationId} />
-    </Suspense>
+    <div className="flex flex-col gap-6">
+      <Suspense fallback={<OrganizationOverviewSkeleton />}>
+        <OrganizationOverview organizationId={organizationId} />
+      </Suspense>
+      <Suspense fallback={<OrgAnalyticsSkeleton />}>
+        <OrgAnalytics organizationId={organizationId} />
+      </Suspense>
+    </div>
   );
 }

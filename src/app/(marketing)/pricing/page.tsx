@@ -32,7 +32,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "৳499",
+    price: "৳500",
     period: "/month",
     description: "For growing teams that ship every sprint.",
     features: [
@@ -48,7 +48,7 @@ const plans = [
   },
   {
     name: "Team",
-    price: "৳999",
+    price: "৳1000",
     period: "/month",
     description: "For organizations running multiple teams.",
     features: [

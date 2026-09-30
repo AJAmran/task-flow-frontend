@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMe, useOrganizations } from "@/hooks";
+import { format } from "date-fns";
+import ContinueWorking from "./continue-working";
 import { cn } from "@/lib/utils";
 
 export function DashboardHomeLoading() {
@@ -132,9 +134,10 @@ export default function DashboardHome() {
             )}
           </div>
           <p className="text-sm text-teal-100/80">
+            {format(new Date(), "EEEE, MMMM d")} ·{" "}
             {isAdmin
               ? "Govern the platform from the Admin area, or collaborate in your own workspaces below."
-              : "Pick a workspace to see its teams, projects, and tasks."}
+              : "Pick up where you left off, or jump into a workspace."}
           </p>
           {isAdmin && (
             <Button
@@ -204,6 +207,7 @@ export default function DashboardHome() {
         </Card>
       ) : (
         <>
+          <ContinueWorking />
           <div className="grid gap-3 sm:grid-cols-3">
             {statStrip.map((stat) => {
               const Icon = stat.icon;

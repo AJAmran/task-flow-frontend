@@ -2,12 +2,15 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  Activity,
   Building2,
   LayoutDashboard,
   LogOut,
   ScrollText,
+  Settings,
   ShieldCheck,
   Users,
+  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -38,6 +41,9 @@ const sidebarRoutes: Record<PlatformRole, SidebarItems> = {
 
 const routeIcons: Record<string, typeof LayoutDashboard> = {
   "/dashboard": LayoutDashboard,
+  "/dashboard/activity": Activity,
+  "/dashboard/payments": Wallet,
+  "/dashboard/profile": Settings,
   "/organizations": Building2,
   "/admin": ShieldCheck,
   "/admin/users": Users,
