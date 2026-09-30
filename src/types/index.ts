@@ -4,3 +4,5 @@ export * from "./api.type";
 export * from "./sidebar.type";
 export * from "./organization.type";
 export * from "./project.type";
+export * from "./sprint.type";
+export * from "./task.type";

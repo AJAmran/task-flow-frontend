@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import CreateTeamForm from "@/components/form/create-team-form";
 import UpdateTeamForm from "@/components/form/update-team-form";
 import { Button } from "@/components/ui/button";
+import AvatarInitials, { AvatarStack } from "@/components/ui/avatar-initials";
 import {
   Card,
   CardContent,
@@ -141,7 +142,7 @@ function TeamCard({
   };
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col transition-all hover:-translate-y-0.5 hover:shadow-md">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
@@ -196,11 +197,16 @@ function TeamCard({
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="flex items-center justify-between text-sm font-medium"
+          className="flex items-center justify-between gap-2 text-sm font-medium"
           aria-expanded={expanded}
         >
-          <span>
-            {teamMembers.length} member{teamMembers.length === 1 ? "" : "s"}
+          <span className="flex items-center gap-2">
+            <AvatarStack
+              names={teamMembers.map((m) => m.user?.name ?? m.userId)}
+            />
+            <span>
+              {teamMembers.length} member{teamMembers.length === 1 ? "" : "s"}
+            </span>
           </span>
           <ChevronDown
             className={cn(
@@ -226,15 +232,21 @@ function TeamCard({
                   key={member.id}
                   className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2"
                 >
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium">
-                      {member.user?.name ?? member.userId}
-                    </span>
-                    {member.user?.email && (
-                      <span className="block truncate text-xs text-muted-foreground">
-                        {member.user.email}
+                  <span className="flex min-w-0 items-center gap-2">
+                    <AvatarInitials
+                      name={member.user?.name ?? member.userId}
+                      size="sm"
+                    />
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium">
+                        {member.user?.name ?? member.userId}
                       </span>
-                    )}
+                      {member.user?.email && (
+                        <span className="block truncate text-xs text-muted-foreground">
+                          {member.user.email}
+                        </span>
+                      )}
+                    </span>
                   </span>
                   {canManage && (
                     <Button

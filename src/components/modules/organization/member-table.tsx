@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Crown, SearchX, Trash2, User, UserPlus } from "lucide-react";
+import { SearchX, Trash2, UserPlus } from "lucide-react";
 import { useState } from "react";
 import InviteMemberForm from "@/components/form/invite-member-form";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import TablePagination from "@/components/ui/table-pagination";
+import AvatarInitials from "@/components/ui/avatar-initials";
 import { toast } from "@/components/ui/toast";
 import {
   useOrganizationMembers,
@@ -169,13 +170,7 @@ export default function MemberTable({
                       <TableRow key={member.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                              {memberIsOwner ? (
-                                <Crown className="size-4" />
-                              ) : (
-                                <User className="size-4" />
-                              )}
-                            </span>
+                            <AvatarInitials name={member.user.name} />
                             <span className="min-w-0">
                               <span className="block truncate text-sm font-medium">
                                 {member.user.name}

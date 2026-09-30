@@ -5,7 +5,6 @@ import {
   Crown,
   FolderKanban,
   Settings,
-  User,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -27,6 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import AvatarInitials from "@/components/ui/avatar-initials";
 import { useGetMe, useOrganization } from "@/hooks";
 
 export function OrganizationOverviewSkeleton() {
@@ -91,7 +91,7 @@ export default function OrganizationOverview({
     {
       label: "Teams",
       value: counts?.teams ?? 0,
-      icon: User,
+      icon: Building2,
       href: `/organizations/${organizationId}/teams`,
       hint: "View teams",
     },
@@ -106,13 +106,15 @@ export default function OrganizationOverview({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card>
+      <Card className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-500"
+        />
         <CardHeader>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-lg bg-muted">
-                <Building2 className="size-5" />
-              </span>
+              <AvatarInitials name={organization.name} size="lg" />
               <div>
                 <CardTitle className="text-xl">{organization.name}</CardTitle>
                 <CardDescription className="font-mono text-xs">
@@ -161,12 +163,17 @@ export default function OrganizationOverview({
 
       <div className="grid gap-4 sm:grid-cols-3">
         {stats.map((stat) => (
-          <Card key={stat.label}>
+          <Card
+            key={stat.label}
+            className="transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
             <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.label}
               </CardTitle>
-              <stat.icon className="size-4 text-muted-foreground" />
+              <span className="flex size-8 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
+                <stat.icon className="size-4" />
+              </span>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold">{stat.value}</p>

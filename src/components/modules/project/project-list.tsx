@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import TablePagination from "@/components/ui/table-pagination";
 import { useProjects, useTeams } from "@/hooks";
 import useDebounce from "@/hooks/debounce.hook";
@@ -251,10 +250,13 @@ export default function ProjectList({
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((project) => (
-            <Card key={project.id} className="flex flex-col">
+            <Card
+              key={project.id}
+              className="flex flex-col transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
               <CardHeader>
                 <div className="flex items-start justify-between gap-2">
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                  <span className="flex size-10 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
                     <FolderKanban className="size-5" />
                   </span>
                   <Badge

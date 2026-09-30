@@ -89,7 +89,15 @@ export default function DashboardHome() {
   const user = meData?.data;
   const memberships = orgsData?.data ?? [];
   const total = orgsData?.meta?.total ?? 0;
+  const ownedCount = memberships.filter((m) => m.role === "ORG_OWNER").length;
+  const memberCount = memberships.length - ownedCount;
   const isAdmin = user?.platformRole === "SUPER_ADMIN";
+
+  const statStrip = [
+    { label: "Workspaces", value: total, icon: Building2 },
+    { label: "Owned by you", value: ownedCount, icon: Crown },
+    { label: "Member of", value: memberCount, icon: User },
+  ];
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -196,6 +204,29 @@ export default function DashboardHome() {
         </Card>
       ) : (
         <>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {statStrip.map((stat) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.label}
+                  className="flex items-center gap-3 rounded-xl border bg-card p-4 shadow-sm"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
+                    <Icon className="size-5" />
+                  </span>
+                  <span>
+                    <span className="block text-xl font-bold leading-none">
+                      {stat.value}
+                    </span>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      {stat.label}
+                    </span>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold tracking-tight">
               Your workspaces ({total})
@@ -218,10 +249,22 @@ export default function DashboardHome() {
               const org = membership.organization;
               const isOwner = membership.role === "ORG_OWNER";
               return (
-                <Card key={membership.membershipId} className="flex flex-col">
-                  <CardHeader>
+                <Card
+                  key={membership.membershipId}
+                  className={cn(
+                    "flex flex-col border-t-2 transition-all hover:-translate-y-0.5 hover:shadow-md",
+                    isOwner ? "border-t-teal-500" : "border-t-muted-foreground/20",
+                  )}
+                >                  <CardHeader>
                     <div className="flex items-start justify-between gap-2">
-                      <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                      <span
+                        className={cn(
+                          "flex size-10 items-center justify-center rounded-lg",
+                          isOwner
+                            ? "bg-teal-600/10 text-teal-700"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
                         <Building2 className="size-5" />
                       </span>
                       <Badge
