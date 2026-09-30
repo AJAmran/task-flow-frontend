@@ -1,6 +1,8 @@
 import { Logo } from "@/assets/logo";
 import LoginForm from "@/components/form/login-form";
+import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function LoginPage() {
   return (
@@ -16,7 +18,15 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-sm">
-            <LoginForm />
+            <Suspense
+              fallback={
+                <div className="flex justify-center py-10">
+                  <Spinner />
+                </div>
+              }
+            >
+              <LoginForm />
+            </Suspense>
           </div>
         </div>
       </div>

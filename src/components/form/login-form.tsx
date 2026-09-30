@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { Crown, Eye, EyeClosed, ShieldCheck, User } from "lucide-react";
 import { useLogin } from "@/hooks";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
@@ -51,12 +51,23 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [demoEmail, setDemoEmail] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
   const { mutate: login, isPending: loginPending } = useLogin();
 
+  // Return to the page the proxy bounced (only safe local paths).
+  const callbackUrl = searchParams.get("callbackUrl");
+  const safeCallback =
+    callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+      ? callbackUrl
+      : null;
+
   const handleSuccess = (platformRole?: string, fallback = "/dashboard") => {
-    const landing = platformRole === "SUPER_ADMIN" ? "/admin" : fallback;
+    const landing =
+      platformRole === "SUPER_ADMIN"
+        ? (safeCallback ?? "/admin")
+        : (safeCallback ?? fallback);
     // Backend auth cookies live on the API domain (cross-site); the proxy
     // needs this frontend-domain marker to let protected routes through.
     setSessionLanding(landing);

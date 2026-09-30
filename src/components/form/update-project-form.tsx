@@ -21,6 +21,8 @@ import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
 
+const NO_TEAM = "__none__";
+
 export default function UpdateProjectForm({
   organizationId,
   project,
@@ -45,12 +47,14 @@ export default function UpdateProjectForm({
       name: project.name,
       description: project.description ?? "",
       status: project.status,
-      teamId: project.teamId,
+      teamId: project.teamId ?? NO_TEAM,
     } as UpdateProjectInput,
     validators: {
       onSubmit: updateProjectSchema,
     },
     onSubmit: ({ value }) => {
+      const nextTeamId =
+        value.teamId === NO_TEAM ? null : (value.teamId ?? null);
       update(
         {
           ...(value.name?.trim() &&
@@ -62,7 +66,7 @@ export default function UpdateProjectForm({
           }),
           ...(value.status &&
             value.status !== project.status && { status: value.status }),
-          ...(value.teamId !== project.teamId && { teamId: value.teamId }),
+          ...(nextTeamId !== project.teamId && { teamId: nextTeamId }),
         },
         {
           onSuccess: () => {
@@ -179,15 +183,16 @@ export default function UpdateProjectForm({
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Team</FieldLabel>
                   <Select
-                    value={field.state.value ?? undefined}
+                    value={field.state.value ?? NO_TEAM}
                     onValueChange={(val: string | null) =>
-                      field.handleChange(val)
+                      field.handleChange(val ?? NO_TEAM)
                     }
                   >
                     <SelectTrigger id={field.name} aria-invalid={isInvalid}>
                       <SelectValue placeholder="No team" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value={NO_TEAM}>No team</SelectItem>
                       {teams.map((team) => (
                         <SelectItem key={team.id} value={team.id}>
                           {team.name}

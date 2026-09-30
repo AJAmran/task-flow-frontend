@@ -31,11 +31,16 @@ import ProjectListLoading from "./project-list-loading";
 
 const PAGE_SIZE = 9;
 
-const sortOptions: { value: ProjectSortBy; label: string }[] = [
-  { value: "createdAt", label: "Newest" },
-  { value: "updatedAt", label: "Recently updated" },
-  { value: "name", label: "Name" },
+const sortOptions: { value: `${ProjectSortBy}:${"asc" | "desc"}`; label: string }[] = [
+  { value: "createdAt:desc", label: "Newest first" },
+  { value: "createdAt:asc", label: "Oldest first" },
+  { value: "updatedAt:desc", label: "Recently updated" },
+  { value: "name:asc", label: "Name (A–Z)" },
+  { value: "name:desc", label: "Name (Z–A)" },
 ];
+
+const isValidSort = (by: string, order: string): boolean =>
+  sortOptions.some((opt) => opt.value === `${by}:${order}`);
 
 export default function ProjectList({
   organizationId,
@@ -56,6 +61,9 @@ export default function ProjectList({
   const teamId = searchParams.get("teamId") ?? undefined;
   const sortBy = (searchParams.get("sortBy") as ProjectSortBy) || "createdAt";
   const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
+  const sortValue = isValidSort(sortBy, sortOrder)
+    ? (`${sortBy}:${sortOrder}` as const)
+    : ("createdAt:desc" as const);
   const urlSearch = searchParams.get("search") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlSearch);
@@ -105,10 +113,8 @@ export default function ProjectList({
     limit: PAGE_SIZE,
     ...(status && { status }),
     ...(teamId && { teamId }),
-    sortBy: ["createdAt", "updatedAt", "name"].includes(sortBy)
-      ? sortBy
-      : "createdAt",
-    sortOrder,
+    sortBy: sortValue.split(":")[0] as ProjectSortBy,
+    sortOrder: sortValue.split(":")[1] as "asc" | "desc",
   });
   const { data: teamsData } = useTeams(organizationId, {
     page: 1,
@@ -193,7 +199,7 @@ export default function ProjectList({
             </SelectContent>
           </Select>
           <Select
-            value={`${sortBy}:${sortOrder}`}
+            value={sortValue}
             onValueChange={(val: string | null) => {
               const [by, order] = (val ?? "createdAt:desc").split(":");
               const params = new URLSearchParams(searchParams.toString());
@@ -211,12 +217,10 @@ export default function ProjectList({
             </SelectTrigger>
             <SelectContent>
               {sortOptions.map((opt) => (
-                <SelectItem key={opt.value} value={`${opt.value}:desc`}>
+                <SelectItem key={opt.value} value={opt.value}>
                   {opt.label}
                 </SelectItem>
               ))}
-              <SelectItem value="name:asc">Name (A–Z)</SelectItem>
-              <SelectItem value="createdAt:asc">Oldest</SelectItem>
             </SelectContent>
           </Select>
         </div>

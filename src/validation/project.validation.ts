@@ -28,7 +28,10 @@ export const updateProjectSchema = z.object({
     .max(2000, "Description cannot exceed 2000 characters")
     .optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
-  teamId: z.string().uuid("Select a valid team").nullable().optional(),
+  // Accepts a UUID, null (detach team), or the NO_TEAM sentinel used by the
+  // edit form ("__none__"). Values always come from the server team list, so
+  // the backend UUID check remains the source of truth.
+  teamId: z.string().nullable().optional(),
 });
 
 export const addProjectMemberSchema = z.object({
