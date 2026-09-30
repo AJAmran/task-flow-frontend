@@ -85,8 +85,8 @@ export default function OrganizationOverview({
       label: "Members",
       value: counts?.members ?? 0,
       icon: Users,
-      href: `/organizations/${organizationId}/teams`,
-      hint: "Manage people",
+      href: `/organizations/${organizationId}/members`,
+      hint: "Invite & manage",
     },
     {
       label: "Teams",

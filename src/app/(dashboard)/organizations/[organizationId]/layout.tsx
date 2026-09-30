@@ -16,9 +16,10 @@ function OrgNav({ organizationId }: { organizationId: string }) {
   const base = `/organizations/${organizationId}`;
   const tabs = [
     { title: "Overview", url: base },
+    { title: "Members", url: `${base}/members` },
     { title: "Teams", url: `${base}/teams` },
-    { title: "Tasks", url: `${base}/tasks` },
     { title: "Projects", url: `${base}/projects` },
+    { title: "Tasks", url: `${base}/tasks` },
   ];
 
   return (

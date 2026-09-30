@@ -1,7 +1,14 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, LogOut } from "lucide-react";
+import {
+  Building2,
+  LayoutDashboard,
+  LogOut,
+  ScrollText,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/assets/logo";
@@ -27,6 +34,15 @@ import type { PlatformRole, SidebarItems } from "@/types";
 const sidebarRoutes: Record<PlatformRole, SidebarItems> = {
   SUPER_ADMIN: adminRoutes,
   USER: ownerRoutes,
+};
+
+const routeIcons: Record<string, typeof LayoutDashboard> = {
+  "/dashboard": LayoutDashboard,
+  "/organizations": Building2,
+  "/admin": ShieldCheck,
+  "/admin/users": Users,
+  "/admin/organizations": Building2,
+  "/admin/audit-logs": ScrollText,
 };
 
 function isRouteActive(pathname: string, url: string) {
@@ -99,7 +115,7 @@ export function DashboardSidebar({ role }: { role: PlatformRole }) {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2 px-2 py-1">
+        <Link href="/dashboard" className="flex items-center gap-2 px-2 py-1">
           <Logo href="" />
           <span className="font-semibold">TaskFlow</span>
         </Link>
@@ -116,9 +132,10 @@ export function DashboardSidebar({ role }: { role: PlatformRole }) {
                       render={<Link href={item.url} />}
                       isActive={isRouteActive(pathname, item.url)}
                     >
-                      {item.url === "/dashboard" || item.url === "/admin" ? (
-                        <LayoutDashboard />
-                      ) : null}
+                      {(() => {
+                        const Icon = routeIcons[item.url];
+                        return Icon ? <Icon /> : null;
+                      })()}
                       {item.title}
                     </SidebarMenuButton>
                   </SidebarMenuItem>

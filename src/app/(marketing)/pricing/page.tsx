@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import CtaBand from "@/components/modules/homepage/CtaBand";
 import {
   Card,
   CardContent,
@@ -122,6 +123,13 @@ export default function PricingPage() {
         subscription module. Upgrades create a real bKash sandbox payment with
         success and cancel redirects.
       </p>
+
+      <div className="mt-8">
+        <CtaBand
+          title="Start free, upgrade when you grow"
+          description="Every plan starts with the same boards, sprints, and role-based dashboards."
+        />
+      </div>
     </div>
   );
 }

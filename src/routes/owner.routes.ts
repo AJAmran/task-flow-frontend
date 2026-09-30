@@ -12,13 +12,4 @@ export const ownerRoutes = [
       },
     ],
   },
-  {
-    title: "Billing",
-    items: [
-      {
-        title: "Subscription",
-        url: "/organizations/subscription",
-      },
-    ],
-  },
 ];

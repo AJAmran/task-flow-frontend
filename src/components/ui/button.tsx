@@ -43,12 +43,19 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton,
+  render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      // Base UI expects a native <button> when `nativeButton` is true. All
+      // `render` usages in this app are Next Links (<a>), which must opt out
+      // — default it automatically so pages can't trigger the console error.
+      nativeButton={render ? (nativeButton ?? false) : nativeButton}
+      render={render}
       {...props}
     />
   )

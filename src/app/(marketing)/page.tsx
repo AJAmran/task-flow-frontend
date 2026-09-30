@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Crown, ShieldCheck, User } from "lucide-react";
+import { Crown, ShieldCheck, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Hero from "@/components/modules/homepage/Hero";
+import CtaBand from "@/components/modules/homepage/CtaBand";
 import { homeFeatures } from "@/components/modules/homepage/home-data";
 
 export const metadata: Metadata = {
@@ -160,20 +161,9 @@ export default function HomePage() {
             </li>
           ))}
         </ol>
-        <div className="mt-10 text-center">
-          <Button
-            size="lg"
-            nativeButton={false}
-            render={
-              <Link href="/register">
-                Create your workspace <ArrowRight />
-              </Link>
-            }
-          >
-            Create your workspace <ArrowRight />
-          </Button>
-        </div>
       </section>
+
+      <CtaBand />
     </>
   );
 }

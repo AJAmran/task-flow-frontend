@@ -1,7 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import CtaBand from "@/components/modules/homepage/CtaBand";
 import { homeFeatures } from "@/components/modules/homepage/home-data";
 
 export const metadata: Metadata = {
@@ -52,29 +50,10 @@ export default function FeaturesPage() {
         })}
       </div>
 
-      <div className="mt-12 rounded-xl border bg-muted/40 p-8 text-center">
-        <h2 className="text-xl font-bold">See it with demo accounts</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-          Log in as Admin, Owner, or Member with one click and explore each
-          dashboard. No signup needed for evaluation.
-        </p>
-        <div className="mt-4 flex justify-center gap-3">
-          <Button nativeButton={false} render={<Link href="/login">Demo login</Link>}>
-            Demo login
-          </Button>
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={
-              <Link href="/pricing">
-                Compare plans <ArrowRight />
-              </Link>
-            }
-          >
-            Compare plans <ArrowRight />
-          </Button>
-        </div>
-      </div>
+      <CtaBand
+        title="See it with demo accounts"
+        description="Log in as Admin, Owner, or Member with one click and explore each dashboard. No signup needed for evaluation."
+      />
     </div>
   );
 }

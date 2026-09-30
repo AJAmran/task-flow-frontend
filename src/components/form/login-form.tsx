@@ -26,6 +26,7 @@ import { setSessionLanding } from "@/lib/session";
 const demoAccounts = [
   {
     label: "Super Admin",
+    hint: "Users, organizations & audit logs",
     email: "superadmin@gmail.com",
     password: "Super@admin12345",
     redirect: "/admin",
@@ -33,6 +34,7 @@ const demoAccounts = [
   },
   {
     label: "Org Owner",
+    hint: "Organizations, teams & billing",
     email: "amran.xgroup@gmail.com",
     password: "Owner@123",
     redirect: "/dashboard",
@@ -40,6 +42,7 @@ const demoAccounts = [
   },
   {
     label: "Member",
+    hint: "Projects, sprints & tasks",
     email: "mdamranhossen77@gmail.com",
     password: "Member@123",
     redirect: "/dashboard",
@@ -233,6 +236,9 @@ export default function LoginForm() {
                     {account.label}
                   </span>
                   <span className="block truncate text-xs text-muted-foreground">
+                    {account.hint}
+                  </span>
+                  <span className="block truncate font-mono text-[11px] text-muted-foreground/80">
                     {account.email}
                   </span>
                 </span>
