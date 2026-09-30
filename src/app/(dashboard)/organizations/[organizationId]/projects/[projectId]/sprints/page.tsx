@@ -1,1 +1,3 @@
-export default function Placeholder() { return <div>Placeholder</div>; }
+export default function Placeholder() {
+  return <div>Placeholder</div>;
+}
