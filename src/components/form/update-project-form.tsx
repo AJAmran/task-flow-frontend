@@ -1,0 +1,217 @@
+"use client";
+
+import { useForm } from "@tanstack/react-form";
+import { useTeams, useUpdateProject } from "@/hooks";
+import type { ProjectDetail } from "@/types";
+import {
+  type UpdateProjectInput,
+  updateProjectSchema,
+} from "@/validation/project.validation";
+import { Button } from "../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Spinner } from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
+import { toast } from "../ui/toast";
+
+export default function UpdateProjectForm({
+  organizationId,
+  project,
+  onSuccess,
+}: {
+  organizationId: string;
+  project: ProjectDetail;
+  onSuccess?: () => void;
+}) {
+  const { mutate: update, isPending } = useUpdateProject(
+    organizationId,
+    project.id,
+  );
+  const { data: teamsData } = useTeams(organizationId, {
+    page: 1,
+    limit: 100,
+  });
+  const teams = teamsData?.data ?? [];
+
+  const form = useForm({
+    defaultValues: {
+      name: project.name,
+      description: project.description ?? "",
+      status: project.status,
+      teamId: project.teamId,
+    } as UpdateProjectInput,
+    validators: {
+      onSubmit: updateProjectSchema,
+    },
+    onSubmit: ({ value }) => {
+      update(
+        {
+          ...(value.name?.trim() &&
+            value.name.trim() !== project.name && {
+              name: value.name.trim(),
+            }),
+          ...(value.description !== undefined && {
+            description: value.description.trim() || null,
+          }),
+          ...(value.status &&
+            value.status !== project.status && { status: value.status }),
+          ...(value.teamId !== project.teamId && { teamId: value.teamId }),
+        },
+        {
+          onSuccess: () => {
+            toast.add({
+              title: "Project updated",
+              description: "Changes saved successfully.",
+              type: "success",
+            });
+            onSuccess?.();
+          },
+          onError: (err) => {
+            toast.add({
+              title: "Update failed",
+              description:
+                err.message || "Something went wrong. Please try again",
+              type: "error",
+            });
+          },
+        },
+      );
+    },
+  });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        form.handleSubmit();
+      }}
+    >
+      <FieldGroup>
+        <form.Field name="name">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Project name</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value ?? ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  autoComplete="off"
+                  aria-invalid={isInvalid}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            );
+          }}
+        </form.Field>
+
+        <form.Field name="description">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                <Textarea
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value ?? ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  aria-invalid={isInvalid}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            );
+          }}
+        </form.Field>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <form.Field name="status">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Status</FieldLabel>
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(val: string | null) =>
+                      field.handleChange(
+                        (val ?? "ACTIVE") as "ACTIVE" | "ARCHIVED",
+                      )
+                    }
+                  >
+                    <SelectTrigger id={field.name} aria-invalid={isInvalid}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">Active</SelectItem>
+                      <SelectItem value="ARCHIVED">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+
+          <form.Field name="teamId">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Team</FieldLabel>
+                  <Select
+                    value={field.state.value ?? undefined}
+                    onValueChange={(val: string | null) =>
+                      field.handleChange(val)
+                    }
+                  >
+                    <SelectTrigger id={field.name} aria-invalid={isInvalid}>
+                      <SelectValue placeholder="No team" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {teams.map((team) => (
+                        <SelectItem key={team.id} value={team.id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+        </div>
+
+        <Button type="submit" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Spinner /> Saving...
+            </>
+          ) : (
+            "Save changes"
+          )}
+        </Button>
+      </FieldGroup>
+    </form>
+  );
+}
