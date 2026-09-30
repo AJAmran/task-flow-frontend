@@ -124,6 +124,7 @@ export default function HomePage() {
                       variant="outline"
                       size="sm"
                       className="w-fit"
+                      nativeButton={false}
                       render={<Link href={role.href}>Try it</Link>}
                     >
                       Try it
@@ -162,6 +163,7 @@ export default function HomePage() {
         <div className="mt-10 text-center">
           <Button
             size="lg"
+            nativeButton={false}
             render={
               <Link href="/register">
                 Create your workspace <ArrowRight />

@@ -19,6 +19,7 @@ export default function Hero() {
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           size="lg"
+          nativeButton={false}
           render={
             <Link href="/register">
               Start free <ArrowRight />
@@ -30,6 +31,7 @@ export default function Hero() {
         <Button
           size="lg"
           variant="outline"
+          nativeButton={false}
           render={
             <Link href="/login">
               <Play /> Try demo login

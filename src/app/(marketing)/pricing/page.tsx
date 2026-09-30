@@ -107,6 +107,7 @@ export default function PricingPage() {
               <Button
                 className="w-full"
                 variant={plan.highlight ? "default" : "outline"}
+                nativeButton={false}
                 render={<Link href={plan.href}>{plan.cta}</Link>}
               >
                 {plan.cta}

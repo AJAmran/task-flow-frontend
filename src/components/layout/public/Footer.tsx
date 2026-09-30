@@ -32,7 +32,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:grid-cols-2 sm:px-6 md:grid-cols-4">
         <div className="flex flex-col gap-3">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Logo size={32} />
+            <Logo size={32} href="" />
             <span>TaskFlow</span>
           </Link>
           <p className="text-sm text-muted-foreground">

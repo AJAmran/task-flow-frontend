@@ -1,7 +1,6 @@
 import { Logo } from "@/assets/logo";
 import LoginForm from "@/components/form/login-form";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function LoginPage() {
   return (
@@ -22,13 +21,7 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <Image
-          src="/login.jpg"
-          alt="TaskFlow illustration"
-          fill
-          className="object-cover dark:brightness-[0.2] dark:grayscale"
-          priority
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-muted" />
       </div>
     </div>
   );

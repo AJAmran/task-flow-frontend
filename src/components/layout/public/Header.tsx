@@ -53,7 +53,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Logo size={32} />
+          <Logo size={32} href="" />
           <span>TaskFlow</span>
         </Link>
 
@@ -63,6 +63,7 @@ export default function Header() {
               key={route.url}
               variant="ghost"
               size="sm"
+              nativeButton={false}
               render={<Link href={route.url}>{route.name}</Link>}
               className={cn(pathname === route.url && "bg-muted")}
             >
@@ -73,6 +74,7 @@ export default function Header() {
             <Button
               variant="ghost"
               size="sm"
+              nativeButton={false}
               render={<Link href={dashboardUrl}>Dashboard</Link>}
             >
               Dashboard
@@ -86,11 +88,12 @@ export default function Header() {
               <Button
                 variant="outline"
                 size="sm"
+                nativeButton={false}
                 render={<Link href="/login">Login</Link>}
               >
                 Login
               </Button>
-              <Button size="sm" render={<Link href="/register">Get Started</Link>}>
+              <Button size="sm" nativeButton={false} render={<Link href="/register">Get Started</Link>}>
                 Get Started
               </Button>
             </>
@@ -125,6 +128,7 @@ export default function Header() {
               variant="ghost"
               size="sm"
               className="justify-start"
+              nativeButton={false}
               render={
                 <Link href={route.url} onClick={() => setOpen(false)}>
                   {route.name}
@@ -139,6 +143,7 @@ export default function Header() {
               variant="ghost"
               size="sm"
               className="justify-start"
+              nativeButton={false}
               render={
                 <Link href={dashboardUrl} onClick={() => setOpen(false)}>
                   Dashboard
@@ -154,6 +159,7 @@ export default function Header() {
                 variant="outline"
                 size="sm"
                 className="flex-1"
+                nativeButton={false}
                 render={
                   <Link href="/login" onClick={() => setOpen(false)}>
                     Login
@@ -165,6 +171,7 @@ export default function Header() {
               <Button
                 size="sm"
                 className="flex-1"
+                nativeButton={false}
                 render={
                   <Link href="/register" onClick={() => setOpen(false)}>
                     Get Started

@@ -59,11 +59,12 @@ export default function FeaturesPage() {
           dashboard. No signup needed for evaluation.
         </p>
         <div className="mt-4 flex justify-center gap-3">
-          <Button render={<Link href="/login">Demo login</Link>}>
+          <Button nativeButton={false} render={<Link href="/login">Demo login</Link>}>
             Demo login
           </Button>
           <Button
             variant="outline"
+            nativeButton={false}
             render={
               <Link href="/pricing">
                 Compare plans <ArrowRight />

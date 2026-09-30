@@ -107,7 +107,7 @@ export default function ContactPage() {
           ))}
         </Accordion>
         <div className="mt-8 text-center">
-          <Button render={<Link href="/register">Create free account</Link>}>
+          <Button nativeButton={false} render={<Link href="/register">Create free account</Link>}>
             Create free account
           </Button>
         </div>

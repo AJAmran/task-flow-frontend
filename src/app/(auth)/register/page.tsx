@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import RegisterForm from "@/components/form/register-form";
 import { Logo } from "@/assets/logo";
 
@@ -41,12 +40,7 @@ export default function RegisterPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <Image
-          src="/login.jpg"
-          alt="TaskFlow illustration"
-          fill
-          className="object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-muted" />
       </div>
     </div>
   );
