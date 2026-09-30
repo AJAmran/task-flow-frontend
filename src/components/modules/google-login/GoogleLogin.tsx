@@ -2,12 +2,15 @@
 
 import { toast } from "@/components/ui/toast";
 import { useGoogleOAuth } from "@/hooks";
+import { setSessionLanding } from "@/lib/session";
 import { GoogleLogin } from "@react-oauth/google";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 export default function GoogleLoginComponent() {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { mutate: googleLogin } = useGoogleOAuth();
 
   if (!clientId) {
@@ -29,13 +32,19 @@ export default function GoogleLoginComponent() {
     googleLogin(
       { idToken },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          const landing =
+            res.data?.user?.platformRole === "SUPER_ADMIN"
+              ? "/admin"
+              : "/dashboard";
+          setSessionLanding(landing);
+          queryClient.invalidateQueries({ queryKey: ["user"] });
           toast.add({
             title: "Logged in Successfully",
             description: "Welcome back",
             type: "success",
           });
-          router.push("/dashboard");
+          router.push(landing);
         },
         onError: (err) => {
           toast.add({

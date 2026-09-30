@@ -3,14 +3,17 @@
 import { format } from "date-fns";
 import {
   ChevronDown,
+  Pencil,
   Plus,
   SearchX,
   Trash2,
   UserPlus,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import CreateTeamForm from "@/components/form/create-team-form";
+import UpdateTeamForm from "@/components/form/update-team-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,6 +32,8 @@ import {
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
+import { Input } from "@/components/ui/input";
+import TablePagination from "@/components/ui/table-pagination";
 import {
   useAddTeamMember,
   useDeleteTeam,
@@ -37,9 +42,12 @@ import {
   useTeamMembers,
   useTeams,
 } from "@/hooks";
+import useDebounce from "@/hooks/debounce.hook";
 import { cn } from "@/lib/utils";
 import type { OrganizationMember, Team } from "@/types";
 import TeamSectionLoading from "./team-section-loading";
+
+const TEAM_PAGE_SIZE = 6;
 
 function TeamCard({
   organizationId,
@@ -54,6 +62,7 @@ function TeamCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [renameOpen, setRenameOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState("");
 
   const { data: teamMembersData, isPending: membersPending } = useTeamMembers(
@@ -158,14 +167,24 @@ function TeamCard({
                 </Button>
               </div>
             ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setConfirmDelete(true)}
-                aria-label={`Delete ${team.name}`}
-              >
-                <Trash2 />
-              </Button>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setRenameOpen(true)}
+                  aria-label={`Rename ${team.name}`}
+                >
+                  <Pencil />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setConfirmDelete(true)}
+                  aria-label={`Delete ${team.name}`}
+                >
+                  <Trash2 />
+                </Button>
+              </div>
             ))}
         </div>
         <CardTitle className="line-clamp-1">{team.name}</CardTitle>
@@ -263,6 +282,23 @@ function TeamCard({
       <CardFooter className="mt-auto text-xs text-muted-foreground">
         Members must belong to the organization first.
       </CardFooter>
+
+      <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename team</DialogTitle>
+            <DialogDescription>
+              Give {team.name} a clearer name for your organization.
+            </DialogDescription>
+          </DialogHeader>
+          <UpdateTeamForm
+            organizationId={organizationId}
+            teamId={team.id}
+            currentName={team.name}
+            onSuccess={() => setRenameOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
@@ -274,12 +310,40 @@ export default function TeamSection({
 }) {
   const [createOpen, setCreateOpen] = useState(false);
 
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const pageParam = Number(searchParams.get("page") ?? "1");
+  const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+  const urlSearch = searchParams.get("search") ?? "";
+
+  const [searchInput, setSearchInput] = useState(urlSearch);
+  const debouncedSearch = useDebounce(searchInput);
+
+  // Sync the debounced filter to the URL (?search=) so views are shareable.
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const current = params.get("search") ?? "";
+    if (debouncedSearch === current) {
+      return;
+    }
+    if (debouncedSearch) {
+      params.set("search", debouncedSearch);
+    } else {
+      params.delete("search");
+    }
+    params.delete("page");
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }, [debouncedSearch, pathname, router, searchParams]);
+
   // Any org member can manage teams (backend enforces membership only).
   const canManage = true;
 
   const { data, isPending, isError, refetch } = useTeams(organizationId, {
-    page: 1,
-    limit: 50,
+    page,
+    limit: TEAM_PAGE_SIZE,
   });
   const { data: orgMembersData } = useOrganizationMembers(organizationId, {
     page: 1,
@@ -287,23 +351,52 @@ export default function TeamSection({
   });
 
   const teams = data?.data ?? [];
+  const totalPages = data?.meta?.totalPages ?? 0;
   const orgMembers = orgMembersData?.data ?? [];
+
+  const visible = debouncedSearch.trim().toLowerCase()
+    ? teams.filter((team) =>
+        team.name.toLowerCase().includes(debouncedSearch.trim().toLowerCase()),
+      )
+    : teams;
+
+  const setPage = (next: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next <= 1) {
+      params.delete("page");
+    } else {
+      params.set("page", String(next));
+    }
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold tracking-tight">Teams</h2>
           <p className="text-sm text-muted-foreground">
-            {teams.length} team{teams.length === 1 ? "" : "s"} in this
+            {data?.meta?.total ?? teams.length} team
+            {(data?.meta?.total ?? teams.length) === 1 ? "" : "s"} in this
             organization
           </p>
         </div>
-        {canManage && (
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
-            <Plus /> New team
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          <Input
+            type="search"
+            placeholder="Filter by name..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="sm:max-w-xs"
+            aria-label="Filter teams by name"
+          />
+          {canManage && (
+            <Button size="sm" onClick={() => setCreateOpen(true)}>
+              <Plus /> New team
+            </Button>
+          )}
+        </div>
       </div>
 
       {isPending ? (
@@ -315,16 +408,20 @@ export default function TeamSection({
             Retry
           </Button>
         </div>
-      ) : teams.length === 0 ? (
+      ) : visible.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-xl border px-6 py-12 text-center">
           <span className="rounded-full bg-muted p-3">
             <SearchX className="size-5 text-muted-foreground" />
           </span>
-          <p className="font-medium">No teams yet</p>
-          <p className="max-w-sm text-sm text-muted-foreground">
-            Group members into teams to organize projects and work.
+          <p className="font-medium">
+            {teams.length === 0 ? "No teams yet" : `No results for "${debouncedSearch}"`}
           </p>
-          {canManage && (
+          <p className="max-w-sm text-sm text-muted-foreground">
+            {teams.length === 0
+              ? "Group members into teams to organize projects and work."
+              : "Try a different name."}
+          </p>
+          {canManage && teams.length === 0 && (
             <Button
               className="mt-2"
               size="sm"
@@ -336,7 +433,7 @@ export default function TeamSection({
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
-          {teams.map((team) => (
+          {visible.map((team) => (
             <TeamCard
               key={team.id}
               organizationId={organizationId}
@@ -346,6 +443,16 @@ export default function TeamSection({
             />
           ))}
         </div>
+      )}
+
+      {totalPages > 1 && (
+        <TablePagination
+          page={page}
+          totalPages={totalPages}
+          handlePageChange={(next) =>
+            setPage(typeof next === "function" ? next(page) : next)
+          }
+        />
       )}
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>

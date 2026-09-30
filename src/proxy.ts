@@ -1,14 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { SESSION_COOKIE, resolveLanding } from "@/lib/session";
 
 const PROTECTED_PREFIXES = ["/admin", "/dashboard", "/organizations"];
 const GUEST_ONLY = ["/login", "/register"];
 
+// NOTE: Backend auth cookies live on the API domain (cross-site), so the
+// proxy cannot see them. It relies on the frontend-domain marker cookie
+// (`tf_landing`) set by every login flow. Real authorization is enforced by
+// AuthGuard / RoleGuard via GET /auth/me.
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hasSession =
-    request.cookies.has("accessToken") ||
-    request.cookies.has("refreshToken");
+  const landing = resolveLanding(
+    request.cookies.get(SESSION_COOKIE)?.value
+      ? decodeURIComponent(request.cookies.get(SESSION_COOKIE)!.value)
+      : null,
+  );
+  const hasSession = request.cookies.has(SESSION_COOKIE);
 
   const isProtected = PROTECTED_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -22,10 +30,10 @@ export default function proxy(request: NextRequest) {
   }
 
   if (GUEST_ONLY.includes(pathname) && hasSession) {
-    const dashboardUrl = request.nextUrl.clone();
-    dashboardUrl.pathname = "/dashboard";
-    dashboardUrl.search = "";
-    return NextResponse.redirect(dashboardUrl);
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = landing;
+    homeUrl.search = "";
+    return NextResponse.redirect(homeUrl);
   }
 
   return NextResponse.next();

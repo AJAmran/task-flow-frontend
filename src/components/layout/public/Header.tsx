@@ -4,6 +4,7 @@ import { Logo } from "@/assets/logo";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks";
+import { clearSession } from "@/lib/session";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
@@ -32,6 +33,7 @@ export default function Header() {
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
+        clearSession();
         queryClient.removeQueries({ queryKey: ["user"] });
         toast.add({
           title: "Logged out",

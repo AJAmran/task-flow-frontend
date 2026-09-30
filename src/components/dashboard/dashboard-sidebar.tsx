@@ -3,7 +3,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { LayoutDashboard, LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/assets/logo";
 import {
   Sidebar,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks";
+import { clearSession } from "@/lib/session";
 import { adminRoutes, memberRoutes, ownerRoutes } from "@/routes";
 import type { PlatformRole, SidebarItems } from "@/types";
 
@@ -42,18 +43,21 @@ function SidebarAccount() {
   const { data } = useGetMe();
   const { mutate: logout, isPending } = useLogout();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const user = data?.data;
 
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
+        clearSession();
         queryClient.removeQueries({ queryKey: ["user"] });
         toast.add({
           title: "Logged out",
           description: "You have been logged out successfully",
           type: "success",
         });
+        router.push("/login");
       },
       onError: () => {
         toast.add({

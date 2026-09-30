@@ -9,11 +9,13 @@ import {
   FieldLabel,
 } from "../ui/field";
 import { useResendOtp, useVerifyAccount } from "@/hooks";
+import { setSessionLanding } from "@/lib/session";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { Suspense } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 function VerifyEmailFormContent() {
   const router = useRouter();
@@ -22,6 +24,7 @@ function VerifyEmailFormContent() {
 
   const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
   const { mutate: resendOtp, isPending: resendPending } = useResendOtp();
+  const queryClient = useQueryClient();
 
   const form = useForm({
     defaultValues: {
@@ -50,13 +53,21 @@ function VerifyEmailFormContent() {
       };
 
       verify(verifyData, {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          // Backend sets auth cookies on success — mark the frontend session
+          // so the proxy lets protected routes through.
+          const landing =
+            res.data?.user?.platformRole === "SUPER_ADMIN"
+              ? "/admin"
+              : "/dashboard";
+          setSessionLanding(landing);
+          queryClient.invalidateQueries({ queryKey: ["user"] });
           toast.add({
             title: "Verification Success",
-            description: "Your email has been verified. You can now log in.",
+            description: "Your email has been verified. Welcome!",
             type: "success",
           });
-          router.push("/login");
+          router.push(landing);
         },
         onError: (err) => {
           toast.add({

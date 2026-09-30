@@ -21,6 +21,7 @@ import { loginSchema } from "@/validation/auth.validation";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "../ui/card";
+import { setSessionLanding } from "@/lib/session";
 
 const demoAccounts = [
   {
@@ -55,13 +56,17 @@ export default function LoginForm() {
   const { mutate: login, isPending: loginPending } = useLogin();
 
   const handleSuccess = (platformRole?: string, fallback = "/dashboard") => {
+    const landing = platformRole === "SUPER_ADMIN" ? "/admin" : fallback;
+    // Backend auth cookies live on the API domain (cross-site); the proxy
+    // needs this frontend-domain marker to let protected routes through.
+    setSessionLanding(landing);
     queryClient.invalidateQueries({ queryKey: ["user"] });
     toast.add({
       title: "Login Success",
       description: "Welcome back",
       type: "success",
     });
-    router.push(platformRole === "SUPER_ADMIN" ? "/admin" : fallback);
+    router.push(landing);
   };
 
   const handleError = (err: Error) => {
