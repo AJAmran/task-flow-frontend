@@ -3,12 +3,12 @@
 import { formatDistanceToNow } from "date-fns";
 import { Activity } from "lucide-react";
 import Link from "next/link";
+import AvatarInitials from "@/components/ui/avatar-initials";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTasks } from "@/hooks";
-import AvatarInitials from "@/components/ui/avatar-initials";
-import { PriorityBadge, StatusBadge } from "./task-shared";
 import ActivityFeedLoading from "./activity-feed-loading";
+import { PriorityBadge, StatusBadge } from "./task-shared";
 
 export default function ActivityFeed({
   organizationId,
@@ -48,8 +48,8 @@ export default function ActivityFeed({
         </span>
         <p className="font-medium">No activity yet</p>
         <p className="max-w-sm text-sm text-muted-foreground">
-          Create tasks and move them across the board — the latest updates
-          will appear here.
+          Create tasks and move them across the board — the latest updates will
+          appear here.
         </p>
       </div>
     );

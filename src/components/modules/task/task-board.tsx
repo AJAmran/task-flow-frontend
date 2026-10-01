@@ -1,5 +1,18 @@
 "use client";
 
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragStartEvent,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import { useDroppable, useDraggable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -21,9 +34,15 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
 import { useChangeTaskStatus, useSprints, useTasks } from "@/hooks";
-import type { TaskStatus } from "@/types";
-import { StatusBadge, TaskCard, statusLabels, taskStatuses } from "./task-shared";
+import type { Task, TaskStatus } from "@/types";
+import { cn } from "@/lib/utils";
 import TaskBoardLoading from "./task-board-loading";
+import {
+  StatusBadge,
+  statusLabels,
+  TaskCard,
+  taskStatuses,
+} from "./task-shared";
 
 function MoveSelect({
   organizationId,
@@ -82,6 +101,85 @@ function MoveSelect({
   );
 }
 
+function DraggableTaskCard({
+  task,
+  organizationId,
+  projectId,
+}: {
+  task: Task;
+  organizationId: string;
+  projectId: string;
+}) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+      data: { task },
+    });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="cursor-grab touch-none active:cursor-grabbing"
+    >
+      <TaskCard
+        organizationId={organizationId}
+        task={task}
+        actions={
+          <div onPointerDown={(e) => e.stopPropagation()}>
+            <MoveSelect
+              organizationId={organizationId}
+              projectId={projectId}
+              taskId={task.id}
+              status={task.status}
+            />
+          </div>
+        }
+      />
+    </div>
+  );
+}
+
+function DroppableColumn({
+  status,
+  count,
+  children,
+}: {
+  status: TaskStatus;
+  count: number;
+  children: React.ReactNode;
+}) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+    data: { status },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "flex flex-col gap-2 rounded-xl p-2 transition-colors",
+        isOver ? "bg-muted" : "bg-muted/50",
+      )}
+    >
+      <div className="flex items-center justify-between px-1 pt-1">
+        <StatusBadge status={status} />
+        <span className="text-xs font-medium text-muted-foreground">
+          {count}
+        </span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 export default function TaskBoard({
   organizationId,
   projectId,
@@ -90,22 +188,30 @@ export default function TaskBoard({
   projectId: string;
 }) {
   const [createOpen, setCreateOpen] = useState(false);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+  
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const sprintId = searchParams.get("sprintId") ?? undefined;
 
-  const { data, isPending, isError, refetch } = useTasks(organizationId, projectId, {
-    page: 1,
-    limit: 100,
-    ...(sprintId && { sprintId }),
-    sortBy: "updatedAt",
-    sortOrder: "desc",
-  });
+  const { data, isPending, isError, refetch } = useTasks(
+    organizationId,
+    projectId,
+    {
+      page: 1,
+      limit: 100,
+      ...(sprintId && { sprintId }),
+      sortBy: "updatedAt",
+      sortOrder: "desc",
+    },
+  );
   const { data: sprintsData } = useSprints(organizationId, projectId, {
     page: 1,
     limit: 100,
   });
+
+  const { mutate: moveTask } = useChangeTaskStatus(organizationId, projectId, true);
 
   const tasks = data?.data ?? [];
   const sprints = sprintsData?.data ?? [];
@@ -119,6 +225,45 @@ export default function TaskBoard({
     }
     const query = params.toString();
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    setActiveTask(active.data.current?.task ?? null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveTask(null);
+    const { active, over } = event;
+    if (!over) return;
+
+    const taskId = active.id as string;
+    const newStatus = over.id as TaskStatus;
+    const task = active.data.current?.task as Task;
+
+    if (task && task.status !== newStatus) {
+      moveTask(
+        { taskId, status: newStatus },
+        {
+          onError: (err) => {
+            toast.add({
+              title: "Move failed",
+              description: err.message || "Please try again",
+              type: "error",
+            });
+          },
+        }
+      );
+    }
   };
 
   if (isPending) {
@@ -182,45 +327,47 @@ export default function TaskBoard({
           </Button>
         </div>
       ) : (
-        <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {taskStatuses.map((status) => {
-            const column = tasks.filter((t) => t.status === status);
-            return (
-              <div
-                key={status}
-                className="flex flex-col gap-2 rounded-xl bg-muted/50 p-2"
-              >
-                <div className="flex items-center justify-between px-1 pt-1">
-                  <StatusBadge status={status} />
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {column.length}
-                  </span>
-                </div>
-                {column.length === 0 ? (
-                  <p className="rounded-lg border border-dashed px-3 py-6 text-center text-xs text-muted-foreground">
-                    Empty
-                  </p>
-                ) : (
-                  column.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      organizationId={organizationId}
-                      task={task}
-                      actions={
-                        <MoveSelect
-                          organizationId={organizationId}
-                          projectId={projectId}
-                          taskId={task.id}
-                          status={task.status}
-                        />
-                      }
-                    />
-                  ))
-                )}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {taskStatuses.map((status) => {
+              const column = tasks.filter((t) => t.status === status);
+              return (
+                <DroppableColumn key={status} status={status} count={column.length}>
+                  {column.length === 0 ? (
+                    <p className="rounded-lg border border-dashed px-3 py-6 text-center text-xs text-muted-foreground">
+                      Empty
+                    </p>
+                  ) : (
+                    column.map((task) => (
+                      <DraggableTaskCard
+                        key={task.id}
+                        task={task}
+                        organizationId={organizationId}
+                        projectId={projectId}
+                      />
+                    ))
+                  )}
+                </DroppableColumn>
+              );
+            })}
+          </div>
+          
+          <DragOverlay>
+            {activeTask ? (
+              <div className="rotate-3 scale-105 opacity-80 cursor-grabbing shadow-xl">
+                <TaskCard
+                  organizationId={organizationId}
+                  task={activeTask}
+                />
               </div>
-            );
-          })}
-        </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
       )}
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -237,7 +384,8 @@ export default function TaskBoard({
       </Dialog>
 
       <p className="text-center text-xs text-muted-foreground">
-        Tip: open a task for subtasks, comments, and attachments.{" "}
+        Tip: drag and drop tasks, or open a task for subtasks, comments, and
+        attachments.{" "}
         <Link
           href={`/organizations/${organizationId}/projects/${projectId}/list`}
           className="underline"
@@ -256,7 +404,10 @@ export function TaskBoardSkeleton() {
       aria-label="Loading board"
     >
       {taskStatuses.map((status) => (
-        <div key={status} className="flex flex-col gap-2 rounded-xl bg-muted/50 p-2">
+        <div
+          key={status}
+          className="flex flex-col gap-2 rounded-xl bg-muted/50 p-2"
+        >
           <Skeleton className="h-6 w-24" />
           <Skeleton className="h-28" />
           <Skeleton className="h-28" />

@@ -12,6 +12,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import AvatarInitials from "@/components/ui/avatar-initials";
@@ -48,17 +49,22 @@ import {
   useDeleteSubtask,
   useDeleteTask,
   useProject,
+  useSprints,
   useSubtasks,
   useTask,
   useUpdateSubtask,
   useUpdateTask,
   useUploadAttachment,
 } from "@/hooks";
-import { formatFileSize } from "@/utils";
 import type { TaskPriority, TaskStatus } from "@/types";
-import { PriorityBadge, StatusBadge, statusLabels, taskStatuses } from "./task-shared";
+import { formatFileSize } from "@/utils";
 import TaskDetailLoading from "./task-detail-loading";
-import Image from "next/image";
+import {
+  PriorityBadge,
+  StatusBadge,
+  statusLabels,
+  taskStatuses,
+} from "./task-shared";
 
 const priorities: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 
@@ -154,7 +160,9 @@ function SubtaskSection({
                     payload: { isDone: !subtask.isDone },
                   })
                 }
-                aria-label={subtask.isDone ? "Mark as not done" : "Mark as done"}
+                aria-label={
+                  subtask.isDone ? "Mark as not done" : "Mark as done"
+                }
                 className="shrink-0"
               >
                 {subtask.isDone ? (
@@ -346,11 +354,7 @@ function AttachmentSection({
   taskId: string;
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
-  const { data, isPending } = useAttachments(
-    organizationId,
-    projectId,
-    taskId,
-  );
+  const { data, isPending } = useAttachments(organizationId, projectId, taskId);
   const { mutate: upload, isPending: uploading } = useUploadAttachment(
     organizationId,
     projectId,
@@ -531,6 +535,13 @@ export default function TaskDetail({
 
   const task = data?.data;
   const members = projectData?.data?.members ?? [];
+  const { data: sprintsData } = useSprints(organizationId, projectId, {
+    page: 1,
+    limit: 100,
+  });
+  const openSprints = (sprintsData?.data ?? []).filter(
+    (s) => s.status !== "COMPLETED",
+  );
   const busy = updating || moving || assigning;
 
   if (isPending) {
@@ -602,6 +613,28 @@ export default function TaskDetail({
         onError: (err) =>
           toast.add({
             title: "Assign failed",
+            description: err.message || "Please try again",
+            type: "error",
+          }),
+      },
+    );
+
+  const patchSprint = (sprintId: string | null) =>
+    updateTask(
+      { sprintId },
+      {
+        onSuccess: () =>
+          toast.add({
+            title: "Sprint updated",
+            type: "success",
+            description:
+              sprintId === null
+                ? "Task moved to backlog."
+                : "Task assigned to sprint.",
+          }),
+        onError: (err) =>
+          toast.add({
+            title: "Update failed",
             description: err.message || "Please try again",
             type: "error",
           }),
@@ -689,9 +722,7 @@ export default function TaskDetail({
           ) : (
             <Badge variant="outline">Unassigned</Badge>
           )}
-          {task.sprint && (
-            <Badge variant="outline">{task.sprint.name}</Badge>
-          )}
+          {task.sprint && <Badge variant="outline">{task.sprint.name}</Badge>}
           {task.dueDate && (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <CalendarDays className="size-3" />
@@ -718,6 +749,30 @@ export default function TaskDetail({
                 {members.map((member) => (
                   <SelectItem key={member.userId} value={member.userId}>
                     {member.user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {openSprints.length > 0 && (
+            <Select
+              value={task.sprintId ?? "__none__"}
+              disabled={busy}
+              onValueChange={(val: string | null) => {
+                if (!val || val === (task.sprintId ?? "__none__")) {
+                  return;
+                }
+                patchSprint(val === "__none__" ? null : val);
+              }}
+            >
+              <SelectTrigger className="w-48" aria-label="Change sprint">
+                <SelectValue placeholder="Move to sprint..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Backlog (no sprint)</SelectItem>
+                {openSprints.map((sprint) => (
+                  <SelectItem key={sprint.id} value={sprint.id}>
+                    {sprint.name}
                   </SelectItem>
                 ))}
               </SelectContent>

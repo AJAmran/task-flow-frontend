@@ -39,7 +39,10 @@ import TaskTableLoading from "./task-table-loading";
 
 const PAGE_SIZE = 10;
 
-const sortOptions: { value: `${TaskSortBy}:${"asc" | "desc"}`; label: string }[] = [
+const sortOptions: {
+  value: `${TaskSortBy}:${"asc" | "desc"}`;
+  label: string;
+}[] = [
   { value: "updatedAt:desc", label: "Recently updated" },
   { value: "createdAt:desc", label: "Newest first" },
   { value: "createdAt:asc", label: "Oldest first" },
@@ -62,15 +65,15 @@ export default function TaskTable({
   const pageParam = Number(searchParams.get("page") ?? "1");
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const statusParam = searchParams.get("status");
-  const status = (["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE"] as TaskStatus[]).includes(
-    statusParam as TaskStatus,
-  )
+  const status = (
+    ["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE"] as TaskStatus[]
+  ).includes(statusParam as TaskStatus)
     ? (statusParam as TaskStatus)
     : undefined;
   const priorityParam = searchParams.get("priority");
-  const priority = (["LOW", "MEDIUM", "HIGH", "URGENT"] as TaskPriority[]).includes(
-    priorityParam as TaskPriority,
-  )
+  const priority = (
+    ["LOW", "MEDIUM", "HIGH", "URGENT"] as TaskPriority[]
+  ).includes(priorityParam as TaskPriority)
     ? (priorityParam as TaskPriority)
     : undefined;
   const sprintId = searchParams.get("sprintId") ?? undefined;

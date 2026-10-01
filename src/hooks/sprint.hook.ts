@@ -24,7 +24,14 @@ const sprintKey = (
   sprintId?: string,
 ) =>
   sprintId
-    ? ["organizations", organizationId, "projects", projectId, "sprints", sprintId]
+    ? [
+        "organizations",
+        organizationId,
+        "projects",
+        projectId,
+        "sprints",
+        sprintId,
+      ]
     : ["organizations", organizationId, "projects", projectId, "sprints"];
 
 export function useCreateSprint(organizationId: string, projectId: string) {

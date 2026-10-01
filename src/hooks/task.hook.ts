@@ -130,7 +130,8 @@ export function useDeleteTask(organizationId: string, projectId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (taskId: string) => deleteTask(organizationId, projectId, taskId),
+    mutationFn: (taskId: string) =>
+      deleteTask(organizationId, projectId, taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: taskKey(organizationId, projectId),
@@ -316,7 +317,11 @@ export function useComments(
   params: ListParams,
 ) {
   return useQuery({
-    queryKey: [...taskKey(organizationId, projectId, taskId), "comments", params],
+    queryKey: [
+      ...taskKey(organizationId, projectId, taskId),
+      "comments",
+      params,
+    ],
     queryFn: () => getComments(organizationId, projectId, taskId, params),
     enabled: !!organizationId && !!projectId && !!taskId,
   });
@@ -373,10 +378,7 @@ export function useAttachments(
   taskId: string,
 ) {
   return useQuery({
-    queryKey: [
-      ...taskKey(organizationId, projectId, taskId),
-      "attachments",
-    ],
+    queryKey: [...taskKey(organizationId, projectId, taskId), "attachments"],
     queryFn: () => getAttachments(organizationId, projectId, taskId),
     enabled: !!organizationId && !!projectId && !!taskId,
   });

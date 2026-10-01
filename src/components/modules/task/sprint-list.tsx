@@ -39,8 +39,8 @@ import {
   useSprints,
   useUpdateSprint,
 } from "@/hooks";
-import type { Sprint, SprintStatus } from "@/types";
 import { cn } from "@/lib/utils";
+import type { Sprint, SprintStatus } from "@/types";
 import SprintListLoading from "./sprint-list-loading";
 
 const statusStyles: Record<SprintStatus, string> = {

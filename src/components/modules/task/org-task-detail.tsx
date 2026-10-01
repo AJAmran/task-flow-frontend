@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import TaskDetail from "@/components/modules/task/task-detail";
+import TaskDetailLoading from "@/components/modules/task/task-detail-loading";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyAssignedTasks } from "@/hooks";
-import TaskDetail from "@/components/modules/task/task-detail";
-import TaskDetailLoading from "@/components/modules/task/task-detail-loading";
 
 export function OrgTaskDetailSkeleton() {
   return <TaskDetailLoading />;

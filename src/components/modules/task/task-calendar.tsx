@@ -20,8 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTasks } from "@/hooks";
 import { cn } from "@/lib/utils";
-import { PriorityBadge } from "./task-shared";
 import TaskCalendarLoading from "./task-calendar-loading";
+import { PriorityBadge } from "./task-shared";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

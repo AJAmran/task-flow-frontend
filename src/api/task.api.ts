@@ -1,8 +1,8 @@
 import apiClient from "@/lib/apiClient";
 import type {
   ApiResponse,
-  AssignTaskPayload,
   AssignedTask,
+  AssignTaskPayload,
   ChangeTaskStatusPayload,
   CreateCommentPayload,
   CreateSubtaskPayload,
@@ -62,7 +62,9 @@ export function getTask(
   projectId: string,
   taskId: string,
 ) {
-  return apiClient<ApiResponse<TaskDetail>>(item(organizationId, projectId, taskId));
+  return apiClient<ApiResponse<TaskDetail>>(
+    item(organizationId, projectId, taskId),
+  );
 }
 
 export function updateTask(

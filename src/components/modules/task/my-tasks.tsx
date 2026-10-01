@@ -5,10 +5,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyAssignedTasks } from "@/hooks";
-import { DueBadge, PriorityBadge, StatusBadge } from "./task-shared";
 import MyTasksLoading from "./my-tasks-loading";
+import { DueBadge, PriorityBadge, StatusBadge } from "./task-shared";
 
-export default function MyTasks({ organizationId }: { organizationId: string }) {
+export default function MyTasks({
+  organizationId,
+}: {
+  organizationId: string;
+}) {
   const { data, isPending, isError, refetch } = useMyAssignedTasks(
     organizationId,
     { page: 1, limit: 50 },
@@ -39,8 +43,8 @@ export default function MyTasks({ organizationId }: { organizationId: string }) 
         </span>
         <p className="font-medium">Nothing assigned to you</p>
         <p className="max-w-sm text-sm text-muted-foreground">
-          Tasks assigned to you in any project of this organization will show
-          up here.
+          Tasks assigned to you in any project of this organization will show up
+          here.
         </p>
       </div>
     );

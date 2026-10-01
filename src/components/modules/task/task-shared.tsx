@@ -1,11 +1,11 @@
 import { format, isPast } from "date-fns";
 import { CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 import Link from "next/link";
+import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import AvatarInitials from "@/components/ui/avatar-initials";
-import type { Task, TaskPriority, TaskStatus } from "@/types";
 import { cn } from "@/lib/utils";
+import type { Task, TaskPriority, TaskStatus } from "@/types";
 
 export const taskStatuses: TaskStatus[] = [
   "TODO",
