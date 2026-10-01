@@ -1,8 +1,8 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
 import { useChangePassword } from "@/hooks";
 import { changePasswordSchema } from "@/validation/auth.validation";
 import { Button } from "../ui/button";

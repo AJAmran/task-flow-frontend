@@ -1,34 +1,34 @@
 export interface IRegisterPayload {
-	name: string;
-	email: string;
-	password: string;
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface ILoginPayload {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 }
 
 export interface IGoogleLoginPayload {
-	idToken: string;
+  idToken: string;
 }
 
 export interface IChangePasswordPayload {
-	oldPassword: string;
-	newPassword: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 export interface IVerifyEmailPayload {
-	email: string;
-	otp: string;
+  email: string;
+  otp: string;
 }
 
 export interface IForgotPasswordPayload {
-	email: string;
+  email: string;
 }
 
 export interface IResetPasswordPayload {
-	email: string;
-	otp: string;
-	newPassword: string;
+  email: string;
+  otp: string;
+  newPassword: string;
 }

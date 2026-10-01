@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import RegisterForm from "@/components/form/register-form";
 import { Logo } from "@/assets/logo";
+import RegisterForm from "@/components/form/register-form";
+
+export const metadata: Metadata = {
+  title: "Create Account — TaskFlow",
+  description:
+    "Sign up for TaskFlow free. Verify your email, create an organization, and invite your team.",
+};
 
 export default function RegisterPage() {
   return (

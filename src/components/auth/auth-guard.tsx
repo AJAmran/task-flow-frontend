@@ -1,9 +1,10 @@
 "use client";
 
-import { useGetMe } from "@/hooks";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import { useGetMe } from "@/hooks";
+import { clearSession } from "@/lib/session";
 import AuthLoading from "./auth-loading";
 
 export default function AuthGuard({ children }: { children: ReactNode }) {
@@ -18,6 +19,9 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
       return;
     }
     if (isError || !user) {
+      // Drop the frontend session hint so the proxy stops bouncing
+      // protected routes (expired backend session + stale marker = loop).
+      clearSession();
       router.replace("/login");
     }
   }, [isPending, isError, user, router]);

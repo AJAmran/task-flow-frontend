@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import AuthGuard from "@/components/auth/auth-guard";
 import AcceptInvitationForm from "@/components/form/accept-invitation-form";
+
+export const metadata: Metadata = {
+  title: "Accept Invitation — TaskFlow",
+  description: "Accept an organization invitation and join your team.",
+};
 
 export default function AcceptInvitationPage() {
   return (

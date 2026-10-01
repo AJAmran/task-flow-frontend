@@ -1,10 +1,11 @@
 "use client";
 
-import { useGetMe } from "@/hooks";
-import type { PlatformRole } from "@/types";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import { useGetMe } from "@/hooks";
+import { clearSession } from "@/lib/session";
+import type { PlatformRole } from "@/types";
 import AccessDenied from "./access-denied";
 import AuthLoading from "./auth-loading";
 
@@ -27,6 +28,8 @@ export default function RoleGuard({ children, roles }: IProps) {
       return;
     }
     if (isError || !user) {
+      // Same stale-marker loop protection as AuthGuard.
+      clearSession();
       router.replace("/login");
     }
   }, [isPending, isError, user, router]);

@@ -1,17 +1,17 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   changePassword,
+  forgotPassword,
   getMe,
   googleOAuth,
   refreshToken,
   resendOtp,
+  resetPassword,
   userLogin,
   userLogout,
   userRegistration,
   verifyAccount,
-  forgotPassword,
-  resetPassword,
 } from "@/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useLogin() {
   return useMutation({

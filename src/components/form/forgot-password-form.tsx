@@ -1,19 +1,14 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../ui/field";
-import { useForgotPassword } from "@/hooks";
 import { useRouter } from "next/navigation";
-import { toast } from "../ui/toast";
-import { Spinner } from "../ui/spinner";
+import { useForgotPassword } from "@/hooks";
 import { forgotPasswordSchema } from "@/validation/auth.validation";
+import { Button } from "../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 export default function ForgotPasswordForm() {
   const router = useRouter();
@@ -34,7 +29,9 @@ export default function ForgotPasswordForm() {
             description: "Please check your email for the reset instructions",
             type: "success",
           });
-          router.push(`/reset-password?email=${encodeURIComponent(value.email)}`);
+          router.push(
+            `/reset-password?email=${encodeURIComponent(value.email)}`,
+          );
         },
         onError: (err) => {
           toast.add({

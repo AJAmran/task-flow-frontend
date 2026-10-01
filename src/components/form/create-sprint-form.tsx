@@ -13,7 +13,9 @@ import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
 
 function toISODateTime(dateOnly: string): string {
-  return new Date(`${dateOnly}T00:00:00`).toISOString();
+  // Keep the picked calendar day stable: store as UTC midnight instead of
+  // local midnight (toISOString would shift the day back for UTC+ zones).
+  return `${dateOnly}T00:00:00.000Z`;
 }
 
 export default function CreateSprintForm({

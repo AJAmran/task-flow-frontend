@@ -4,6 +4,14 @@ import { useForm } from "@tanstack/react-form";
 import { format } from "date-fns";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
+import { useCreateTask, useProject, useSprints } from "@/hooks";
+import { cn } from "@/lib/utils";
+import type { TaskPriority } from "@/types";
+import {
+  type CreateTaskInput,
+  createTaskSchema,
+  NO_SELECT,
+} from "@/validation/task.validation";
 import { Button } from "../ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
@@ -14,17 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Spinner } from "../ui/spinner";
 import { Textarea } from "../ui/textarea";
 import { toast } from "../ui/toast";
-import { useCreateTask, useProject, useSprints } from "@/hooks";
-import {
-  NO_SELECT,
-  type CreateTaskInput,
-  createTaskSchema,
-} from "@/validation/task.validation";
-import type { TaskPriority } from "@/types";
-import { cn } from "@/lib/utils";
 
 const steps = [
   { step: "01", title: "Details", description: "What needs doing" },
@@ -35,7 +34,8 @@ const steps = [
 const priorities: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 
 function toISODateTime(dateOnly: string): string {
-  return new Date(`${dateOnly}T00:00:00`).toISOString();
+  // Same UTC-midnight rule as sprints: the picked day must not shift.
+  return `${dateOnly}T00:00:00.000Z`;
 }
 
 export default function TaskCreateWizard({
@@ -241,9 +241,7 @@ export default function TaskCreateWizard({
                   <Select
                     value={field.state.value || NO_SELECT}
                     onValueChange={(val: string | null) =>
-                      field.handleChange(
-                        val === NO_SELECT ? "" : (val ?? ""),
-                      )
+                      field.handleChange(val === NO_SELECT ? "" : (val ?? ""))
                     }
                   >
                     <SelectTrigger id={field.name}>
@@ -271,9 +269,7 @@ export default function TaskCreateWizard({
                   <Select
                     value={field.state.value || NO_SELECT}
                     onValueChange={(val: string | null) =>
-                      field.handleChange(
-                        val === NO_SELECT ? "" : (val ?? ""),
-                      )
+                      field.handleChange(val === NO_SELECT ? "" : (val ?? ""))
                     }
                   >
                     <SelectTrigger id={field.name}>
@@ -317,10 +313,7 @@ export default function TaskCreateWizard({
             {[
               ["Title", form.state.values.title],
               ["Priority", form.state.values.priority],
-              [
-                "Description",
-                form.state.values.description?.trim() || "—",
-              ],
+              ["Description", form.state.values.description?.trim() || "—"],
               ["Sprint", sprintName],
               ["Assignee", assigneeName],
               [

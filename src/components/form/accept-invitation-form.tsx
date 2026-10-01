@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { useAcceptInvitation } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { toast } from "../ui/toast";
-import { Spinner } from "../ui/spinner";
+import { useAcceptInvitation } from "@/hooks";
+import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 function AcceptInvitationFormContent() {
   const router = useRouter();
@@ -19,8 +19,8 @@ function AcceptInvitationFormContent() {
     return (
       <Card>
         <CardContent className="p-6 text-center text-sm text-muted-foreground">
-          Invitation token is missing. Please open the invitation link from
-          your email again.
+          Invitation token is missing. Please open the invitation link from your
+          email again.
         </CardContent>
       </Card>
     );

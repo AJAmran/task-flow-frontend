@@ -1,11 +1,11 @@
 "use client";
 
-import { toast } from "@/components/ui/toast";
-import { useGoogleOAuth } from "@/hooks";
-import { setSessionLanding } from "@/lib/session";
 import { GoogleLogin } from "@react-oauth/google";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/toast";
+import { useGoogleOAuth } from "@/hooks";
+import { setSessionLanding } from "@/lib/session";
 
 export default function GoogleLoginComponent() {
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;

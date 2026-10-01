@@ -1,21 +1,16 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../ui/field";
-import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useRegistration } from "@/hooks";
 import { useRouter } from "next/navigation";
-import { toast } from "../ui/toast";
-import { Spinner } from "../ui/spinner";
+import { useState } from "react";
+import { useRegistration } from "@/hooks";
 import { registerSchema } from "@/validation/auth.validation";
+import { Button } from "../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -42,7 +37,7 @@ export default function RegisterForm() {
       };
 
       register(registerData, {
-        onSuccess: (res) => {
+        onSuccess: () => {
           toast.add({
             title: "Registration Success",
             description: "Please check your email to verify your account",

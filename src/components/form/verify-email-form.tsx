@@ -1,21 +1,16 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Button } from "../ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../ui/field";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useResendOtp, useVerifyAccount } from "@/hooks";
 import { setSessionLanding } from "@/lib/session";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "../ui/toast";
-import { Spinner } from "../ui/spinner";
+import { Button } from "../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { Suspense } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 function VerifyEmailFormContent() {
   const router = useRouter();
@@ -96,7 +91,9 @@ function VerifyEmailFormContent() {
 
             return (
               <Field data-invalid={isInvalid} className="items-center">
-                <FieldLabel htmlFor={field.name} className="sr-only">Verification Code</FieldLabel>
+                <FieldLabel htmlFor={field.name} className="sr-only">
+                  Verification Code
+                </FieldLabel>
                 <InputOTP
                   maxLength={6}
                   value={field.state.value}
@@ -173,7 +170,13 @@ function VerifyEmailFormContent() {
 
 export default function VerifyEmailForm() {
   return (
-    <Suspense fallback={<div className="flex justify-center"><Spinner /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
+      }
+    >
       <VerifyEmailFormContent />
     </Suspense>
   );

@@ -1,8 +1,17 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Input } from "../ui/input";
+import { useQueryClient } from "@tanstack/react-query";
+import { Crown, Eye, EyeClosed, ShieldCheck, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useLogin } from "@/hooks";
+import { setSessionLanding } from "@/lib/session";
+import { loginSchema } from "@/validation/auth.validation";
+import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
 import {
   Field,
   FieldError,
@@ -10,18 +19,9 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "../ui/field";
-import { useState } from "react";
-import { Crown, Eye, EyeClosed, ShieldCheck, User } from "lucide-react";
-import { useLogin } from "@/hooks";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "../ui/toast";
+import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
-import Link from "next/link";
-import { loginSchema } from "@/validation/auth.validation";
-import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
-import { useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent } from "../ui/card";
-import { setSessionLanding } from "@/lib/session";
+import { toast } from "../ui/toast";
 
 const demoAccounts = [
   {
@@ -62,7 +62,7 @@ export default function LoginForm() {
   // Return to the page the proxy bounced (only safe local paths).
   const callbackUrl = searchParams.get("callbackUrl");
   const safeCallback =
-    callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+    callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
       ? callbackUrl
       : null;
 

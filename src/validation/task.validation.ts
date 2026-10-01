@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-const isoDatetime = (message: string) =>
-  z.string({ message }).datetime({ message: "Must be a valid date" });
-
 const NO_SELECT = "__none__";
 
 export const createTaskSchema = z.object({

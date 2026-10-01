@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Suspense } from "react";
 import { Logo } from "@/assets/logo";
 import LoginForm from "@/components/form/login-form";
 import { Spinner } from "@/components/ui/spinner";
-import Link from "next/link";
-import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Login — TaskFlow",
+  description:
+    "Log in to TaskFlow with email or Google, or use a one-click demo account for Admin, Owner, or Member.",
+};
 
 export default function LoginPage() {
   return (

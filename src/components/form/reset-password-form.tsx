@@ -1,27 +1,22 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../ui/field";
-import { useState, Suspense } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useResetPassword } from "@/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "../ui/toast";
-import { Spinner } from "../ui/spinner";
+import { Suspense, useState } from "react";
+import { useResetPassword } from "@/hooks";
 import { resetPasswordSchema } from "@/validation/auth.validation";
+import { Button } from "../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 function ResetPasswordFormContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -90,7 +85,9 @@ function ResetPasswordFormContent() {
 
             return (
               <Field data-invalid={isInvalid} className="items-center">
-                <FieldLabel htmlFor={field.name} className="self-start">Verification Code</FieldLabel>
+                <FieldLabel htmlFor={field.name} className="self-start">
+                  Verification Code
+                </FieldLabel>
                 <InputOTP
                   maxLength={6}
                   value={field.state.value}
@@ -158,7 +155,9 @@ function ResetPasswordFormContent() {
 
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Confirm New Password</FieldLabel>
+                <FieldLabel htmlFor={field.name}>
+                  Confirm New Password
+                </FieldLabel>
                 <div className="relative">
                   <Input
                     id={field.name}
@@ -204,7 +203,13 @@ function ResetPasswordFormContent() {
 
 export default function ResetPasswordForm() {
   return (
-    <Suspense fallback={<div className="flex justify-center"><Spinner /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center">
+          <Spinner />
+        </div>
+      }
+    >
       <ResetPasswordFormContent />
     </Suspense>
   );
