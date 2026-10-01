@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { SESSION_COOKIE, resolveLanding } from "@/lib/session";
+import { NextResponse } from "next/server";
+import { resolveLanding, SESSION_COOKIE } from "@/lib/session";
 
 const PROTECTED_PREFIXES = ["/admin", "/dashboard", "/organizations"];
 const GUEST_ONLY = ["/login", "/register"];
@@ -25,7 +25,8 @@ export default function proxy(request: NextRequest) {
   if (isProtected && !hasSession) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    // Preserve query (?token=, ?page=, filters) so login can return here.
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${request.nextUrl.search}`);
     return NextResponse.redirect(loginUrl);
   }
 
