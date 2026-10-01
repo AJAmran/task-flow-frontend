@@ -7,3 +7,4 @@ export * from "./task.api";
 export * from "./user.api";
 export * from "./dashboard.api";
 export * from "./billing.api";
+export * from "./admin.api";

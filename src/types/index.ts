@@ -9,3 +9,4 @@ export * from "./task.type";
 export * from "./profile.type";
 export * from "./dashboard.type";
 export * from "./billing.type";
+export * from "./admin.type";

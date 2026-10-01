@@ -8,3 +8,4 @@ export * from "./task.hook";
 export * from "./user.hook";
 export * from "./dashboard.hook";
 export * from "./billing.hook";
+export * from "./admin.hook";
