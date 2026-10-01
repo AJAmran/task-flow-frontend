@@ -133,9 +133,14 @@ export default function OrganizationOverview({
                 )}
               </Badge>
               {organization.subscription && (
-                <Badge variant="outline" className="uppercase">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-6 uppercase"
+                  render={<Link href="/dashboard/payments">{organization.subscription.plan}</Link>}
+                >
                   {organization.subscription.plan}
-                </Badge>
+                </Button>
               )}
               {isOwner && (
                 <Button

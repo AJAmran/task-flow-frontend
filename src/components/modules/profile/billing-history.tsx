@@ -13,7 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useOrganizations, useSubscription } from "@/hooks";
+import { useOrganizations, useOrganization, useSubscription } from "@/hooks";
+import UpgradeButtons from "@/components/modules/billing/upgrade-buttons";
 import { cn } from "@/lib/utils";
 
 const planStyles: Record<string, string> = {
@@ -31,6 +32,8 @@ const paymentStyles: Record<string, string> = {
 
 function OrgBilling({ organizationId, name }: { organizationId: string; name: string }) {
   const { data, isPending, isError } = useSubscription(organizationId);
+  const { data: orgData } = useOrganization(organizationId);
+  const isOwner = orgData?.data?.myRole === "ORG_OWNER";
 
   if (isPending) {
     return <Skeleton className="h-56 w-full" />;
@@ -91,6 +94,9 @@ function OrgBilling({ organizationId, name }: { organizationId: string; name: st
           >
             Compare plans
           </Button>
+        )}
+        {isOwner && (
+          <UpgradeButtons organizationId={organizationId} currentPlan={sub.plan} />
         )}
         <div className="flex flex-col gap-2">
           <h4 className="flex items-center gap-1.5 text-sm font-semibold">
