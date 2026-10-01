@@ -43,7 +43,7 @@ const demoAccounts = [
   {
     label: "Member",
     hint: "Projects, sprints & tasks",
-    email: "mdamranhossen77@gmail.com",
+    email: "firoz03dec@gmail.com",
     password: "Member@123",
     redirect: "/dashboard",
     icon: User,

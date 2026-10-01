@@ -284,13 +284,13 @@ export default function ProjectList({
                   className="w-full"
                   render={
                     <Link
-                      href={`/organizations/${organizationId}/projects/${project.id}`}
+                      href={`/organizations/${organizationId}/projects/${project.id}/board`}
                     >
-                      Open
+                      Open board
                     </Link>
                   }
                 >
-                  Open
+                  Open board
                 </Button>
               </CardFooter>
             </Card>
