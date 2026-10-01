@@ -6,8 +6,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 import { useInitiatePayment } from "@/hooks";
 import { savePendingPayment } from "@/lib/pending-payment";
-import { PLAN_PRICES, type PaidPlan } from "@/types";
 import { cn } from "@/lib/utils";
+import { type PaidPlan, PLAN_PRICES } from "@/types";
 
 const plans: { plan: PaidPlan; blurb: string }[] = [
   { plan: "PRO", blurb: "20 projects · 50 members" },
@@ -96,9 +96,7 @@ export default function UpgradeButtons({
               <span>
                 <span className="block text-sm font-bold">
                   {plan} · ৳{PLAN_PRICES[plan]}
-                  <span className="font-normal text-muted-foreground">
-                    /mo
-                  </span>
+                  <span className="font-normal text-muted-foreground">/mo</span>
                 </span>
                 <span className="block text-xs text-muted-foreground">
                   {blurb}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Users, Wallet, Banknote } from "lucide-react";
+import { Banknote, Building2, Users, Wallet } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -35,7 +35,7 @@ const pretty = (value: string) =>
 
 export function AdminOverviewSkeleton() {
   return (
-    <div className="flex flex-col gap-4" aria-label="Loading admin overview">
+    <div className="flex flex-col gap-4" role="status" aria-label="Loading admin overview">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Skeleton key={i} className="h-28" />

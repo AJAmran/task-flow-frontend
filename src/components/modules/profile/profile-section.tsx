@@ -1,6 +1,8 @@
 "use client";
 
 import { ShieldCheck, User } from "lucide-react";
+import ChangePasswordForm from "@/components/form/change-password-form";
+import UpdateProfileForm from "@/components/form/update-profile-form";
 import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,8 +15,6 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyProfile } from "@/hooks";
-import ChangePasswordForm from "@/components/form/change-password-form";
-import UpdateProfileForm from "@/components/form/update-profile-form";
 
 export function ProfileSectionSkeleton() {
   return (
@@ -104,13 +104,18 @@ export default function ProfileSection() {
           <CardHeader>
             <CardTitle className="text-base">Password</CardTitle>
             <CardDescription>
-              {user.provider === "google"
-                ? "This account signs in with Google."
-                : "Choose a strong, unique password."}
+              Choose a strong, unique password.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ChangePasswordForm />
+            {user.provider === "google" ? (
+              <p className="rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">
+                This account signs in with Google, so there is no password
+                to change here.
+              </p>
+            ) : (
+              <ChangePasswordForm />
+            )}
           </CardContent>
         </Card>
       </div>

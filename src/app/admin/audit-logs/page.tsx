@@ -16,8 +16,7 @@ export default function AdminAuditLogsPage() {
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold tracking-tight">Audit logs</h2>
         <p className="text-sm text-muted-foreground">
-          Task updates, invites, billing, and moderation — who did what,
-          when.
+          Task updates, invites, billing, and moderation — who did what, when.
         </p>
       </div>
       <Suspense fallback={<AuditLogsSkeleton />}>

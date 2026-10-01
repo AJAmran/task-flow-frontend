@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { Receipt, Wallet } from "lucide-react";
 import Link from "next/link";
+import UpgradeButtons from "@/components/modules/billing/upgrade-buttons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,8 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useOrganizations, useOrganization, useSubscription } from "@/hooks";
-import UpgradeButtons from "@/components/modules/billing/upgrade-buttons";
+import { useOrganization, useOrganizations, useSubscription } from "@/hooks";
 import { cn } from "@/lib/utils";
 
 const planStyles: Record<string, string> = {
@@ -30,7 +30,13 @@ const paymentStyles: Record<string, string> = {
   CANCELLED: "bg-muted text-muted-foreground",
 };
 
-function OrgBilling({ organizationId, name }: { organizationId: string; name: string }) {
+function OrgBilling({
+  organizationId,
+  name,
+}: {
+  organizationId: string;
+  name: string;
+}) {
   const { data, isPending, isError } = useSubscription(organizationId);
   const { data: orgData } = useOrganization(organizationId);
   const isOwner = orgData?.data?.myRole === "ORG_OWNER";
@@ -96,7 +102,10 @@ function OrgBilling({ organizationId, name }: { organizationId: string; name: st
           </Button>
         )}
         {isOwner && (
-          <UpgradeButtons organizationId={organizationId} currentPlan={sub.plan} />
+          <UpgradeButtons
+            organizationId={organizationId}
+            currentPlan={sub.plan}
+          />
         )}
         <div className="flex flex-col gap-2">
           <h4 className="flex items-center gap-1.5 text-sm font-semibold">
@@ -122,9 +131,7 @@ function OrgBilling({ organizationId, name }: { organizationId: string; name: st
                       {payment.trxID ? ` · ${payment.trxID}` : ""}
                     </span>
                   </span>
-                  <Badge
-                    className={cn(paymentStyles[payment.status] ?? "")}
-                  >
+                  <Badge className={cn(paymentStyles[payment.status] ?? "")}>
                     {payment.status.toLowerCase()}
                   </Badge>
                 </li>

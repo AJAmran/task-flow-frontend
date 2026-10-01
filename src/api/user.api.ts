@@ -1,9 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import type {
-  ApiResponse,
-  MeUser,
-  UpdateProfilePayload,
-} from "@/types";
+import type { ApiResponse, MeUser, UpdateProfilePayload } from "@/types";
 
 export function getMyProfile() {
   return apiClient<ApiResponse<MeUser>>("/users/me");

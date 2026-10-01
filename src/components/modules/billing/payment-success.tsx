@@ -14,11 +14,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "@/components/ui/toast";
 import { useExecutePayment, usePaymentById } from "@/hooks";
-import {
-  clearPendingPayment,
-  readPendingPayment,
-} from "@/lib/pending-payment";
+import { clearPendingPayment, readPendingPayment } from "@/lib/pending-payment";
 
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
@@ -62,6 +60,12 @@ function PaymentSuccessContent() {
     }
     execute(id, {
       onSuccess: () => refetch(),
+      onError: (err) =>
+        toast.add({
+          title: "Confirmation failed",
+          description: err.message || "Please try again",
+          type: "error",
+        }),
     });
   };
 
@@ -105,8 +109,7 @@ function PaymentSuccessContent() {
           {!paymentDbId && !paymentID && !isPending && (
             <p className="rounded-lg border bg-muted/40 p-3 text-sm text-muted-foreground">
               No payment reference found. Start an upgrade from Billing &
-              Payments, complete the bKash sandbox checkout, then return
-              here.
+              Payments, complete the bKash sandbox checkout, then return here.
             </p>
           )}
           {isError && (

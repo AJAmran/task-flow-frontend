@@ -1,6 +1,6 @@
+import { XCircle } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,8 +26,8 @@ export default function PaymentCancelPage() {
           </span>
           <CardTitle>Payment cancelled</CardTitle>
           <CardDescription>
-            The bKash checkout was closed before completion. No money moved
-            and your workspace plan is unchanged.
+            The bKash checkout was closed before completion. No money moved and
+            your workspace plan is unchanged.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">

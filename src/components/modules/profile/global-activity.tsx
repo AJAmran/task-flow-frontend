@@ -3,13 +3,13 @@
 import { formatDistanceToNow } from "date-fns";
 import { Activity } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGetMe, useMyAssignedTasks, useOrganizations } from "@/hooks";
 import {
   PriorityBadge,
   StatusBadge,
 } from "@/components/modules/task/task-shared";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetMe, useMyAssignedTasks, useOrganizations } from "@/hooks";
 
 export function GlobalActivitySkeleton() {
   return (
@@ -87,9 +87,9 @@ export default function GlobalActivity() {
         <Button
           className="mt-2"
           size="sm"
-          render={<Link href="/organizations">Browse organizations</Link>}
+          render={<Link href="/organizations">Browse workspaces</Link>}
         >
-          Browse organizations
+          Browse workspaces
         </Button>
       </div>
     );

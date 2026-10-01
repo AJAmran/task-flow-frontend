@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { Building2, SearchX } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +30,7 @@ const PAGE_SIZE = 10;
 
 export function AdminOrgsSkeleton() {
   return (
-    <div className="flex flex-col gap-4" aria-label="Loading organizations">
+    <div className="flex flex-col gap-4" role="status" aria-label="Loading organizations">
       <Skeleton className="h-8 w-40" />
       <Skeleton className="h-80 w-full" />
     </div>
@@ -92,7 +91,10 @@ export default function AdminOrgsTable() {
       {
         onSuccess: () =>
           toast.add({
-            title: next === "SUSPENDED" ? "Organization suspended" : "Organization reactivated",
+            title:
+              next === "SUSPENDED"
+                ? "Organization suspended"
+                : "Organization reactivated",
             description: `${name} is now ${next.toLowerCase()}.`,
             type: "success",
           }),

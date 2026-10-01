@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { ScrollText, SearchX } from "lucide-react";
+import { ScrollText } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +24,7 @@ const PAGE_SIZE = 15;
 
 export function AuditLogsSkeleton() {
   return (
-    <div className="flex flex-col gap-4" aria-label="Loading audit logs">
+    <div className="flex flex-col gap-4" role="status" aria-label="Loading audit logs">
       <div className="flex flex-wrap gap-2">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-8 w-36" />
@@ -92,8 +92,8 @@ export default function AuditLogsTable() {
     page,
     limit: PAGE_SIZE,
     ...(debouncedAction.trim() && { action: debouncedAction.trim() }),
-    ...(from && { from: new Date(`${from}T00:00:00`).toISOString() }),
-    ...(to && { to: new Date(`${to}T23:59:59`).toISOString() }),
+    ...(from && { from: `${from}T00:00:00.000Z` }),
+    ...(to && { to: `${to}T23:59:59.000Z` }),
   });
 
   const logs = data?.data ?? [];
@@ -152,8 +152,7 @@ export default function AuditLogsTable() {
           </span>
           <p className="font-medium">No audit events match</p>
           <p className="max-w-sm text-sm text-muted-foreground">
-            Actions like task updates, invites, billing, and blocks appear
-            here.
+            Actions like task updates, invites, billing, and blocks appear here.
           </p>
         </div>
       ) : (

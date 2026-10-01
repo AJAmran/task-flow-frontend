@@ -1,7 +1,14 @@
 "use client";
 
 import { format } from "date-fns";
-import { Ban, CheckCircle2, Crown, SearchX, ShieldCheck, User } from "lucide-react";
+import {
+  Ban,
+  CheckCircle2,
+  Crown,
+  SearchX,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import AvatarInitials from "@/components/ui/avatar-initials";
@@ -54,9 +61,11 @@ export default function AdminUsersTable() {
   const pageParam = Number(searchParams.get("page") ?? "1");
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const roleParam = searchParams.get("role") as PlatformRole | null;
-  const platformRole = roleParam === "USER" || roleParam === "SUPER_ADMIN" ? roleParam : undefined;
+  const platformRole =
+    roleParam === "USER" || roleParam === "SUPER_ADMIN" ? roleParam : undefined;
   const activeParam = searchParams.get("active");
-  const isActive = activeParam === "true" ? true : activeParam === "false" ? false : undefined;
+  const isActive =
+    activeParam === "true" ? true : activeParam === "false" ? false : undefined;
   const urlSearch = searchParams.get("search") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlSearch);
@@ -251,7 +260,9 @@ export default function AdminUsersTable() {
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      <Badge variant={user.isActive ? "outline" : "destructive"}>
+                      <Badge
+                        variant={user.isActive ? "outline" : "destructive"}
+                      >
                         {user.isActive ? (
                           <span className="flex items-center gap-1">
                             <CheckCircle2 className="size-3" /> Active
