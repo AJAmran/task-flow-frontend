@@ -14,8 +14,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CreateTeamForm from "@/components/form/create-team-form";
 import UpdateTeamForm from "@/components/form/update-team-form";
-import { Button } from "@/components/ui/button";
 import AvatarInitials, { AvatarStack } from "@/components/ui/avatar-initials";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -31,13 +31,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import TablePagination from "@/components/ui/table-pagination";
+import { toast } from "@/components/ui/toast";
 import {
   useAddTeamMember,
   useDeleteTeam,
+  useOrganization,
   useOrganizationMembers,
   useRemoveTeamMember,
   useTeamMembers,
@@ -55,11 +56,13 @@ function TeamCard({
   team,
   orgMembers,
   canManage,
+  canDelete,
 }: {
   organizationId: string;
   team: Team;
   orgMembers: OrganizationMember[];
   canManage: boolean;
+  canDelete: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -148,7 +151,7 @@ function TeamCard({
           <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
             <Users className="size-5" />
           </span>
-          {canManage &&
+          {canDelete &&
             (confirmDelete ? (
               <div className="flex gap-1.5">
                 <Button
@@ -187,6 +190,16 @@ function TeamCard({
                 </Button>
               </div>
             ))}
+          {!canDelete && canManage && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setRenameOpen(true)}
+              aria-label={`Rename ${team.name}`}
+            >
+              <Pencil />
+            </Button>
+          )}
         </div>
         <CardTitle className="line-clamp-1">{team.name}</CardTitle>
         <CardDescription>
@@ -350,8 +363,12 @@ export default function TeamSection({
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }, [debouncedSearch, pathname, router, searchParams]);
 
-  // Any org member can manage teams (backend enforces membership only).
+  // Any org member can manage teams, but only owners can delete them
+  // (backend enforces ORG_OWNER for delete).
   const canManage = true;
+
+  const { data: orgData } = useOrganization(organizationId);
+  const canDelete = orgData?.data?.myRole === "ORG_OWNER";
 
   const { data, isPending, isError, refetch } = useTeams(organizationId, {
     page,
@@ -426,7 +443,9 @@ export default function TeamSection({
             <SearchX className="size-5 text-muted-foreground" />
           </span>
           <p className="font-medium">
-            {teams.length === 0 ? "No teams yet" : `No results for "${debouncedSearch}"`}
+            {teams.length === 0
+              ? "No teams yet"
+              : `No results for "${debouncedSearch}"`}
           </p>
           <p className="max-w-sm text-sm text-muted-foreground">
             {teams.length === 0
@@ -452,6 +471,7 @@ export default function TeamSection({
               team={team}
               orgMembers={orgMembers}
               canManage={canManage}
+              canDelete={canDelete}
             />
           ))}
         </div>

@@ -1,6 +1,6 @@
+import { Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import { Suspense } from "react";
 import ProjectList from "@/components/modules/project/project-list";
 import ProjectListLoading from "@/components/modules/project/project-list-loading";

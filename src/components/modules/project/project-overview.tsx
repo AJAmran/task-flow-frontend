@@ -152,7 +152,9 @@ export default function ProjectOverview({
                 "Active"
               )}
             </Badge>
-            {project.team && <Badge variant="outline">{project.team.name}</Badge>}
+            {project.team && (
+              <Badge variant="outline">{project.team.name}</Badge>
+            )}
           </div>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <CalendarDays className="size-3" />
@@ -160,11 +162,7 @@ export default function ProjectOverview({
           </p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setEditOpen(true)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
             <Pencil /> Edit
           </Button>
           <Button
@@ -236,8 +234,8 @@ export default function ProjectOverview({
         <CardContent>
           <CardDescription>
             Manage tasks on the Board and List tabs, plan time-boxed work under
-            Sprints, and review every change in Activity. Manage project
-            members below.
+            Sprints, and review every change in Activity. Manage project members
+            below.
           </CardDescription>
         </CardContent>
       </Card>

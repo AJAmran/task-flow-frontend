@@ -23,7 +23,10 @@ export default async function ProjectDetailPage({
   return (
     <div className="flex flex-col gap-4">
       <Suspense fallback={<ProjectOverviewSkeleton />}>
-        <ProjectOverview organizationId={organizationId} projectId={projectId} />
+        <ProjectOverview
+          organizationId={organizationId}
+          projectId={projectId}
+        />
       </Suspense>
       <Suspense fallback={<ProjectMembersSkeleton />}>
         <ProjectMembers organizationId={organizationId} projectId={projectId} />

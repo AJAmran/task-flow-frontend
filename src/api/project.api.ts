@@ -24,10 +24,7 @@ export function createProject(
   );
 }
 
-export function getProjects(
-  organizationId: string,
-  params: ProjectListParams,
-) {
+export function getProjects(organizationId: string, params: ProjectListParams) {
   return apiClient<ApiResponse<Project[]>>(
     `/organizations/${organizationId}/projects`,
     {

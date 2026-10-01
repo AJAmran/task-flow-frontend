@@ -1,5 +1,6 @@
 "use client";
 
+import { format } from "date-fns";
 import {
   ArrowRight,
   Building2,
@@ -24,9 +25,9 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMe, useOrganizations } from "@/hooks";
-import { format } from "date-fns";
-import ContinueWorking from "./continue-working";
 import { cn } from "@/lib/utils";
+import ContinueWorking from "./continue-working";
+import GettingStartedChecklist from "./getting-started-checklist";
 
 export function DashboardHomeLoading() {
   return (
@@ -57,9 +58,9 @@ const onboardingSteps = [
   {
     step: "1",
     icon: Building2,
-    title: "Create an organization",
+    title: "Create a workspace",
     description: "A workspace for your company, client, or crew.",
-    cta: "Create organization",
+    cta: "Create workspace",
     href: "/organizations/new",
   },
   {
@@ -68,7 +69,7 @@ const onboardingSteps = [
     title: "Invite your team",
     description:
       "Open your organization, go to the Members tab, and add people by email.",
-    cta: "Go to organizations",
+    cta: "Go to workspaces",
     href: "/organizations",
   },
   {
@@ -76,7 +77,7 @@ const onboardingSteps = [
     icon: FolderKanban,
     title: "Start a project",
     description: "Plan sprints and track tasks on the board.",
-    cta: "Browse organizations",
+    cta: "Go to workspaces",
     href: "/organizations",
   },
 ];
@@ -208,6 +209,12 @@ export default function DashboardHome() {
       ) : (
         <>
           <ContinueWorking />
+          {memberships[0] && (
+            <GettingStartedChecklist
+              organizationId={memberships[0].organization.id}
+              organizationName={memberships[0].organization.name}
+            />
+          )}
           <div className="grid gap-3 sm:grid-cols-3">
             {statStrip.map((stat) => {
               const Icon = stat.icon;
@@ -257,9 +264,13 @@ export default function DashboardHome() {
                   key={membership.membershipId}
                   className={cn(
                     "flex flex-col border-t-2 transition-all hover:-translate-y-0.5 hover:shadow-md",
-                    isOwner ? "border-t-teal-500" : "border-t-muted-foreground/20",
+                    isOwner
+                      ? "border-t-teal-500"
+                      : "border-t-muted-foreground/20",
                   )}
-                >                  <CardHeader>
+                >
+                  {" "}
+                  <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <span
                         className={cn(
@@ -314,11 +325,11 @@ export default function DashboardHome() {
           nativeButton={false}
           render={
             <Link href="/organizations/new">
-              <Plus /> New organization
+              <Plus /> New workspace
             </Link>
           }
         >
-          <Plus /> New organization
+          <Plus /> New workspace
         </Button>
         <Button
           size="sm"

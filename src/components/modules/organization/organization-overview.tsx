@@ -1,15 +1,10 @@
 "use client";
 
-import {
-  Building2,
-  Crown,
-  FolderKanban,
-  Settings,
-  Users,
-} from "lucide-react";
+import { Building2, Crown, FolderKanban, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import UpdateOrganizationForm from "@/components/form/update-organization-form";
+import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +21,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import AvatarInitials from "@/components/ui/avatar-initials";
 import { useGetMe, useOrganization } from "@/hooks";
 
 export function OrganizationOverviewSkeleton() {
@@ -137,7 +131,11 @@ export default function OrganizationOverview({
                   variant="outline"
                   size="sm"
                   className="h-6 uppercase"
-                  render={<Link href="/dashboard/payments">{organization.subscription.plan}</Link>}
+                  render={
+                    <Link href="/dashboard/payments">
+                      {organization.subscription.plan}
+                    </Link>
+                  }
                 >
                   {organization.subscription.plan}
                 </Button>

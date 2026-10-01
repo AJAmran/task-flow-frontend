@@ -4,26 +4,21 @@ import { useQueries } from "@tanstack/react-query";
 import { isPast } from "date-fns";
 import { AlertTriangle, ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getMyAssignedTasks } from "@/api";
-import { useOrganizations } from "@/hooks";
-import type { AssignedTask } from "@/types";
 import {
   DueBadge,
   PriorityBadge,
   StatusBadge,
 } from "@/components/modules/task/task-shared";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useOrganizations } from "@/hooks";
+import type { AssignedTask } from "@/types";
 
 export function ContinueWorkingSkeleton() {
   return (
-    <div className="flex flex-col gap-2" aria-label="Loading continue working">
+    <div className="flex flex-col gap-2" role="status" aria-label="Loading continue working">
       {Array.from({ length: 4 }).map((_, i) => (
         <Skeleton key={i} className="h-16 w-full" />
       ))}
@@ -49,8 +44,7 @@ export default function ContinueWorking() {
         "my-assigned",
         { page: 1, limit: 10 },
       ],
-      queryFn: () =>
-        getMyAssignedTasks(organizationId, { page: 1, limit: 10 }),
+      queryFn: () => getMyAssignedTasks(organizationId, { page: 1, limit: 10 }),
       enabled: !!organizationId,
     })),
   });
@@ -89,8 +83,7 @@ export default function ContinueWorking() {
           <div>
             <p className="text-sm font-semibold">You&apos;re all caught up</p>
             <p className="text-xs text-muted-foreground">
-              Every assigned task is done. Pick up something new from a
-              board.
+              Every assigned task is done. Pick up something new from a board.
             </p>
           </div>
         </CardContent>
@@ -117,8 +110,8 @@ export default function ContinueWorking() {
         <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm">
           <AlertTriangle className="size-4 shrink-0 text-amber-600" />
           <p>
-            <span className="font-semibold">{overdue.length}</span> overdue
-            task{overdue.length === 1 ? "" : "s"} — start here.
+            <span className="font-semibold">{overdue.length}</span> overdue task
+            {overdue.length === 1 ? "" : "s"} — start here.
           </p>
         </div>
       )}

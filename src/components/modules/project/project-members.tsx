@@ -117,9 +117,7 @@ export default function ProjectMembers({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">
-          Members ({members.length})
-        </CardTitle>
+        <CardTitle className="text-base">Members ({members.length})</CardTitle>
         <CardDescription>
           Only organization members can join this project.
         </CardDescription>

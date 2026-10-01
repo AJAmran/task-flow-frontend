@@ -19,9 +19,7 @@ export default async function ProjectActivityPage({
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold tracking-tight">
-          Recent updates
-        </h2>
+        <h2 className="text-lg font-semibold tracking-tight">Recent updates</h2>
         <p className="text-sm text-muted-foreground">
           The most recently changed tasks in this project.
         </p>

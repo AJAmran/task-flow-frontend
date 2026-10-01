@@ -54,8 +54,7 @@ export default function OrgAnalytics({
 }: {
   organizationId: string;
 }) {
-  const { data, isPending, isError, refetch } =
-    useOrgDashboard(organizationId);
+  const { data, isPending, isError, refetch } = useOrgDashboard(organizationId);
 
   if (isPending) {
     return <OrgAnalyticsSkeleton />;

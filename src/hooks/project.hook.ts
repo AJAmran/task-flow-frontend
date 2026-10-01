@@ -46,10 +46,7 @@ export function useCreateProject(organizationId: string) {
   });
 }
 
-export function useProjects(
-  organizationId: string,
-  params: ProjectListParams,
-) {
+export function useProjects(organizationId: string, params: ProjectListParams) {
   return useQuery({
     queryKey: ["organizations", organizationId, "projects", params],
     queryFn: () => getProjects(organizationId, params),

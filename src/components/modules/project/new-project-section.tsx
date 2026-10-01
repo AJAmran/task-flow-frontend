@@ -22,8 +22,7 @@ export default function NewProjectSection({
       <CardHeader>
         <CardTitle>Create a project</CardTitle>
         <CardDescription>
-          Projects group sprints and tasks. You can attach a team now or
-          later.
+          Projects group sprints and tasks. You can attach a team now or later.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -29,7 +29,7 @@ function OrgNav({ organizationId }: { organizationId: string }) {
           href="/organizations"
           className="flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="size-4" /> All organizations
+          <ArrowLeft className="size-4" /> All workspaces
         </Link>
         {isPending ? (
           <Skeleton className="h-7 w-48" />

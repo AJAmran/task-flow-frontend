@@ -65,7 +65,7 @@ export default function OrganizationWizard() {
             <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
               <Building2 className="size-5" />
             </span>
-            <CardTitle>Organization details</CardTitle>
+            <CardTitle>Workspace details</CardTitle>
             <CardDescription>
               This is the workspace your teams, projects and billing belong to.
             </CardDescription>
@@ -92,7 +92,7 @@ export default function OrganizationWizard() {
             </span>
             <CardTitle>Workspace ready</CardTitle>
             <CardDescription>
-              Your organization was created. Next: invite teammates, create a
+              Your workspace is ready. Next: invite teammates, create a
               team, then start a project.
             </CardDescription>
           </CardHeader>
@@ -112,7 +112,7 @@ export default function OrganizationWizard() {
                 )
               }
             >
-              {createdId ? "Open organization" : "Go to organizations"}
+              {createdId ? "Open workspace" : "Go to workspaces"}
               <ArrowRight />
             </Button>
           </CardContent>

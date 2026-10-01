@@ -1,6 +1,6 @@
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { Suspense } from "react";
 import TaskDetail from "@/components/modules/task/task-detail";
 import TaskDetailLoading from "@/components/modules/task/task-detail-loading";

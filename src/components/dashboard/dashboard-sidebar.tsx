@@ -26,7 +26,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks";

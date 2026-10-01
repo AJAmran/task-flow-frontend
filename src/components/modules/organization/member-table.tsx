@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { SearchX, Trash2, UserPlus } from "lucide-react";
 import { useState } from "react";
 import InviteMemberForm from "@/components/form/invite-member-form";
+import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import TablePagination from "@/components/ui/table-pagination";
-import AvatarInitials from "@/components/ui/avatar-initials";
 import { toast } from "@/components/ui/toast";
 import {
   useOrganizationMembers,

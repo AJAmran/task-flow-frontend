@@ -7,7 +7,7 @@ export const memberRoutes = [
         url: "/dashboard",
       },
       {
-        title: "Organizations",
+        title: "Workspaces",
         url: "/organizations",
       },
     ],

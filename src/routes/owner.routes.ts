@@ -7,7 +7,7 @@ export const ownerRoutes = [
         url: "/dashboard",
       },
       {
-        title: "Organizations",
+        title: "Workspaces",
         url: "/organizations",
       },
     ],

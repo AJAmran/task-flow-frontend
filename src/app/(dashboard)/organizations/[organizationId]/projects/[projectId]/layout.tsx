@@ -58,7 +58,11 @@ function ProjectNav({
                 {project?.name ?? "Project"}
               </h2>
               {project && (
-                <Badge variant={project.status === "ACTIVE" ? "default" : "secondary"}>
+                <Badge
+                  variant={
+                    project.status === "ACTIVE" ? "default" : "secondary"
+                  }
+                >
                   {project.status === "ACTIVE" ? "Active" : "Archived"}
                 </Badge>
               )}

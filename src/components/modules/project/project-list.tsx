@@ -30,7 +30,10 @@ import ProjectListLoading from "./project-list-loading";
 
 const PAGE_SIZE = 9;
 
-const sortOptions: { value: `${ProjectSortBy}:${"asc" | "desc"}`; label: string }[] = [
+const sortOptions: {
+  value: `${ProjectSortBy}:${"asc" | "desc"}`;
+  label: string;
+}[] = [
   { value: "createdAt:desc", label: "Newest first" },
   { value: "createdAt:asc", label: "Oldest first" },
   { value: "updatedAt:desc", label: "Recently updated" },
@@ -269,7 +272,9 @@ export default function ProjectList({
                 </div>
                 <CardTitle className="line-clamp-1">{project.name}</CardTitle>
                 <CardDescription className="line-clamp-2">
-                  {project.description || project.team?.name || "No description"}
+                  {project.description ||
+                    project.team?.name ||
+                    "No description"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex gap-4 text-sm text-muted-foreground">
