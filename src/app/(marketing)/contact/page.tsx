@@ -1,13 +1,13 @@
+import { Clock, Mail, MessageCircle } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Clock, Mail, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -107,7 +107,10 @@ export default function ContactPage() {
           ))}
         </Accordion>
         <div className="mt-8 text-center">
-          <Button nativeButton={false} render={<Link href="/register">Create free account</Link>}>
+          <Button
+            nativeButton={false}
+            render={<Link href="/register">Create free account</Link>}
+          >
             Create free account
           </Button>
         </div>

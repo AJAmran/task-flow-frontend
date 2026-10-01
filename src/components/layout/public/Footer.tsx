@@ -1,5 +1,5 @@
-import { Logo } from "@/assets/logo";
 import Link from "next/link";
+import { Logo } from "@/assets/logo";
 
 const columns = [
   {

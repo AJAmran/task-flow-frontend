@@ -1,15 +1,15 @@
 "use client";
 
-import { Logo } from "@/assets/logo";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/toast";
-import { useGetMe, useLogout } from "@/hooks";
-import { clearSession } from "@/lib/session";
 import { useQueryClient } from "@tanstack/react-query";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Logo } from "@/assets/logo";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { useGetMe, useLogout } from "@/hooks";
+import { clearSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
 const routes = [
@@ -28,7 +28,8 @@ export default function Header() {
   const queryClient = useQueryClient();
 
   const user = data?.data;
-  const dashboardUrl = user?.platformRole === "SUPER_ADMIN" ? "/admin" : "/dashboard";
+  const dashboardUrl =
+    user?.platformRole === "SUPER_ADMIN" ? "/admin" : "/dashboard";
 
   const handleLogout = () => {
     logout(undefined, {
@@ -95,7 +96,11 @@ export default function Header() {
               >
                 Login
               </Button>
-              <Button size="sm" nativeButton={false} render={<Link href="/register">Get Started</Link>}>
+              <Button
+                size="sm"
+                nativeButton={false}
+                render={<Link href="/register">Get Started</Link>}
+              >
                 Get Started
               </Button>
             </>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import CtaBand from "@/components/modules/homepage/CtaBand";
+import { homeFeatures } from "@/components/modules/homepage/home-data";
 import {
   Card,
   CardContent,
@@ -6,8 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CtaBand from "@/components/modules/homepage/CtaBand";
-import { homeFeatures } from "@/components/modules/homepage/home-data";
 
 export const metadata: Metadata = {
   title: "Features — TaskFlow",

@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const workflow = ["Todo", "In Progress", "In Review", "Done"];
 
@@ -30,9 +30,9 @@ export default function Hero() {
           </span>
         </h1>
         <p className="max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
-          One workspace for organizations, teams, projects, sprints, and
-          tasks. Plan work, review progress, and keep every member aligned —
-          from backlog to done.
+          One workspace for organizations, teams, projects, sprints, and tasks.
+          Plan work, review progress, and keep every member aligned — from
+          backlog to done.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button

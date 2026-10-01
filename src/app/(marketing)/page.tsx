@@ -1,6 +1,9 @@
+import { Crown, ShieldCheck, User } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Crown, ShieldCheck, User } from "lucide-react";
+import CtaBand from "@/components/modules/homepage/CtaBand";
+import Hero from "@/components/modules/homepage/Hero";
+import { homeFeatures } from "@/components/modules/homepage/home-data";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,9 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Hero from "@/components/modules/homepage/Hero";
-import CtaBand from "@/components/modules/homepage/CtaBand";
-import { homeFeatures } from "@/components/modules/homepage/home-data";
 
 export const metadata: Metadata = {
   title: "TaskFlow — Project Management for Modern Teams",

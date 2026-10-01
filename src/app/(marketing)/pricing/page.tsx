@@ -1,8 +1,8 @@
+import { Check } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import CtaBand from "@/components/modules/homepage/CtaBand";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -25,7 +25,12 @@ const plans = [
     price: "৳0",
     period: "forever",
     description: "For trying TaskFlow with a small team.",
-    features: ["Up to 3 projects", "Up to 5 members", "Kanban boards & sprints", "Community support"],
+    features: [
+      "Up to 3 projects",
+      "Up to 5 members",
+      "Kanban boards & sprints",
+      "Community support",
+    ],
     cta: "Start free",
     href: "/register",
     highlight: false,
@@ -81,7 +86,9 @@ export default function PricingPage() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={cn(plan.highlight && "border-primary ring-1 ring-primary")}
+            className={cn(
+              plan.highlight && "border-primary ring-1 ring-primary",
+            )}
           >
             <CardHeader>
               <CardTitle>{plan.name}</CardTitle>
@@ -119,9 +126,9 @@ export default function PricingPage() {
       </div>
 
       <p className="mx-auto mt-8 max-w-2xl text-center text-xs text-muted-foreground">
-        Plan limits (projects, members) are enforced by the backend
-        subscription module. Upgrades create a real bKash sandbox payment with
-        success and cancel redirects.
+        Plan limits (projects, members) are enforced by the backend subscription
+        module. Upgrades create a real bKash sandbox payment with success and
+        cancel redirects.
       </p>
 
       <div className="mt-8">
