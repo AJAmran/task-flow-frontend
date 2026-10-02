@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/assets/logo";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks";
 import { clearSession } from "@/lib/session";
@@ -73,20 +74,29 @@ export default function Header() {
               {route.name}
             </Button>
           ))}
-          {user && (
-            <Button
-              variant="ghost"
-              size="sm"
-              nativeButton={false}
-              render={<Link href={dashboardUrl}>Dashboard</Link>}
-            >
-              Dashboard
-            </Button>
+          {isPending ? (
+            <Skeleton className="h-7 w-20" aria-label="Loading account" />
+          ) : (
+            user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                nativeButton={false}
+                render={<Link href={dashboardUrl}>Dashboard</Link>}
+              >
+                Dashboard
+              </Button>
+            )
           )}
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          {!isPending && !user && (
+          {isPending ? (
+            <>
+              <Skeleton className="h-7 w-16" aria-label="Loading account" />
+              <Skeleton className="h-7 w-24" aria-hidden />
+            </>
+          ) : !user ? (
             <>
               <Button
                 variant="outline"
@@ -104,8 +114,7 @@ export default function Header() {
                 Get Started
               </Button>
             </>
-          )}
-          {!isPending && user && (
+          ) : (
             <Button
               variant="destructive"
               size="sm"
@@ -145,22 +154,33 @@ export default function Header() {
               {route.name}
             </Button>
           ))}
-          {user && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start"
-              nativeButton={false}
-              render={
-                <Link href={dashboardUrl} onClick={() => setOpen(false)}>
-                  Dashboard
-                </Link>
-              }
-            >
-              Dashboard
-            </Button>
+          {isPending ? (
+            <div className="px-2 py-1.5" aria-label="Loading account">
+              <Skeleton className="h-7 w-full" />
+            </div>
+          ) : (
+            user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start"
+                nativeButton={false}
+                render={
+                  <Link href={dashboardUrl} onClick={() => setOpen(false)}>
+                    Dashboard
+                  </Link>
+                }
+              >
+                Dashboard
+              </Button>
+            )
           )}
-          {!isPending && !user && (
+          {isPending ? (
+            <div className="flex gap-2 pt-2" aria-label="Loading account">
+              <Skeleton className="h-7 flex-1" />
+              <Skeleton className="h-7 flex-1" />
+            </div>
+          ) : !user ? (
             <div className="flex gap-2 pt-2">
               <Button
                 variant="outline"
@@ -188,8 +208,7 @@ export default function Header() {
                 Get Started
               </Button>
             </div>
-          )}
-          {!isPending && user && (
+          ) : (
             <Button
               variant="destructive"
               size="sm"

@@ -32,6 +32,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { toast } from "@/components/ui/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useGetMe, useLogout } from "@/hooks";
 import { clearSession } from "@/lib/session";
 import { adminRoutes, memberRoutes, ownerRoutes } from "@/routes";
@@ -94,7 +95,7 @@ function isRouteActive(
 }
 
 function SidebarAccount() {
-  const { data } = useGetMe();
+  const { data, isPending: isLoadingUser } = useGetMe();
   const { mutate: logout, isPending } = useLogout();
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -122,6 +123,16 @@ function SidebarAccount() {
       },
     });
   };
+
+  if (isLoadingUser) {
+    return (
+      <div className="flex flex-col gap-2 px-2" aria-label="Loading account">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+    );
+  }
 
   if (!user) {
     return null;
