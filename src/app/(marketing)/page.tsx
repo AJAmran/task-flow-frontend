@@ -1,10 +1,7 @@
-import { Crown, ShieldCheck, User } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import CtaBand from "@/components/modules/homepage/CtaBand";
 import Hero from "@/components/modules/homepage/Hero";
 import { homeFeatures } from "@/components/modules/homepage/home-data";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,36 +16,12 @@ export const metadata: Metadata = {
     "Plan sprints, track tasks on Kanban boards, manage teams, and bill subscriptions. One workspace for your whole organization.",
 };
 
-const roles = [
-  {
-    icon: ShieldCheck,
-    title: "Super Admin",
-    description:
-      "Platform overview, user and organization management, audit logs, and billing insight.",
-    href: "/login",
-  },
-  {
-    icon: Crown,
-    title: "Org Owner",
-    description:
-      "Create organizations, invite members, manage teams and projects, upgrade plans.",
-    href: "/login",
-  },
-  {
-    icon: User,
-    title: "Member",
-    description:
-      "Join teams, pick up tasks, move cards across the board, and track personal activity.",
-    href: "/login",
-  },
-];
-
 const steps = [
   {
     step: "01",
-    title: "Create your organization",
+    title: "Create your workspace",
     description:
-      "Sign up, verify your email, and create an organization for your company or client.",
+      "Sign up, verify your email, and create a workspace for your company or client.",
   },
   {
     step: "02",
@@ -71,7 +44,10 @@ export default function HomePage() {
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <span className="inline-block rounded-full border border-teal-600/20 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-900">
+            Capabilities
+          </span>
+          <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
             Everything you need to deliver
           </h2>
           <p className="mt-2 text-muted-foreground">
@@ -82,9 +58,12 @@ export default function HomePage() {
           {homeFeatures.map((feature) => {
             const Icon = feature.icon;
             return (
-              <Card key={feature.title}>
+              <Card
+                key={feature.title}
+                className="transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md"
+              >
                 <CardHeader>
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
+                  <span className="flex size-10 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
                     <Icon className="size-5" />
                   </span>
                   <CardTitle>{feature.title}</CardTitle>
@@ -101,55 +80,72 @@ export default function HomePage() {
       <section className="w-full border-y bg-muted/40">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              One login away from your role
+            <span className="inline-block rounded-full border border-teal-600/20 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-900">
+              For every role
+            </span>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+              Built for every role on your team
             </h2>
             <p className="mt-2 text-muted-foreground">
-              Evaluators can try every workflow with one-click demo accounts.
+              Admins govern the platform, owners run workspaces, members
+              deliver the work — each with a dashboard made for the job.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            {roles.map((role) => {
-              const Icon = role.icon;
-              return (
-                <Card key={role.title}>
-                  <CardHeader>
-                    <span className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                      <Icon className="size-5" />
-                    </span>
-                    <CardTitle>{role.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-4">
-                    <CardDescription>{role.description}</CardDescription>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-fit"
-                      nativeButton={false}
-                      render={<Link href={role.href}>Try it</Link>}
-                    >
-                      Try it
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {[
+              {
+                step: "01",
+                title: "Admins govern",
+                description:
+                  "Platform overview, people and workspace management, audit trail.",
+              },
+              {
+                step: "02",
+                title: "Owners run",
+                description:
+                  "Workspaces, invites, teams, projects, sprints, and billing.",
+              },
+              {
+                step: "03",
+                title: "Members deliver",
+                description:
+                  "Boards, tasks, subtasks, discussions, files, and deadlines.",
+              },
+            ].map((item) => (
+              <Card
+                key={item.step}
+                className="transition-all hover:-translate-y-1 hover:shadow-md"
+              >
+                <CardHeader>
+                  <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
+                    {item.step}
+                  </span>
+                  <CardTitle>{item.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{item.description}</CardDescription>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <span className="inline-block rounded-full border border-teal-600/20 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-900">
+            How it works
+          </span>
+          <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
             From signup to sprint in minutes
           </h2>
         </div>
         <ol className="grid gap-4 md:grid-cols-3">
           {steps.map((item) => (
             <li key={item.step}>
-              <Card className="h-full">
+              <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-md">
                 <CardHeader>
-                  <span className="text-sm font-bold text-muted-foreground">
+                  <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
                     {item.step}
                   </span>
                   <CardTitle>{item.title}</CardTitle>
