@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
+import loginImage from "@/assets/images/loginimage.png";
 import { Logo } from "@/assets/logo";
 import LoginForm from "@/components/form/login-form";
 import { Spinner } from "@/components/ui/spinner";
@@ -8,7 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 export const metadata: Metadata = {
   title: "Login — TaskFlow",
   description:
-    "Log in to TaskFlow with email or Google, or use a one-click demo account for Admin, Owner, or Member.",
+    "Log in to TaskFlow with your email or Google to reach your workspace.",
 };
 
 export default function LoginPage() {
@@ -40,13 +42,9 @@ export default function LoginPage() {
       <div className="relative hidden overflow-hidden bg-[#0a2e36] lg:block">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(45,212,191,0.3),transparent_50%),radial-gradient(circle_at_90%_85%,rgba(45,212,191,0.18),transparent_50%)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(45,212,191,0.25),transparent_50%)]"
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.12] bg-[radial-gradient(rgba(255,255,255,0.8)_1px,transparent_1px)] bg-[size:22px_22px]"
-        />
-        <div className="relative flex h-full flex-col justify-between p-10">
+        <div className="relative flex h-full flex-col gap-6 p-10">
           <Link
             href="/"
             className="flex items-center gap-2 font-semibold text-white"
@@ -54,18 +52,29 @@ export default function LoginPage() {
             <Logo href="" />
             <span>TaskFlow</span>
           </Link>
-          <div className="flex flex-col gap-6">
+          <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/10">
+            <Image
+              src={loginImage}
+              alt="Team collaborating on TaskFlow"
+              fill
+              priority
+              placeholder="blur"
+              sizes="(max-width:1024px) 0vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="flex flex-col gap-4">
             <p className="max-w-md text-2xl font-bold tracking-tight text-balance text-white">
               Plan sprints, track tasks, and ship with your whole team.
             </p>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-2.5">
               {[
                 ["Admin", "Users, organizations & audit logs"],
                 ["Owner", "Organizations, teams & billing"],
                 ["Member", "Projects, sprints & tasks"],
               ].map(([role, text]) => (
                 <li key={role} className="flex items-center gap-3">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-teal-200">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-xs font-bold text-teal-200">
                     {role[0]}
                   </span>
                   <span className="text-sm text-teal-50">
@@ -75,10 +84,11 @@ export default function LoginPage() {
                 </li>
               ))}
             </ul>
+            <p className="max-w-md text-xs text-teal-100/60">
+              Secure sign-in with email or Google. Admins, owners, and
+              members each land on their own workspace.
+            </p>
           </div>
-          <p className="max-w-md text-xs text-teal-100/60">
-            Evaluating? Use a Quick Demo Login button — no typing needed.
-          </p>
         </div>
       </div>
     </div>

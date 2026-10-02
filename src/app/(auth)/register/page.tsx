@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import registerImage from "@/assets/images/registerimg.png";
 import { Logo } from "@/assets/logo";
 import RegisterForm from "@/components/form/register-form";
 
@@ -46,8 +48,20 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-muted" />
+      <div className="relative hidden overflow-hidden bg-[#0a2e36] lg:block">
+        <Image
+          src={registerImage}
+          alt="Get started with TaskFlow"
+          fill
+          priority
+          placeholder="blur"
+          sizes="(max-width:1024px) 0vw, 50vw"
+          className="object-cover"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-[#0a2e36]/90 via-[#0a2e36]/30 to-[#0a2e36]/20"
+        />
       </div>
     </div>
   );

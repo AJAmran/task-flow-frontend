@@ -2,7 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { Crown, Eye, EyeClosed, ShieldCheck, User } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -11,7 +11,6 @@ import { setSessionLanding } from "@/lib/session";
 import { loginSchema } from "@/validation/auth.validation";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import { Button } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
 import {
   Field,
   FieldError,
@@ -23,36 +22,8 @@ import { Input } from "../ui/input";
 import { Spinner } from "../ui/spinner";
 import { toast } from "../ui/toast";
 
-const demoAccounts = [
-  {
-    label: "Super Admin",
-    hint: "Users, organizations & audit logs",
-    email: "superadmin@gmail.com",
-    password: "Super@admin12345",
-    redirect: "/admin",
-    icon: ShieldCheck,
-  },
-  {
-    label: "Org Owner",
-    hint: "Organizations, teams & billing",
-    email: "amran.xgroup@gmail.com",
-    password: "Owner@123",
-    redirect: "/dashboard",
-    icon: Crown,
-  },
-  {
-    label: "Member",
-    hint: "Projects, sprints & tasks",
-    email: "firoz03dec@gmail.com",
-    password: "Member@123",
-    redirect: "/dashboard",
-    icon: User,
-  },
-] as const;
-
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [demoEmail, setDemoEmail] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -84,24 +55,11 @@ export default function LoginForm() {
   };
 
   const handleError = (err: Error) => {
-    setDemoEmail(null);
     toast.add({
       title: "Authorization failure",
       description: err.message || "Something went wrong. Please try again",
       type: "error",
     });
-  };
-
-  const handleDemoLogin = (account: (typeof demoAccounts)[number]) => {
-    setDemoEmail(account.email);
-    login(
-      { email: account.email, password: account.password },
-      {
-        onSuccess: (res) =>
-          handleSuccess(res.data?.user?.platformRole, account.redirect),
-        onError: handleError,
-      },
-    );
   };
 
   const form = useForm({
@@ -204,7 +162,7 @@ export default function LoginForm() {
           </form.Field>
 
           <Button disabled={loginPending} type="submit">
-            {loginPending && !demoEmail ? (
+            {loginPending ? (
               <>
                 <Spinner /> submitting
               </>
@@ -218,49 +176,6 @@ export default function LoginForm() {
       <FieldSeparator>Or continue with</FieldSeparator>
 
       <GoogleLoginComponent />
-
-      <FieldSeparator>Quick Demo Login</FieldSeparator>
-
-      <div className="grid gap-2">
-        {demoAccounts.map((account) => {
-          const Icon = account.icon;
-          const isLoading = loginPending && demoEmail === account.email;
-          return (
-            <Card key={account.email}>
-              <CardContent className="flex items-center gap-3 p-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <Icon className="size-4" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium">
-                    {account.label}
-                  </span>
-                  <span className="block truncate text-xs text-muted-foreground">
-                    {account.hint}
-                  </span>
-                  <span className="block truncate font-mono text-[11px] text-muted-foreground/80">
-                    {account.email}
-                  </span>
-                </span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={loginPending}
-                  onClick={() => handleDemoLogin(account)}
-                >
-                  {isLoading ? (
-                    <>
-                      <Spinner /> login
-                    </>
-                  ) : (
-                    "Demo Login"
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
 
       <div className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
