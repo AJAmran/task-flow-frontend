@@ -13,7 +13,7 @@ export default function OrganizationDetailError({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
       <h1 className="text-xl font-bold tracking-tight">
-        Organization failed to load
+        Workspace failed to load
       </h1>
       <p className="max-w-sm text-sm text-muted-foreground">
         {error.message || "You may not be a member of this organization."}
@@ -25,9 +25,9 @@ export default function OrganizationDetailError({
         <Button
           variant="ghost"
           nativeButton={false}
-          render={<Link href="/organizations">Back to organizations</Link>}
+          render={<Link href="/organizations">Back to workspaces</Link>}
         >
-          Back to organizations
+          Back to workspaces
         </Button>
       </div>
     </div>

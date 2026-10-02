@@ -135,7 +135,7 @@ export default function OrganizationList() {
           </p>
           <p className="max-w-sm text-sm text-muted-foreground">
             {memberships.length === 0
-              ? "Create your first organization to invite your team and start shipping."
+              ? "Create your first workspace to invite your team and start shipping."
               : "Try a different name."}
           </p>
           {memberships.length === 0 && (
@@ -143,10 +143,10 @@ export default function OrganizationList() {
               className="mt-2"
               nativeButton={false}
               render={
-                <Link href="/organizations/new">Create organization</Link>
+                <Link href="/organizations/new">Create workspace</Link>
               }
             >
-              Create organization
+              Create workspace
             </Button>
           )}
         </div>

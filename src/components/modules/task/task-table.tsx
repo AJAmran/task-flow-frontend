@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { ArrowUpDown, Plus, SearchX } from "lucide-react";
+import { Plus, SearchX } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -289,11 +289,7 @@ export default function TaskTable({
                 <TableHead>Status</TableHead>
                 <TableHead>Priority</TableHead>
                 <TableHead className="hidden md:table-cell">Assignee</TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  <span className="flex items-center gap-1">
-                    Due <ArrowUpDown className="size-3" />
-                  </span>
-                </TableHead>
+                <TableHead className="hidden lg:table-cell">Due</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -362,7 +358,7 @@ export default function TaskTable({
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <span className="text-lg font-semibold">Create a task</span>
+            <DialogTitle>Create a task</DialogTitle>
           </DialogHeader>
           <TaskCreateWizard
             organizationId={organizationId}

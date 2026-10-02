@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/table";
 import TablePagination from "@/components/ui/table-pagination";
 import { toast } from "@/components/ui/toast";
-import { useAdminUsers, useUpdateUserStatus } from "@/hooks";
+import { useAdminUsers, useGetMe, useUpdateUserStatus } from "@/hooks";
 import useDebounce from "@/hooks/debounce.hook";
 import type { PlatformRole } from "@/types";
 
@@ -118,6 +118,8 @@ export default function AdminUsersTable() {
     ...(isActive !== undefined && { isActive }),
   });
   const { mutate: setStatus, isPending: statusPending } = useUpdateUserStatus();
+  const { data: meData } = useGetMe();
+  const myId = meData?.data?.id;
 
   const users = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 0;
@@ -278,9 +280,10 @@ export default function AdminUsersTable() {
                       {format(new Date(user.createdAt), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell className="text-right">
-                      {isSuper ? (
+                      {isSuper || user.id === myId ? (
                         <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
-                          <Crown className="size-3" /> Protected
+                          <Crown className="size-3" />{" "}
+                          {user.id === myId ? "You" : "Protected"}
                         </span>
                       ) : (
                         <Button

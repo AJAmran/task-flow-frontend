@@ -68,7 +68,7 @@ const onboardingSteps = [
     icon: UserPlus,
     title: "Invite your team",
     description:
-      "Open your organization, go to the Members tab, and add people by email.",
+      "Open your workspace, go to the People section, and add members by email.",
     cta: "Go to workspaces",
     href: "/organizations",
   },
