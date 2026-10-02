@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import TaskTable from "@/components/modules/task/task-table";
-import TaskTableLoading from "@/components/modules/task/task-table-loading";
+import TasksHub from "@/components/modules/task/tasks-hub";
 
 export const metadata: Metadata = {
   title: "Project Tasks — TaskFlow",
   description:
-    "Manage every task in this project. Create with the guided wizard, then filter and sort.",
+    "Manage every task in this project. Switch between board, list, and calendar views.",
 };
 
 export default async function ProjectTasksPage({
@@ -16,9 +14,5 @@ export default async function ProjectTasksPage({
 }) {
   const { organizationId, projectId } = await params;
 
-  return (
-    <Suspense fallback={<TaskTableLoading />}>
-      <TaskTable organizationId={organizationId} projectId={projectId} />
-    </Suspense>
-  );
+  return <TasksHub organizationId={organizationId} projectId={projectId} />;
 }

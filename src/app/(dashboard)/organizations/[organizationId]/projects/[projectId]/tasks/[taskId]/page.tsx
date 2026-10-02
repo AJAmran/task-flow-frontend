@@ -25,7 +25,7 @@ export default async function ProjectTaskDetailPage({
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
       <Link
-        href={`/organizations/${organizationId}/projects/${projectId}/board`}
+        href={`/organizations/${organizationId}/projects/${projectId}/tasks?view=board`}
         className="flex w-fit items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="size-4" /> Back to board

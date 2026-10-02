@@ -3,7 +3,11 @@
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Activity,
+  ArrowLeft,
   Building2,
+  CalendarRange,
+  ClipboardList,
+  FolderKanban,
   LayoutDashboard,
   LogOut,
   ScrollText,
@@ -31,7 +35,7 @@ import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks";
 import { clearSession } from "@/lib/session";
 import { adminRoutes, memberRoutes, ownerRoutes } from "@/routes";
-import type { PlatformRole, SidebarItems } from "@/types";
+import type { PlatformRole, SidebarIcon, SidebarItems } from "@/types";
 
 const sidebarRoutes: Record<PlatformRole, SidebarItems> = {
   SUPER_ADMIN: adminRoutes,
@@ -50,11 +54,40 @@ const routeIcons: Record<string, typeof LayoutDashboard> = {
   "/admin/audit-logs": ScrollText,
 };
 
-function isRouteActive(pathname: string, url: string) {
+const iconComponents = {
+  dashboard: LayoutDashboard,
+  activity: Activity,
+  payments: Wallet,
+  profile: Settings,
+  workspaces: Building2,
+  admin: ShieldCheck,
+  users: Users,
+  orgs: Building2,
+  logs: ScrollText,
+  overview: LayoutDashboard,
+  people: Users,
+  projects: FolderKanban,
+  tasks: ClipboardList,
+  sprints: CalendarRange,
+  back: ArrowLeft,
+} as const;
+
+function iconForItem(url: string, icon?: SidebarIcon) {
+  if (icon) {
+    return iconComponents[icon];
+  }
+  return routeIcons[url] ?? null;
+}
+
+function isRouteActive(
+  pathname: string,
+  url: string,
+  exact?: boolean,
+) {
   if (pathname === url) {
     return true;
   }
-  if (url === "/dashboard" || url === "/admin") {
+  if (exact || url === "/dashboard" || url === "/admin") {
     return false;
   }
   return pathname.startsWith(`${url}/`);
@@ -113,9 +146,15 @@ function SidebarAccount() {
   );
 }
 
-export function DashboardSidebar({ role }: { role: PlatformRole }) {
+export function DashboardSidebar({
+  role,
+  items,
+}: {
+  role: PlatformRole;
+  items?: SidebarItems;
+}) {
   const pathname = usePathname();
-  const routes: SidebarItems = sidebarRoutes[role] ?? memberRoutes;
+  const routes: SidebarItems = items ?? sidebarRoutes[role] ?? memberRoutes;
 
   return (
     <Sidebar>
@@ -135,10 +174,10 @@ export function DashboardSidebar({ role }: { role: PlatformRole }) {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       render={<Link href={item.url} />}
-                      isActive={isRouteActive(pathname, item.url)}
+                      isActive={isRouteActive(pathname, item.url, item.exact)}
                     >
                       {(() => {
-                        const Icon = routeIcons[item.url];
+                        const Icon = iconForItem(item.url, item.icon);
                         return Icon ? <Icon /> : null;
                       })()}
                       {item.title}

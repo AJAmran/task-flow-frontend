@@ -384,10 +384,10 @@ export default function TaskBoard({
       </Dialog>
 
       <p className="text-center text-xs text-muted-foreground">
-        Tip: drag and drop tasks, or open a task for subtasks, comments, and
-        attachments.{" "}
+        Tip: change a card&apos;s status to move it, or open a task for
+        subtasks, comments, and attachments.{" "}
         <Link
-          href={`/organizations/${organizationId}/projects/${projectId}/list`}
+          href={`/organizations/${organizationId}/projects/${projectId}/tasks?view=list`}
           className="underline"
         >
           Switch to list view

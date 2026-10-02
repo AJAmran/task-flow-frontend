@@ -73,7 +73,7 @@ export default function GettingStartedChecklist({
       description: "Add people by email so work is shared.",
       cta: {
         label: "Invite now",
-        href: `/organizations/${organizationId}/members`,
+        href: `/organizations/${organizationId}/people`,
       },
     },
     {

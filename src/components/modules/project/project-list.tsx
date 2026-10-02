@@ -289,7 +289,7 @@ export default function ProjectList({
                   className="w-full"
                   render={
                     <Link
-                      href={`/organizations/${organizationId}/projects/${project.id}/board`}
+                      href={`/organizations/${organizationId}/projects/${project.id}/tasks?view=board`}
                     >
                       Open board
                     </Link>
