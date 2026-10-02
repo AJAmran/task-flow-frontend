@@ -20,26 +20,11 @@ export default async function OrganizationPeoplePage({
 
   return (
     <div className="flex flex-1 flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-tight">Members</h2>
-          <p className="text-sm text-muted-foreground">
-            People in this workspace. Owners can invite, change roles, and
-            remove members.
-          </p>
-        </div>
-        <Suspense fallback={<MemberTableLoading />}>
-          <MembersSection organizationId={organizationId} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<MemberTableLoading />}>
+        <MembersSection organizationId={organizationId} />
+      </Suspense>
 
-      <div className="flex flex-col gap-4 border-t pt-6">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-tight">Teams</h2>
-          <p className="text-sm text-muted-foreground">
-            Group members into teams to staff projects together.
-          </p>
-        </div>
+      <div className="border-t pt-6">
         <Suspense fallback={<TeamSectionLoading />}>
           <TeamSection organizationId={organizationId} />
         </Suspense>

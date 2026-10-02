@@ -4,13 +4,11 @@ import { Building2, Crown, FolderKanban, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import UpdateOrganizationForm from "@/components/form/update-organization-form";
-import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -106,50 +104,43 @@ export default function OrganizationOverview({
           className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-teal-500 via-cyan-400 to-teal-500"
         />
         <CardHeader>
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <AvatarInitials name={organization.name} size="lg" />
-              <div>
-                <CardTitle className="text-xl">{organization.name}</CardTitle>
-                <CardDescription className="font-mono text-xs">
-                  /{organization.slug} · {organization.status}
-                </CardDescription>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant={isOwner ? "default" : "secondary"}>
-                {isOwner ? (
-                  <span className="flex items-center gap-1">
-                    <Crown className="size-3" /> Owner
-                  </span>
-                ) : (
-                  "Member"
-                )}
-              </Badge>
-              {organization.subscription && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-6 uppercase"
-                  render={
-                    <Link href="/dashboard/payments">
-                      {organization.subscription.plan}
-                    </Link>
-                  }
-                >
-                  {organization.subscription.plan}
-                </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={isOwner ? "default" : "secondary"}>
+              {isOwner ? (
+                <span className="flex items-center gap-1">
+                  <Crown className="size-3" /> Owner
+                </span>
+              ) : (
+                "Member"
               )}
-              {isOwner && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setEditOpen(true)}
-                >
-                  <Settings /> Edit
-                </Button>
-              )}
-            </div>
+            </Badge>
+            <span className="font-mono text-xs text-muted-foreground">
+              /{organization.slug} · {organization.status}
+            </span>
+            {organization.subscription && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 uppercase"
+                render={
+                  <Link href="/dashboard/payments">
+                    {organization.subscription.plan}
+                  </Link>
+                }
+              >
+                {organization.subscription.plan}
+              </Button>
+            )}
+            {isOwner && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setEditOpen(true)}
+                className="ml-auto"
+              >
+                <Settings /> Edit
+              </Button>
+            )}
           </div>
         </CardHeader>
         {organization.owner && (
