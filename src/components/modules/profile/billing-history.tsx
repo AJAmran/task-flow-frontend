@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Receipt, Wallet } from "lucide-react";
+import { Lock, Receipt, Wallet } from "lucide-react";
 import Link from "next/link";
 import UpgradeButtons from "@/components/modules/billing/upgrade-buttons";
 import { Badge } from "@/components/ui/badge";
@@ -92,7 +92,7 @@ function OrgBilling({
             Renews {format(new Date(sub.currentPeriodEnd), "MMM d, yyyy")}
           </p>
         )}
-        {sub.plan === "FREE" && (
+        {sub.plan === "FREE" && isOwner && (
           <Button
             size="sm"
             className="w-fit"
@@ -101,16 +101,27 @@ function OrgBilling({
             Compare plans
           </Button>
         )}
+        {!isOwner && (
+          <p className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+            <Lock className="size-3.5 shrink-0" />
+            Billing is managed by your workspace owner — you have
+            view-only access here.
+          </p>
+        )}
+        {isOwner && (
+          <UpgradeButtons organizationId={organizationId} currentPlan={sub.plan} />
+        )}
         {isOwner && (
           <UpgradeButtons
             organizationId={organizationId}
             currentPlan={sub.plan}
           />
         )}
-        <div className="flex flex-col gap-2">
-          <h4 className="flex items-center gap-1.5 text-sm font-semibold">
-            <Receipt className="size-4" /> Payment history
-          </h4>
+        {isOwner && (
+          <div className="flex flex-col gap-2">
+            <h4 className="flex items-center gap-1.5 text-sm font-semibold">
+              <Receipt className="size-4" /> Payment history
+            </h4>
           {sub.payments.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No payments yet. Upgrades appear here with status and date.
@@ -138,7 +149,8 @@ function OrgBilling({
               ))}
             </ul>
           )}
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

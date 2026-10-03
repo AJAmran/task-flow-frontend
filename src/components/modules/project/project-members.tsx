@@ -21,6 +21,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
+import { getApiErrorMessage } from "@/lib/apiError";
 import {
   useAddProjectMember,
   useOrganizationMembers,
@@ -83,7 +84,7 @@ export default function ProjectMembers({
         onError: (err) => {
           toast.add({
             title: "Add failed",
-            description: err.message || "Please try again",
+            description: getApiErrorMessage(err),
             type: "error",
           });
         },
@@ -103,7 +104,7 @@ export default function ProjectMembers({
       onError: (err) => {
         toast.add({
           title: "Remove failed",
-          description: err.message || "Please try again",
+          description: getApiErrorMessage(err),
           type: "error",
         });
       },

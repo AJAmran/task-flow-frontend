@@ -1,10 +1,10 @@
-import { Plus } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
+import PlanUsage from "@/components/modules/billing/plan-usage";
+import NewProjectButton from "@/components/modules/project/new-project-button";
 import ProjectList from "@/components/modules/project/project-list";
 import ProjectListLoading from "@/components/modules/project/project-list-loading";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "Projects — TaskFlow",
@@ -28,16 +28,13 @@ export default async function OrganizationProjectsPage({
             Workspaces for sprints, tasks, and delivery
           </p>
         </div>
-        <Button
-          render={
-            <Link href={`/organizations/${organizationId}/projects/new`}>
-              New project
-            </Link>
-          }
-        >
-          <Plus /> New project
-        </Button>
+        <NewProjectButton organizationId={organizationId} />
       </div>
+      <Suspense
+        fallback={<Skeleton className="h-12 w-full" />}
+      >
+        <PlanUsage organizationId={organizationId} type="projects" />
+      </Suspense>
       <Suspense fallback={<ProjectListLoading />}>
         <ProjectList organizationId={organizationId} />
       </Suspense>

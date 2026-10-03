@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import PlanUsage from "@/components/modules/billing/plan-usage";
 import MemberTableLoading from "@/components/modules/organization/member-table-loading";
 import MembersSection from "@/components/modules/organization/members-section";
 import TeamSection from "@/components/modules/organization/team-section";
 import TeamSectionLoading from "@/components/modules/organization/team-section-loading";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "People — TaskFlow",
@@ -20,6 +22,9 @@ export default async function OrganizationPeoplePage({
 
   return (
     <div className="flex flex-1 flex-col gap-8">
+      <Suspense fallback={<Skeleton className="h-12 w-full" />}>
+        <PlanUsage organizationId={organizationId} type="members" />
+      </Suspense>
       <Suspense fallback={<MemberTableLoading />}>
         <MembersSection organizationId={organizationId} />
       </Suspense>

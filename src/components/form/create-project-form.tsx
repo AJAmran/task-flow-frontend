@@ -2,6 +2,11 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useCreateProject, useTeams } from "@/hooks";
+import { getApiErrorMessage } from "@/lib/apiError";
+import {
+  LIMIT_UPGRADE_SUFFIX,
+  isLimitError,
+} from "@/components/modules/billing/plan-usage";
 import {
   type CreateProjectInput,
   createProjectSchema,
@@ -63,10 +68,12 @@ export default function CreateProjectForm({
             onSuccess?.(res.data?.id ?? "");
           },
           onError: (err) => {
+            const limited = isLimitError(err);
             toast.add({
-              title: "Creation failed",
+              title: limited ? "Plan limit reached" : "Creation failed",
               description:
-                err.message || "Something went wrong. Please try again",
+                getApiErrorMessage(err) +
+                (limited ? LIMIT_UPGRADE_SUFFIX : ""),
               type: "error",
             });
           },
