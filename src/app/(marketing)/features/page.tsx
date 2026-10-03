@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import CtaBand from "@/components/modules/homepage/CtaBand";
 import { homeFeatures } from "@/components/modules/homepage/home-data";
+import Reveal from "@/components/ui/reveal";
 import {
   Card,
   CardContent,
@@ -55,11 +56,14 @@ export default function FeaturesPage() {
             const Icon = feature.icon;
             const big = index % 3 === 0;
             return (
-              <Card
+              <Reveal
                 key={feature.title}
+                delay={(index % 3) * 80}
+                className={cn(spans[index % spans.length])}
+              >
+              <Card
                 className={cn(
-                  "group relative flex flex-col overflow-hidden transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md",
-                  spans[index % spans.length],
+                  "group relative flex h-full flex-col overflow-hidden transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md",
                   big && "bg-gradient-to-br from-teal-50/60 via-card to-card",
                 )}
               >
@@ -82,15 +86,18 @@ export default function FeaturesPage() {
                   </CardDescription>
                 </CardContent>
               </Card>
+              </Reveal>
             );
           })}
         </div>
 
         <div className="mt-8">
-          <CtaBand
-            title="See every workflow live"
-            description="Create a free workspace and run a sprint in minutes — boards, teams, billing included."
-          />
+          <Reveal>
+            <CtaBand
+              title="See every workflow live"
+              description="Create a free workspace and run a sprint in minutes — boards, teams, billing included."
+            />
+          </Reveal>
         </div>
       </div>
     </div>

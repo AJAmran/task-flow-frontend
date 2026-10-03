@@ -7,8 +7,8 @@ export default function CtaBand({
   description = "Create a free workspace, invite your team, and run your first sprint today.",
   primaryCta = "Start free",
   primaryHref = "/register",
-  secondaryCta = "Try demo login",
-  secondaryHref = "/login",
+  secondaryCta = "Explore features",
+  secondaryHref = "/features",
 }: {
   title?: string;
   description?: string;

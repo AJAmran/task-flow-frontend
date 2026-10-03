@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Logo } from "@/assets/logo";
 import CtaBand from "@/components/modules/homepage/CtaBand";
+import Reveal from "@/components/ui/reveal";
 import {
   Card,
   CardContent,
@@ -95,10 +96,10 @@ export default function AboutPage() {
         </dl>
 
         <div className="grid gap-4 md:grid-cols-3">
-          {values.map((value) => (
+          {values.map((value, index) => (
+            <Reveal key={value.title} delay={index * 90} className="h-full">
             <Card
-              key={value.title}
-              className="transition-all hover:-translate-y-1 hover:shadow-md"
+              className="h-full transition-all hover:-translate-y-1 hover:shadow-md"
             >
               <CardHeader>
                 <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
@@ -110,6 +111,7 @@ export default function AboutPage() {
                 <CardDescription>{value.description}</CardDescription>
               </CardContent>
             </Card>
+            </Reveal>
           ))}
         </div>
 
@@ -128,12 +130,14 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-8">
+          <Reveal>
           <CtaBand
             title="Come build with us"
             description="Start a free workspace and feel the difference on your very first sprint."
             secondaryCta="View pricing"
             secondaryHref="/pricing"
           />
+          </Reveal>
         </div>
       </div>
     </div>

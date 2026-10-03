@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import Reveal from "@/components/ui/reveal";
 import {
   Card,
   CardContent,
@@ -86,13 +87,11 @@ export default function ContactPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          {channels.map((channel) => {
+          {channels.map((channel, index) => {
             const Icon = channel.icon;
             return (
-              <Card
-                key={channel.title}
-                className="transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md"
-              >
+              <Reveal key={channel.title} delay={index * 80} className="h-full">
+              <Card className="h-full transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md">
                 <CardHeader>
                   <span className="flex size-10 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
                     <Icon className="size-5" />
@@ -104,6 +103,7 @@ export default function ContactPage() {
                   <p className="text-sm font-medium">{channel.value}</p>
                 </CardContent>
               </Card>
+              </Reveal>
             );
           })}
         </div>

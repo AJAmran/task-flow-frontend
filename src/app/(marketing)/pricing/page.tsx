@@ -2,6 +2,7 @@ import { Check, Gift, Receipt, Rocket, ShieldCheck, Zap } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import CtaBand from "@/components/modules/homepage/CtaBand";
+import Reveal from "@/components/ui/reveal";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -117,9 +118,10 @@ export default function PricingPage() {
         </div>
 
         <div className="grid items-stretch gap-4 md:grid-cols-3 lg:gap-6">
-          {plans.map((plan) => {
+          {plans.map((plan, index) => {
             const Icon = plan.icon;
             return (
+              <Reveal key={plan.name} delay={index * 90} className="h-full">
               <Card
                 key={plan.name}
                 className={cn(
@@ -197,18 +199,17 @@ export default function PricingPage() {
                   </Button>
                 </CardFooter>
               </Card>
+              </Reveal>
             );
           })}
         </div>
 
         <div className="mt-10 grid gap-3 sm:grid-cols-3">
-          {assurances.map((item) => {
+          {assurances.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div
-                key={item.title}
-                className="flex items-start gap-3 rounded-xl border bg-card p-4"
-              >
+              <Reveal key={item.title} delay={index * 80}>
+              <div className="flex h-full items-start gap-3 rounded-xl border bg-card p-4">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
                   <Icon className="size-4" />
                 </span>
@@ -221,6 +222,7 @@ export default function PricingPage() {
                   </span>
                 </span>
               </div>
+              </Reveal>
             );
           })}
         </div>
@@ -232,10 +234,12 @@ export default function PricingPage() {
         </p>
 
         <div className="mt-8">
-          <CtaBand
-            title="Start free, upgrade when you grow"
-            description="Every plan starts with the same boards, sprints, and role-based dashboards."
-          />
+          <Reveal>
+            <CtaBand
+              title="Start free, upgrade when you grow"
+              description="Every plan starts with the same boards, sprints, and role-based dashboards."
+            />
+          </Reveal>
         </div>
       </div>
     </div>

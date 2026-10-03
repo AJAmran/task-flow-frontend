@@ -16,25 +16,36 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0 opacity-[0.35] bg-[radial-gradient(rgba(13,60,70,0.14)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]"
       />
       <div className="relative mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-4 py-16 text-center sm:px-6 sm:py-24">
-        <span className="flex items-center gap-2 rounded-full border border-teal-600/20 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-900">
+        <span
+          className="animate-tf-fade-up flex items-center gap-2 rounded-full border border-teal-600/20 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-900"
+        >
           <span className="relative flex size-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-500 opacity-60" />
             <span className="relative inline-flex size-2 rounded-full bg-teal-600" />
           </span>
           Sprint planning • Kanban • Team analytics
         </span>
-        <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+        <h1
+          className="animate-tf-fade-up max-w-3xl text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl"
+          style={{ animationDelay: "80ms" }}
+        >
           Ship projects faster with{" "}
           <span className="bg-gradient-to-r from-teal-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
             TaskFlow
           </span>
         </h1>
-        <p className="max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
-          One workspace for organizations, teams, projects, sprints, and tasks.
-          Plan work, review progress, and keep every member aligned — from
-          backlog to done.
+        <p
+          className="animate-tf-fade-up max-w-2xl text-balance text-base text-muted-foreground sm:text-lg"
+          style={{ animationDelay: "160ms" }}
+        >
+          One workspace for organizations, teams, projects, sprints, and
+          tasks. Plan work, review progress, and keep every member aligned —
+          from backlog to done.
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div
+          className="animate-tf-fade-up flex flex-col gap-3 sm:flex-row"
+          style={{ animationDelay: "240ms" }}
+        >
           <Button
             size="lg"
             render={
@@ -49,18 +60,19 @@ export default function Hero() {
             size="lg"
             variant="outline"
             render={
-              <Link href="/login">
-                <Play /> Try demo login
+              <Link href="/features">
+                <Play /> See how it works
               </Link>
             }
           >
-            <Play /> Try demo login
+            <Play /> See how it works
           </Button>
         </div>
 
         <div
           aria-hidden
-          className="mt-4 flex flex-wrap items-center justify-center gap-2"
+          className="animate-tf-fade-up mt-4 flex flex-wrap items-center justify-center gap-2"
+          style={{ animationDelay: "320ms" }}
         >
           {workflow.map((stage, i) => (
             <span key={stage} className="flex items-center gap-2">
@@ -80,7 +92,10 @@ export default function Hero() {
           ))}
         </div>
 
-        <dl className="grid w-full max-w-2xl grid-cols-1 gap-4 pt-6 sm:grid-cols-3">
+        <dl
+          className="animate-tf-fade-up grid w-full max-w-2xl grid-cols-1 gap-4 pt-6 sm:grid-cols-3"
+          style={{ animationDelay: "400ms" }}
+        >
           {[
             ["3", "Distinct roles"],
             ["18+", "App pages"],

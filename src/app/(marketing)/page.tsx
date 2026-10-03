@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import CtaBand from "@/components/modules/homepage/CtaBand";
 import Hero from "@/components/modules/homepage/Hero";
 import { homeFeatures } from "@/components/modules/homepage/home-data";
+import Reveal from "@/components/ui/reveal";
 import {
   Card,
   CardContent,
@@ -55,23 +56,22 @@ export default function HomePage() {
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {homeFeatures.map((feature) => {
+          {homeFeatures.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card
-                key={feature.title}
-                className="transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md"
-              >
-                <CardHeader>
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
-                    <Icon className="size-5" />
-                  </span>
-                  <CardTitle>{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardContent>
-              </Card>
+              <Reveal key={feature.title} delay={Math.min(index, 5) * 70}>
+                <Card className="h-full transition-all hover:-translate-y-1 hover:border-teal-600/30 hover:shadow-md">
+                  <CardHeader>
+                    <span className="flex size-10 items-center justify-center rounded-lg bg-teal-600/10 text-teal-700">
+                      <Icon className="size-5" />
+                    </span>
+                    <CardTitle>{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{feature.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              </Reveal>
             );
           })}
         </div>
@@ -111,21 +111,20 @@ export default function HomePage() {
                 description:
                   "Boards, tasks, subtasks, discussions, files, and deadlines.",
               },
-            ].map((item) => (
-              <Card
-                key={item.step}
-                className="transition-all hover:-translate-y-1 hover:shadow-md"
-              >
-                <CardHeader>
-                  <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
-                    {item.step}
-                  </span>
-                  <CardTitle>{item.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{item.description}</CardDescription>
-                </CardContent>
-              </Card>
+            ].map((item, index) => (
+              <Reveal key={item.step} delay={index * 90}>
+                <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-md">
+                  <CardHeader>
+                    <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
+                      {item.step}
+                    </span>
+                    <CardTitle>{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{item.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -141,25 +140,29 @@ export default function HomePage() {
           </h2>
         </div>
         <ol className="grid gap-4 md:grid-cols-3">
-          {steps.map((item) => (
+          {steps.map((item, index) => (
             <li key={item.step}>
-              <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-md">
-                <CardHeader>
-                  <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
-                    {item.step}
-                  </span>
-                  <CardTitle>{item.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{item.description}</CardDescription>
-                </CardContent>
-              </Card>
+              <Reveal delay={index * 90} className="h-full">
+                <Card className="h-full transition-all hover:-translate-y-1 hover:shadow-md">
+                  <CardHeader>
+                    <span className="bg-gradient-to-br from-teal-700 to-teal-500 bg-clip-text text-sm font-bold text-transparent">
+                      {item.step}
+                    </span>
+                    <CardTitle>{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{item.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              </Reveal>
             </li>
           ))}
         </ol>
       </section>
 
-      <CtaBand />
+      <Reveal>
+        <CtaBand />
+      </Reveal>
     </>
   );
 }

@@ -132,3 +132,52 @@
     @apply font-sans;
   }
 }
+
+/* ---- Motion system: smooth entrances + scroll reveals ---- */
+@keyframes tf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-tf-fade-up {
+    animation: tf-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-tf-fade-in {
+    animation: tf-fade-in 0.5s ease-out both;
+  }
+  /* Scroll reveal: starts hidden, .is-visible animates in */
+  .tf-reveal {
+    opacity: 0;
+  }
+  .tf-reveal.is-visible {
+    animation: tf-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--tf-delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-tf-fade-up,
+  .animate-tf-fade-in,
+  .tf-reveal,
+  .tf-reveal.is-visible {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
