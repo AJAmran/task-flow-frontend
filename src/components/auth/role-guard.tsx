@@ -30,7 +30,11 @@ export default function RoleGuard({ children, roles }: IProps) {
     if (isError || !user) {
       // Same stale-marker loop protection as AuthGuard.
       clearSession();
-      router.replace("/login");
+      const dest =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : "/login";
+      router.replace(`/login?callbackUrl=${encodeURIComponent(dest)}`);
     }
   }, [isPending, isError, user, router]);
 

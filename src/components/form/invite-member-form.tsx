@@ -2,6 +2,11 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useInviteMember } from "@/hooks";
+import { getApiErrorMessage, getApiErrorStatus } from "@/lib/apiError";
+import {
+  LIMIT_UPGRADE_SUFFIX,
+  isLimitError,
+} from "@/components/modules/billing/plan-usage";
 import { cn } from "@/lib/utils";
 import type { OrgRole } from "@/types";
 import {
@@ -52,7 +57,7 @@ export default function InviteMemberForm({
             toast.add({
               title: "Invitation sent",
               description:
-                (res as { message?: string }).message ??
+                res.message ??
                 `Invite sent to ${value.email}`,
               type: "success",
             });
@@ -60,10 +65,21 @@ export default function InviteMemberForm({
             onSuccess?.();
           },
           onError: (err) => {
+            const status = getApiErrorStatus(err);
+            const serverMessage = getApiErrorMessage(err);
+            const alreadyInvited =
+              status === 409 &&
+              serverMessage.toLowerCase().includes("already exists");
+            const limited = isLimitError(err);
             toast.add({
-              title: "Invite failed",
-              description:
-                err.message || "Something went wrong. Please try again",
+              title: alreadyInvited
+                ? "Already invited"
+                : limited
+                  ? "Member limit reached"
+                  : "Invite failed",
+              description: alreadyInvited
+                ? `${value.email} already has an active invitation (valid 7 days). Ask them to check inbox and spam — no need to send again.`
+                : serverMessage + (limited ? LIMIT_UPGRADE_SUFFIX : ""),
               type: "error",
             });
           },

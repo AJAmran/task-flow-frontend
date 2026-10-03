@@ -22,7 +22,12 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
       // Drop the frontend session hint so the proxy stops bouncing
       // protected routes (expired backend session + stale marker = loop).
       clearSession();
-      router.replace("/login");
+      // Preserve the full destination (incl. ?token=) for post-login return.
+      const dest =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : "/login";
+      router.replace(`/login?callbackUrl=${encodeURIComponent(dest)}`);
     }
   }, [isPending, isError, user, router]);
 

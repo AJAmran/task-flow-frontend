@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { resolveLanding, SESSION_COOKIE } from "@/lib/session";
 
 const PROTECTED_PREFIXES = ["/admin", "/dashboard", "/organizations"];
+// Exact paths that need a session (e.g. invitation links opened logged-out).
+const PROTECTED_EXACT = ["/accept-invitation", "/invite"];
 const GUEST_ONLY = ["/login", "/register"];
 
 // NOTE: Backend auth cookies live on the API domain (cross-site), so the
@@ -18,15 +20,18 @@ export default function proxy(request: NextRequest) {
   );
   const hasSession = request.cookies.has(SESSION_COOKIE);
 
-  const isProtected = PROTECTED_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
+  const isProtected =
+    PROTECTED_PREFIXES.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    ) || PROTECTED_EXACT.includes(pathname);
 
   if (isProtected && !hasSession) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     // Preserve query (?token=, ?page=, filters) so login can return here.
-    loginUrl.searchParams.set("callbackUrl", `${pathname}${request.nextUrl.search}`);
+    const callback = `${pathname}${request.nextUrl.search}`;
+    loginUrl.search = "";
+    loginUrl.searchParams.set("callbackUrl", callback);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -45,6 +50,8 @@ export const config = {
     "/admin/:path*",
     "/dashboard/:path*",
     "/organizations/:path*",
+    "/accept-invitation",
+    "/invite",
     "/login",
     "/register",
   ],
