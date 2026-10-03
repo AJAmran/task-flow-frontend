@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Logo } from "@/assets/logo";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogout } from "@/hooks";
 import { clearSession } from "@/lib/session";
@@ -91,6 +92,7 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           {isPending ? (
             <>
               <Skeleton className="h-7 w-16" aria-label="Loading account" />
@@ -126,14 +128,16 @@ export default function Header() {
           )}
         </div>
 
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          className="md:hidden"
-          onClick={() => setOpen((prev) => !prev)}
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
