@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { SearchX, Trash2, UserPlus } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import InviteMemberForm from "@/components/form/invite-member-form";
 import AvatarInitials from "@/components/ui/avatar-initials";
@@ -26,6 +27,7 @@ import {
 import TablePagination from "@/components/ui/table-pagination";
 import { toast } from "@/components/ui/toast";
 import {
+  useOrganization,
   useOrganizationMembers,
   useRemoveMember,
   useUpdateMemberRole,
@@ -54,6 +56,7 @@ export default function MemberTable({
     organizationId,
     { page, limit: PAGE_SIZE },
   );
+  const { data: orgData } = useOrganization(organizationId);
 
   const { mutate: changeRole, isPending: rolePending } =
     useUpdateMemberRole(organizationId);
@@ -62,6 +65,11 @@ export default function MemberTable({
 
   const members = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 0;
+  const totalMembers = data?.meta?.total ?? 0;
+  const maxMembers =
+    orgData?.data?.organization.subscription?.maxMembers;
+  const memberLimitReached =
+    maxMembers !== undefined && totalMembers >= maxMembers;
 
   const handleRoleChange = (userId: string, next: OrgRole) => {
     changeRole(
@@ -116,11 +124,19 @@ export default function MemberTable({
             {(data?.meta?.total ?? 0) === 1 ? "" : "s"} in this organization
           </p>
         </div>
-        {isOwner && (
-          <Button size="sm" onClick={() => setInviteOpen(true)}>
-            <UserPlus /> Invite
-          </Button>
-        )}
+        {isOwner &&
+          (memberLimitReached ? (
+            <Button
+              size="sm"
+              render={<Link href="/dashboard/payments">Upgrade for more</Link>}
+            >
+              Upgrade for more
+            </Button>
+          ) : (
+            <Button size="sm" onClick={() => setInviteOpen(true)}>
+              <UserPlus /> Invite
+            </Button>
+          ))}
       </div>
 
       {isPending ? (

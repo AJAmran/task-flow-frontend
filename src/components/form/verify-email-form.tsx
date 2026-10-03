@@ -2,8 +2,9 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
+import { Mail, MailWarning } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useResendOtp, useVerifyAccount } from "@/hooks";
 import { setSessionLanding } from "@/lib/session";
 import { Button } from "../ui/button";
@@ -20,6 +21,15 @@ function VerifyEmailFormContent() {
   const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
   const { mutate: resendOtp, isPending: resendPending } = useResendOtp();
   const queryClient = useQueryClient();
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) {
+      return;
+    }
+    const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   const form = useForm({
     defaultValues: {
@@ -84,6 +94,17 @@ function VerifyEmailFormContent() {
       }}
     >
       <FieldGroup>
+        {email ? (
+          <p className="flex items-center justify-center gap-2 rounded-lg bg-teal-600/10 px-3 py-2 text-sm font-medium text-teal-900">
+            <Mail className="size-4 shrink-0" />
+            <span className="truncate">{email}</span>
+          </p>
+        ) : (
+          <p className="flex items-center justify-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
+            <MailWarning className="size-4 shrink-0" />
+            No email in link — go back and register again.
+          </p>
+        )}
         <form.Field name="otp">
           {(field) => {
             const isInvalid =
@@ -98,17 +119,19 @@ function VerifyEmailFormContent() {
                   maxLength={6}
                   value={field.state.value}
                   onChange={(val) => field.handleChange(val)}
+                  onComplete={() => form.handleSubmit()}
                   onBlur={field.handleBlur}
                   id={field.name}
                   aria-invalid={isInvalid}
+                  containerClassName="justify-center"
                 >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
+                  <InputOTPGroup className="w-full justify-center gap-1.5 sm:gap-2">
+                    <InputOTPSlot index={0} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={1} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={2} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={3} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={4} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={5} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
                   </InputOTPGroup>
                 </InputOTP>
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -128,7 +151,7 @@ function VerifyEmailFormContent() {
         </Button>
 
         <Button
-          disabled={resendPending || !email}
+          disabled={resendPending || !email || cooldown > 0}
           type="button"
           variant="outline"
           className="w-full"
@@ -137,6 +160,7 @@ function VerifyEmailFormContent() {
               { email },
               {
                 onSuccess: () => {
+                  setCooldown(30);
                   toast.add({
                     title: "OTP resent",
                     description: "Please check your email for a new code",
@@ -159,8 +183,10 @@ function VerifyEmailFormContent() {
             <>
               <Spinner /> resending
             </>
+          ) : cooldown > 0 ? (
+            `Resend in ${cooldown}s`
           ) : (
-            "Resend OTP"
+            "Resend code"
           )}
         </Button>
       </FieldGroup>

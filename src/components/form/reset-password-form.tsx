@@ -92,17 +92,19 @@ function ResetPasswordFormContent() {
                   maxLength={6}
                   value={field.state.value}
                   onChange={(val) => field.handleChange(val)}
+                  onComplete={() => form.handleSubmit()}
                   onBlur={field.handleBlur}
                   id={field.name}
                   aria-invalid={isInvalid}
+                  containerClassName="justify-center"
                 >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
+                  <InputOTPGroup className="w-full justify-center gap-1.5 sm:gap-2">
+                    <InputOTPSlot index={0} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={1} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={2} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={3} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={4} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
+                    <InputOTPSlot index={5} className="size-10 rounded-xl border-2 text-base font-bold transition-all first:rounded-xl last:rounded-xl focus-within:border-teal-500 data-[active=true]:border-teal-500 data-[active=true]:ring-2 data-[active=true]:ring-teal-500/30 sm:size-12 sm:text-lg" />
                   </InputOTPGroup>
                 </InputOTP>
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
