@@ -38,7 +38,8 @@ function OrgBilling({
   name: string;
 }) {
   const { data, isPending, isError } = useSubscription(organizationId);
-  const { data: orgData } = useOrganization(organizationId);
+  const { data: orgData, isPending: orgPending } =
+    useOrganization(organizationId);
   const isOwner = orgData?.data?.myRole === "ORG_OWNER";
 
   if (isPending) {
@@ -101,17 +102,14 @@ function OrgBilling({
             Compare plans
           </Button>
         )}
-        {!isOwner && (
+        {!orgPending && !isOwner && (
           <p className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
             <Lock className="size-3.5 shrink-0" />
-            Billing is managed by your workspace owner — you have
-            view-only access here.
+            Billing is managed by your workspace owner — you have view-only
+            access here.
           </p>
         )}
-        {isOwner && (
-          <UpgradeButtons organizationId={organizationId} currentPlan={sub.plan} />
-        )}
-        {isOwner && (
+        {!orgPending && isOwner && (
           <UpgradeButtons
             organizationId={organizationId}
             currentPlan={sub.plan}
@@ -122,33 +120,33 @@ function OrgBilling({
             <h4 className="flex items-center gap-1.5 text-sm font-semibold">
               <Receipt className="size-4" /> Payment history
             </h4>
-          {sub.payments.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No payments yet. Upgrades appear here with status and date.
-            </p>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {sub.payments.map((payment) => (
-                <li
-                  key={payment.id}
-                  className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm"
-                >
-                  <span>
-                    <span className="font-medium">
-                      ৳{payment.amount} {payment.currency}
+            {sub.payments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No payments yet. Upgrades appear here with status and date.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {sub.payments.map((payment) => (
+                  <li
+                    key={payment.id}
+                    className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm"
+                  >
+                    <span>
+                      <span className="font-medium">
+                        ৳{payment.amount} {payment.currency}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {format(new Date(payment.createdAt), "MMM d, yyyy")}
+                        {payment.trxID ? ` · ${payment.trxID}` : ""}
+                      </span>
                     </span>
-                    <span className="block text-xs text-muted-foreground">
-                      {format(new Date(payment.createdAt), "MMM d, yyyy")}
-                      {payment.trxID ? ` · ${payment.trxID}` : ""}
-                    </span>
-                  </span>
-                  <Badge className={cn(paymentStyles[payment.status] ?? "")}>
-                    {payment.status.toLowerCase()}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          )}
+                    <Badge className={cn(paymentStyles[payment.status] ?? "")}>
+                      {payment.status.toLowerCase()}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </CardContent>
@@ -158,7 +156,7 @@ function OrgBilling({
 
 export function BillingHistorySkeleton() {
   return (
-    <div className="grid gap-4 lg:grid-cols-2" aria-label="Loading billing">
+    <div className="grid gap-4 lg:grid-cols-2" aria-busy="true">
       <Skeleton className="h-56 w-full" />
       <Skeleton className="h-56 w-full" />
     </div>
