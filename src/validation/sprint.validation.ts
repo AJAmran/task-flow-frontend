@@ -1,7 +1,15 @@
 import { z } from "zod";
+import { isDateOnly } from "@/lib/date";
 
-const isoDatetime = (message: string) =>
-  z.string({ message }).datetime({ message: "Must be a valid date" });
+const dateOnly = (message: string) =>
+  z
+    .string({ message })
+    .refine(
+      (value) => isDateOnly(value) && !Number.isNaN(new Date(value).getTime()),
+      {
+        message: "Must be a valid date",
+      },
+    );
 
 export const createSprintSchema = z
   .object({
@@ -10,11 +18,11 @@ export const createSprintSchema = z
       .trim()
       .min(2, "Name must be at least 2 characters")
       .max(100, "Name cannot exceed 100 characters"),
-    startDate: isoDatetime("Start date is required"),
-    endDate: isoDatetime("End date is required"),
+    startDate: dateOnly("Start date is required"),
+    endDate: dateOnly("End date is required"),
   })
   .refine((data) => new Date(data.startDate) < new Date(data.endDate), {
-    message: "Start date must be before end date",
+    message: "End date must be after start date",
     path: ["endDate"],
   });
 
@@ -26,8 +34,8 @@ export const updateSprintSchema = z
       .min(2, "Name must be at least 2 characters")
       .max(100, "Name cannot exceed 100 characters")
       .optional(),
-    startDate: isoDatetime("Start date must be valid").optional(),
-    endDate: isoDatetime("End date must be valid").optional(),
+    startDate: dateOnly("Start date must be valid").optional(),
+    endDate: dateOnly("End date must be valid").optional(),
   })
   .refine(
     (data) =>
@@ -35,7 +43,7 @@ export const updateSprintSchema = z
       data.endDate === undefined ||
       new Date(data.startDate) < new Date(data.endDate),
     {
-      message: "Start date must be before end date",
+      message: "End date must be after start date",
       path: ["endDate"],
     },
   );

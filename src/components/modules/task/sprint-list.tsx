@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { CalendarRange, Pencil, Play, Plus, SearchX } from "lucide-react";
 import { useState } from "react";
 import CreateSprintForm from "@/components/form/create-sprint-form";
@@ -39,6 +38,7 @@ import {
   useSprints,
   useUpdateSprint,
 } from "@/hooks";
+import { formatDayUTC } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import type { Sprint, SprintStatus } from "@/types";
 import SprintListLoading from "./sprint-list-loading";
@@ -198,8 +198,7 @@ function SprintCard({
         </div>
         <CardTitle className="line-clamp-1">{sprint.name}</CardTitle>
         <CardDescription>
-          {format(new Date(sprint.startDate), "MMM d")} →{" "}
-          {format(new Date(sprint.endDate), "MMM d, yyyy")}
+          {formatDayUTC(sprint.startDate)} → {formatDayUTC(sprint.endDate)}
         </CardDescription>
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">
@@ -367,8 +366,8 @@ export default function SprintList({
 export function SprintListSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-hidden>
-      {Array.from({ length: 3 }).map((_, i) => (
-        <Skeleton key={i} className="h-48" />
+      {["sprint-a", "sprint-b", "sprint-c"].map((slot) => (
+        <Skeleton key={slot} className="h-48" />
       ))}
     </div>
   );

@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useCreateTask, useProject, useSprints } from "@/hooks";
+import { toISODateTime } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import type { TaskPriority } from "@/types";
 import {
@@ -32,11 +33,6 @@ const steps = [
 ];
 
 const priorities: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
-
-function toISODateTime(dateOnly: string): string {
-  // Same UTC-midnight rule as sprints: the picked day must not shift.
-  return `${dateOnly}T00:00:00.000Z`;
-}
 
 export default function TaskCreateWizard({
   organizationId,
