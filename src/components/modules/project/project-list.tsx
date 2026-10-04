@@ -110,11 +110,14 @@ export default function ProjectList({
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   };
 
+  const activeSearch = debouncedSearch.trim();
+
   const { data, isPending, isError, refetch } = useProjects(organizationId, {
     page,
     limit: PAGE_SIZE,
     ...(status && { status }),
     ...(teamId && { teamId }),
+    ...(activeSearch && { search: activeSearch }),
     sortBy: sortValue.split(":")[0] as ProjectSortBy,
     sortOrder: sortValue.split(":")[1] as "asc" | "desc",
   });
@@ -127,15 +130,7 @@ export default function ProjectList({
   const projects = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 0;
 
-  const visible = debouncedSearch.trim().toLowerCase()
-    ? projects.filter(
-        (p) =>
-          p.name.toLowerCase().includes(debouncedSearch.trim().toLowerCase()) ||
-          p.description
-            ?.toLowerCase()
-            .includes(debouncedSearch.trim().toLowerCase()),
-      )
-    : projects;
+  const visible = projects;
 
   if (isPending) {
     return <ProjectListLoading />;

@@ -9,6 +9,8 @@ export interface CreateProjectPayload {
   name: string;
   description?: string;
   teamId?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface UpdateProjectPayload {
@@ -16,6 +18,8 @@ export interface UpdateProjectPayload {
   description?: string | null;
   status?: ProjectStatus;
   teamId?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export interface AddProjectMemberPayload {
@@ -26,6 +30,7 @@ export interface AddProjectMemberPayload {
 export interface ProjectListParams extends ListParams {
   status?: ProjectStatus;
   teamId?: string;
+  search?: string;
   sortBy?: ProjectSortBy;
   sortOrder?: "asc" | "desc";
 }
@@ -48,6 +53,8 @@ export interface Project {
   name: string;
   description: string | null;
   status: ProjectStatus;
+  startDate?: string | null;
+  endDate?: string | null;
   createdAt: string;
   updatedAt: string;
   team?: ProjectTeamRef | null;
