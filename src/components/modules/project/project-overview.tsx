@@ -30,10 +30,11 @@ import {
   useProject,
   useUpdateProject,
 } from "@/hooks";
+import { formatDayUTC, isPastDayUTC } from "@/lib/date";
 
 export function ProjectOverviewSkeleton() {
   return (
-    <div className="flex flex-col gap-4" aria-label="Loading project">
+    <div className="flex flex-col gap-4" aria-busy="true">
       <Skeleton className="h-8 w-64" />
       <Skeleton className="h-20 w-full" />
       <div className="grid gap-4 sm:grid-cols-3">
@@ -87,6 +88,20 @@ export default function ProjectOverview({
   }
 
   const archived = project.status === "ARCHIVED";
+
+  const scheduleLabel = (() => {
+    if (!project.startDate && !project.endDate) {
+      return null;
+    }
+    return (
+      <>
+        {formatDayUTC(project.startDate)} → {formatDayUTC(project.endDate)}
+        {isPastDayUTC(project.endDate) && (
+          <span className="ml-1 text-destructive">(past)</span>
+        )}
+      </>
+    );
+  })();
 
   const handleStatusToggle = () => {
     updateStatus(
@@ -158,7 +173,9 @@ export default function ProjectOverview({
           </div>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
             <CalendarDays className="size-3" />
-            Created {format(new Date(project.createdAt), "MMM d, yyyy")}
+            {scheduleLabel ?? (
+              <>Created {format(new Date(project.createdAt), "MMM d, yyyy")}</>
+            )}
           </p>
         </div>
         <div className="flex gap-2">

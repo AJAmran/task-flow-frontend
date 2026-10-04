@@ -2,6 +2,8 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useTeams, useUpdateProject } from "@/hooks";
+import { getApiErrorMessage } from "@/lib/apiError";
+import { dateOnlyValue, toISODateTime } from "@/lib/date";
 import type { ProjectDetail } from "@/types";
 import {
   type UpdateProjectInput,
@@ -41,6 +43,8 @@ export default function UpdateProjectForm({
     limit: 100,
   });
   const teams = teamsData?.data ?? [];
+  const currentStart = dateOnlyValue(project.startDate);
+  const currentEnd = dateOnlyValue(project.endDate);
 
   const form = useForm({
     defaultValues: {
@@ -48,6 +52,8 @@ export default function UpdateProjectForm({
       description: project.description ?? "",
       status: project.status,
       teamId: project.teamId ?? NO_TEAM,
+      startDate: currentStart,
+      endDate: currentEnd,
     } as UpdateProjectInput,
     validators: {
       onSubmit: updateProjectSchema,
@@ -55,6 +61,8 @@ export default function UpdateProjectForm({
     onSubmit: ({ value }) => {
       const nextTeamId =
         value.teamId === NO_TEAM ? null : (value.teamId ?? null);
+      const nextStart = value.startDate || "";
+      const nextEnd = value.endDate || "";
       update(
         {
           ...(value.name?.trim() &&
@@ -67,6 +75,12 @@ export default function UpdateProjectForm({
           ...(value.status &&
             value.status !== project.status && { status: value.status }),
           ...(nextTeamId !== project.teamId && { teamId: nextTeamId }),
+          ...(nextStart !== currentStart && {
+            startDate: nextStart ? toISODateTime(nextStart) : null,
+          }),
+          ...(nextEnd !== currentEnd && {
+            endDate: nextEnd ? toISODateTime(nextEnd) : null,
+          }),
         },
         {
           onSuccess: () => {
@@ -80,8 +94,7 @@ export default function UpdateProjectForm({
           onError: (err) => {
             toast.add({
               title: "Update failed",
-              description:
-                err.message || "Something went wrong. Please try again",
+              description: getApiErrorMessage(err),
               type: "error",
             });
           },
@@ -142,6 +155,55 @@ export default function UpdateProjectForm({
             );
           }}
         </form.Field>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <form.Field name="startDate">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Start date</FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="date"
+                    value={field.state.value || ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    aria-invalid={isInvalid}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+
+          <form.Field name="endDate">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>End date</FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="date"
+                    value={field.state.value || ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    min={form.state.values.startDate || undefined}
+                    aria-invalid={isInvalid}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <form.Field name="status">

@@ -1,12 +1,13 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import {
+  isLimitError,
+  LIMIT_UPGRADE_SUFFIX,
+} from "@/components/modules/billing/plan-usage";
 import { useCreateProject, useTeams } from "@/hooks";
 import { getApiErrorMessage } from "@/lib/apiError";
-import {
-  LIMIT_UPGRADE_SUFFIX,
-  isLimitError,
-} from "@/components/modules/billing/plan-usage";
+import { dateOnlyValue, toISODateTime } from "@/lib/date";
 import {
   type CreateProjectInput,
   createProjectSchema,
@@ -38,12 +39,15 @@ export default function CreateProjectForm({
     limit: 100,
   });
   const teams = teamsData?.data ?? [];
+  const today = dateOnlyValue(new Date().toISOString());
 
   const form = useForm({
     defaultValues: {
       name: "",
       description: "",
       teamId: "",
+      startDate: "",
+      endDate: "",
     } as CreateProjectInput,
     validators: {
       onSubmit: createProjectSchema,
@@ -55,6 +59,8 @@ export default function CreateProjectForm({
           ...(value.description?.trim() && {
             description: value.description.trim(),
           }),
+          ...(value.startDate && { startDate: toISODateTime(value.startDate) }),
+          ...(value.endDate && { endDate: toISODateTime(value.endDate) }),
           ...(value.teamId && { teamId: value.teamId }),
         },
         {
@@ -72,8 +78,7 @@ export default function CreateProjectForm({
             toast.add({
               title: limited ? "Plan limit reached" : "Creation failed",
               description:
-                getApiErrorMessage(err) +
-                (limited ? LIMIT_UPGRADE_SUFFIX : ""),
+                getApiErrorMessage(err) + (limited ? LIMIT_UPGRADE_SUFFIX : ""),
               type: "error",
             });
           },
@@ -164,6 +169,59 @@ export default function CreateProjectForm({
                     ))}
                   </SelectContent>
                 </Select>
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            );
+          }}
+        </form.Field>
+
+        <form.Field name="startDate">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>
+                  Start date (optional)
+                </FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="date"
+                  value={field.state.value || ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  min={today}
+                  aria-invalid={isInvalid}
+                />
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
+              </Field>
+            );
+          }}
+        </form.Field>
+
+        <form.Field name="endDate">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+            const startValue = form.state.values.startDate;
+
+            return (
+              <Field data-invalid={isInvalid}>
+                <FieldLabel htmlFor={field.name}>
+                  End date (optional)
+                </FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="date"
+                  value={field.state.value || ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  min={startValue || today}
+                  aria-invalid={isInvalid}
+                />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
