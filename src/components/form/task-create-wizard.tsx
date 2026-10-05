@@ -207,7 +207,8 @@ export default function TaskCreateWizard({
               {(field) => (
                 <Field>
                   <FieldLabel htmlFor={field.name}>Priority</FieldLabel>
-                  <div className="grid grid-cols-4 gap-2">
+                  <fieldset className="grid grid-cols-4 gap-2">
+                    <legend className="sr-only">Task priority</legend>
                     {priorities.map((p) => (
                       <Button
                         key={p}
@@ -217,11 +218,12 @@ export default function TaskCreateWizard({
                         }
                         size="sm"
                         onClick={() => field.handleChange(p)}
+                        aria-pressed={field.state.value === p}
                       >
                         {p[0] + p.slice(1).toLowerCase()}
                       </Button>
                     ))}
-                  </div>
+                  </fieldset>
                 </Field>
               )}
             </form.Field>

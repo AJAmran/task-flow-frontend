@@ -6,7 +6,6 @@ import {
   endOfMonth,
   endOfWeek,
   format,
-  isSameDay,
   isSameMonth,
   isToday,
   parse,
@@ -19,6 +18,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTasks } from "@/hooks";
+import { dateOnlyValue, formatFullUTC } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import TaskCalendarLoading from "./task-calendar-loading";
 import { PriorityBadge } from "./task-shared";
@@ -71,10 +71,12 @@ export default function TaskCalendar({
 
   const dated = (data?.data ?? []).filter((t) => t.dueDate);
   const undatedCount = (data?.data ?? []).length - dated.length;
+  const fetched = (data?.data ?? []).length;
+  const total = data?.meta?.total ?? fetched;
 
   const byDay = new Map<string, typeof dated>();
   for (const task of dated) {
-    const key = format(new Date(task.dueDate as string), "yyyy-MM-dd");
+    const key = dateOnlyValue(task.dueDate as string);
     const list = byDay.get(key) ?? [];
     list.push(task);
     byDay.set(key, list);
@@ -97,6 +99,12 @@ export default function TaskCalendar({
 
   return (
     <div className="flex flex-col gap-4">
+      {total > fetched && (
+        <p className="text-xs text-muted-foreground">
+          Showing {fetched} of {total} tasks. Use the List view with
+          pagination to see the rest.
+        </p>
+      )}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold tracking-tight">
           {format(month, "MMMM yyyy")}
@@ -141,7 +149,7 @@ export default function TaskCalendar({
         </div>
         <div className="grid grid-cols-7">
           {days.map((day) => {
-            const key = format(day, "yyyy-MM-dd");
+            const key = dateOnlyValue(day.toISOString());
             const items = byDay.get(key) ?? [];
             const inMonth = isSameMonth(day, month);
 
@@ -212,7 +220,7 @@ export default function TaskCalendar({
                 <span className="flex shrink-0 items-center gap-2">
                   <PriorityBadge priority={task.priority} />
                   <span className="text-xs text-muted-foreground">
-                    {format(new Date(task.dueDate as string), "MMM d, yyyy")}
+                    {formatFullUTC(task.dueDate as string)}
                   </span>
                 </span>
               </li>

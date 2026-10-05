@@ -1,11 +1,10 @@
-// Backend errors arrive as `{ success:false, statusCode, message, errors[] }`
-// inside the ofetch error payload — `err.message` alone is technical
-// (`[POST] "...": 409`). Always prefer the server message.
-
 interface ApiErrorShape {
   message?: unknown;
   data?: { message?: unknown } | null;
-  response?: { _data?: { message?: unknown } | null } | null;
+  response?: {
+    _data?: { message?: unknown } | null;
+    status?: unknown;
+  } | null;
   status?: number;
   statusCode?: number;
 }
@@ -36,6 +35,9 @@ export function getApiErrorStatus(err: unknown): number | null {
   }
   if (typeof e?.statusCode === "number") {
     return e.statusCode;
+  }
+  if (typeof e?.response?.status === "number") {
+    return e.response.status;
   }
   return null;
 }

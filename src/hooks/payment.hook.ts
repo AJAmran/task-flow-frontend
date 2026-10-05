@@ -22,6 +22,8 @@ export function useExecutePayment(organizationId?: string) {
           queryKey: ["organizations", organizationId],
         });
       }
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["payments"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "dashboard-stats"] });
     },
   });

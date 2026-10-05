@@ -60,17 +60,6 @@ export function useSprints(
   });
 }
 
-export function useSuspenseSprints(
-  organizationId: string,
-  projectId: string,
-  params: SprintListParams,
-) {
-  return useSuspenseQuery({
-    queryKey: [...sprintKey(organizationId, projectId), params],
-    queryFn: () => getSprints(organizationId, projectId, params),
-  });
-}
-
 export function useSprint(
   organizationId: string,
   projectId: string,

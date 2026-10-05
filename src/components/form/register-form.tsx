@@ -43,7 +43,6 @@ export default function RegisterForm() {
             description: "Please check your email to verify your account",
             type: "success",
           });
-          // usually backend sends an email with OTP, so redirect to verify email
           router.push(`/verify-email?email=${encodeURIComponent(value.email)}`);
         },
         onError: (err) => {
@@ -134,9 +133,11 @@ export default function RegisterForm() {
                   />
                   <button
                     className="absolute right-3 top-1/2 -translate-y-1/2"
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
+type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
+            >
                     {showPassword ? (
                       <EyeClosed className="size-4" />
                     ) : (
@@ -171,9 +172,13 @@ export default function RegisterForm() {
                   />
                   <button
                     className="absolute right-3 top-1/2 -translate-y-1/2"
-                    type="button"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  >
+type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              aria-label={
+                showConfirmPassword ? "Hide password" : "Show password"
+              }
+              aria-pressed={showConfirmPassword}
+            >
                     {showConfirmPassword ? (
                       <EyeClosed className="size-4" />
                     ) : (

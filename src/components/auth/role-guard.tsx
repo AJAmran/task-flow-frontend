@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
@@ -16,6 +17,7 @@ interface IProps {
 
 export default function RoleGuard({ children, roles }: IProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, isPending, isError } = useGetMe();
 
@@ -28,15 +30,15 @@ export default function RoleGuard({ children, roles }: IProps) {
       return;
     }
     if (isError || !user) {
-      // Same stale-marker loop protection as AuthGuard.
       clearSession();
+      queryClient.clear();
       const dest =
         typeof window !== "undefined"
           ? window.location.pathname + window.location.search
           : "/login";
       router.replace(`/login?callbackUrl=${encodeURIComponent(dest)}`);
     }
-  }, [isPending, isError, user, router]);
+  }, [isPending, isError, user, router, queryClient]);
 
   if (isPending) {
     return <AuthLoading />;

@@ -1,7 +1,23 @@
 import z from "zod";
 
+const emailField = (message = "Please enter a valid email") =>
+  z.string().trim().toLowerCase().pipe(z.email(message));
+
+const passwordField = (label = "Password") =>
+  z
+    .string()
+    .min(8, `${label} Must Minimum 8 Characters Long.`)
+    .max(128, `${label} must be at most 128 characters long.`)
+    .regex(/[a-z]/, `${label} must contain at least 1 Lowercase Letter`)
+    .regex(/[A-Z]/, `${label} must contain at least 1 Uppercase Letter`)
+    .regex(/[0-9]/, `${label} must contain at least 1 Number`)
+    .regex(
+      /[^A-Za-z0-9]/,
+      `${label} must contain at least 1 Special Character`,
+    );
+
 export const loginSchema = z.object({
-  email: z.email(),
+  email: emailField(),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -11,17 +27,8 @@ export const registerSchema = z
       .string()
       .min(2, "Name must be at least 2 characters long")
       .max(50, "Name must be at most 50 characters long"),
-    email: z.email("Please enter a valid email"),
-    password: z
-      .string()
-      .min(8, "Password Must Minimum 8 Characters Long.")
-      .regex(/[a-z]/, "Password must contain at least 1 Lowercase Letter")
-      .regex(/[A-Z]/, "Password must contain at least 1 Uppercase Letter")
-      .regex(/[0-9]/, "Password must contain at least 1 Number")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Password must contain at least 1 Special Character",
-      ),
+    email: emailField(),
+    password: passwordField(),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -30,7 +37,7 @@ export const registerSchema = z
   });
 
 export const verifyEmailSchema = z.object({
-  email: z.email("Please enter a valid email"),
+  email: emailField(),
   otp: z
     .string()
     .trim()
@@ -39,26 +46,17 @@ export const verifyEmailSchema = z.object({
 });
 
 export const resendOtpSchema = z.object({
-  email: z.email("Please enter a valid email"),
+  email: emailField(),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.email("Please enter a valid email"),
+  email: emailField(),
 });
 
 export const changePasswordSchema = z
   .object({
     oldPassword: z.string().min(1, "Old password is required"),
-    newPassword: z
-      .string()
-      .min(8, "Password Must Minimum 8 Characters Long.")
-      .regex(/[a-z]/, "Password must contain at least 1 Lowercase Letter")
-      .regex(/[A-Z]/, "Password must contain at least 1 Uppercase Letter")
-      .regex(/[0-9]/, "Password must contain at least 1 Number")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Password must contain at least 1 Special Character",
-      ),
+    newPassword: passwordField("New password"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -68,22 +66,13 @@ export const changePasswordSchema = z
 
 export const resetPasswordSchema = z
   .object({
-    email: z.email("Please enter a valid email"),
+    email: emailField(),
     otp: z
       .string()
       .trim()
       .length(6, "OTP must be 6 digits")
       .regex(/^\d{6}$/, "OTP must be 6 digits"),
-    newPassword: z
-      .string()
-      .min(8, "Password Must Minimum 8 Characters Long.")
-      .regex(/[a-z]/, "Password must contain at least 1 Lowercase Letter")
-      .regex(/[A-Z]/, "Password must contain at least 1 Uppercase Letter")
-      .regex(/[0-9]/, "Password must contain at least 1 Number")
-      .regex(
-        /[^A-Za-z0-9]/,
-        "Password must contain at least 1 Special Character",
-      ),
+    newPassword: passwordField("New password"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {

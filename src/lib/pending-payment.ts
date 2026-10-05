@@ -1,13 +1,11 @@
-import type { PaidPlan, PendingPayment } from "@/types";
+import type { PendingPayment } from "@/types";
 
 const STORAGE_KEY = "tf_pending_payment";
 
 export function savePendingPayment(payment: PendingPayment): void {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payment));
-  } catch {
-    // Storage unavailable (private mode) — URL param remains the source.
-  }
+  } catch {}
 }
 
 export function readPendingPayment(): PendingPayment | null {
@@ -29,7 +27,5 @@ export function readPendingPayment(): PendingPayment | null {
 export function clearPendingPayment(): void {
   try {
     sessionStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // Ignore storage errors.
-  }
+  } catch {}
 }

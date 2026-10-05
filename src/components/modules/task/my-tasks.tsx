@@ -2,23 +2,46 @@
 
 import { ClipboardList } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import TablePagination from "@/components/ui/table-pagination";
 import { useMyAssignedTasks } from "@/hooks";
 import MyTasksLoading from "./my-tasks-loading";
 import { DueBadge, PriorityBadge, StatusBadge } from "./task-shared";
+
+const PAGE_SIZE = 20;
 
 export default function MyTasks({
   organizationId,
 }: {
   organizationId: string;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const pageParam = Number(searchParams.get("myTasksPage") ?? "1");
+  const page =
+    Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
+  const setPage = (next: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next <= 1) {
+      params.delete("myTasksPage");
+    } else {
+      params.set("myTasksPage", String(next));
+    }
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
   const { data, isPending, isError, refetch } = useMyAssignedTasks(
     organizationId,
-    { page: 1, limit: 50 },
+    { page, limit: PAGE_SIZE },
   );
 
   const tasks = data?.data ?? [];
+  const totalPages = data?.meta?.totalPages ?? 0;
+  const total = data?.meta?.total ?? 0;
 
   if (isPending) {
     return <MyTasksLoading />;
@@ -55,7 +78,7 @@ export default function MyTasks({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
-        {open} open · {tasks.length} total assigned
+        {open} open · {total} total assigned
       </p>
       <ul className="flex flex-col gap-2">
         {tasks.map((task) => (
@@ -87,6 +110,15 @@ export default function MyTasks({
           </li>
         ))}
       </ul>
+      {totalPages > 1 && (
+        <TablePagination
+          page={page}
+          totalPages={totalPages}
+          handlePageChange={(next) =>
+            setPage(typeof next === "function" ? next(page) : next)
+          }
+        />
+      )}
     </div>
   );
 }

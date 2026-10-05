@@ -32,6 +32,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import TablePagination from "@/components/ui/table-pagination";
 import { toast } from "@/components/ui/toast";
@@ -190,16 +197,6 @@ function TeamCard({
                 </Button>
               </div>
             ))}
-          {!canDelete && canManage && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setRenameOpen(true)}
-              aria-label={`Rename ${team.name}`}
-            >
-              <Pencil />
-            </Button>
-          )}
         </div>
         <CardTitle className="line-clamp-1">{team.name}</CardTitle>
         <CardDescription>
@@ -267,7 +264,7 @@ function TeamCard({
                       size="sm"
                       disabled={removePending}
                       onClick={() => handleRemove(member.userId)}
-                      aria-label="Remove from team"
+                      aria-label={`Remove ${member.user?.name ?? member.userId} from team`}
                     >
                       <Trash2 />
                     </Button>
@@ -278,19 +275,29 @@ function TeamCard({
 
             {canManage && candidates.length > 0 && (
               <div className="flex gap-2 pt-1">
-                <select
-                  value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
-                  className="h-8 min-w-0 flex-1 rounded-lg border border-border bg-background px-2 text-sm"
-                  aria-label="Select organization member to add"
+                <Select
+                  value={selectedUserId || undefined}
+                  onValueChange={(value: string | null) =>
+                    setSelectedUserId(value ?? "")
+                  }
                 >
-                  <option value="">Select member...</option>
-                  {candidates.map((candidate) => (
-                    <option key={candidate.userId} value={candidate.userId}>
-                      {candidate.user.name} ({candidate.user.email})
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger
+                    className="h-8 min-w-0 flex-1"
+                    aria-label="Select organization member to add"
+                  >
+                    <SelectValue placeholder="Select member..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {candidates.map((candidate) => (
+                      <SelectItem
+                        key={candidate.userId}
+                        value={candidate.userId}
+                      >
+                        {candidate.user.name} ({candidate.user.email})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Button
                   size="sm"
                   disabled={!selectedUserId || addPending}
@@ -346,7 +353,6 @@ export default function TeamSection({
   const [searchInput, setSearchInput] = useState(urlSearch);
   const debouncedSearch = useDebounce(searchInput);
 
-  // Sync the debounced filter to the URL (?search=) so views are shareable.
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     const current = params.get("search") ?? "";
@@ -363,16 +369,17 @@ export default function TeamSection({
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }, [debouncedSearch, pathname, router, searchParams]);
 
-  // Any org member can manage teams, but only owners can delete them
-  // (backend enforces ORG_OWNER for delete).
-  const canManage = true;
+  const canCreate = true;
 
   const { data: orgData } = useOrganization(organizationId);
   const canDelete = orgData?.data?.myRole === "ORG_OWNER";
+  const canManage = canDelete;
 
+  const activeSearch = debouncedSearch.trim();
   const { data, isPending, isError, refetch } = useTeams(organizationId, {
     page,
     limit: TEAM_PAGE_SIZE,
+    ...(activeSearch && { search: activeSearch }),
   });
   const { data: orgMembersData } = useOrganizationMembers(organizationId, {
     page: 1,
@@ -383,11 +390,7 @@ export default function TeamSection({
   const totalPages = data?.meta?.totalPages ?? 0;
   const orgMembers = orgMembersData?.data ?? [];
 
-  const visible = debouncedSearch.trim().toLowerCase()
-    ? teams.filter((team) =>
-        team.name.toLowerCase().includes(debouncedSearch.trim().toLowerCase()),
-      )
-    : teams;
+  const visible = teams;
 
   const setPage = (next: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -420,7 +423,7 @@ export default function TeamSection({
             className="sm:max-w-xs"
             aria-label="Filter teams by name"
           />
-          {canManage && (
+          {canCreate && (
             <Button size="sm" onClick={() => setCreateOpen(true)}>
               <Plus /> New team
             </Button>
@@ -452,7 +455,7 @@ export default function TeamSection({
               ? "Group members into teams to organize projects and work."
               : "Try a different name."}
           </p>
-          {canManage && teams.length === 0 && (
+          {canCreate && teams.length === 0 && (
             <Button
               className="mt-2"
               size="sm"

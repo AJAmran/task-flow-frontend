@@ -48,7 +48,7 @@ function TasksHubContent({
     <div className="flex flex-col gap-4">
       <div
         className="flex w-fit items-center gap-1 rounded-xl border bg-muted/50 p-1"
-        role="tablist"
+        role="group"
         aria-label="Task views"
       >
         {views.map((item) => {
@@ -59,8 +59,7 @@ function TasksHubContent({
               key={item.value}
               variant="ghost"
               size="sm"
-              role="tab"
-              aria-selected={active}
+              aria-pressed={active}
               onClick={() => setView(item.value)}
               className={cn(
                 active && "bg-card shadow-sm hover:bg-card",

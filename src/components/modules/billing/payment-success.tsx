@@ -22,27 +22,28 @@ function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const [paymentDbId, setPaymentDbId] = useState<string | null>(null);
   const [paymentID, setPaymentID] = useState<string | null>(null);
+  const [pendingOrgId, setPendingOrgId] = useState<string | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     const fromUrl =
       searchParams.get("id") ?? searchParams.get("paymentID") ?? null;
     if (fromUrl) {
-      // DB id and gateway paymentID are both accepted in the URL.
       setPaymentDbId(searchParams.get("id"));
       setPaymentID(searchParams.get("paymentID"));
+      setPendingOrgId(undefined);
       return;
     }
     const saved = readPendingPayment();
     setPaymentDbId(saved?.id ?? null);
     setPaymentID(saved?.paymentID ?? null);
+    setPendingOrgId(saved?.organizationId);
   }, [searchParams]);
 
-  // Safe read-only lookup (GET /payments/:id). Never polls the callback
-  // endpoint — it mutates PENDING payments server-side.
   const { data, isPending, isError, refetch } = usePaymentById(paymentDbId);
-  const { mutate: execute, isPending: executing } = useExecutePayment(
-    readPendingPayment()?.organizationId,
-  );
+  const { mutate: execute, isPending: executing } =
+    useExecutePayment(pendingOrgId);
 
   const payment = data?.data;
   const status = payment?.status;

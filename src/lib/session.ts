@@ -1,20 +1,27 @@
-// Frontend-domain session hint for proxy.ts.
-//
-// The backend sets its httpOnly auth cookies on the API domain, which is
-// cross-site from the frontend (localhost / *.vercel.app). The Next proxy
-// cannot see those cookies, so every login flow sets this marker cookie on
-// the FRONTEND domain and every logout clears it. It is only a routing hint —
-// real authorization always happens via useGetMe + AuthGuard/RoleGuard.
-
 export const SESSION_COOKIE = "tf_landing";
 
-const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+
+const NON_LANDING_PATHS = new Set([
+  "/login",
+  "/register",
+  "/invite",
+  "/accept-invitation",
+]);
 
 export function resolveLanding(path?: string | null): string {
-  if (path && path.startsWith("/") && !path.startsWith("//")) {
-    return path;
+  if (
+    !path ||
+    !path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.includes("\\")
+  ) {
+    return "/dashboard";
   }
-  return "/dashboard";
+  if (NON_LANDING_PATHS.has(path.split(/[?#]/)[0])) {
+    return "/dashboard";
+  }
+  return path;
 }
 
 export function setSessionLanding(path?: string | null): void {

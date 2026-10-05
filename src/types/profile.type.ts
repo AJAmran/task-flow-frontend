@@ -1,4 +1,4 @@
 export interface UpdateProfilePayload {
   name?: string;
-  profileImage?: string;
+  profileImage?: string | null;
 }

@@ -69,6 +69,10 @@ export default function AdminUsersTable() {
   const urlSearch = searchParams.get("search") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlSearch);
+
+  useEffect(() => {
+    setSearchInput((prev) => (prev === urlSearch ? prev : urlSearch));
+  }, [urlSearch]);
   const debouncedSearch = useDebounce(searchInput);
 
   useEffect(() => {
@@ -217,7 +221,7 @@ export default function AdminUsersTable() {
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border bg-card">
+        <div className="overflow-x-auto rounded-xl border bg-card">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">

@@ -2,7 +2,6 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from "@tanstack/react-query";
 import {
   assignTask,
@@ -27,7 +26,6 @@ import {
 import type {
   ApiResponse,
   AssignTaskPayload,
-  ChangeTaskStatusPayload,
   CreateCommentPayload,
   CreateSubtaskPayload,
   CreateTaskPayload,
@@ -45,8 +43,37 @@ const taskKey = (organizationId: string, projectId: string, taskId?: string) =>
     ? ["organizations", organizationId, "projects", projectId, "tasks", taskId]
     : ["organizations", organizationId, "projects", projectId, "tasks"];
 
+const myAssignedKey = (organizationId: string) => [
+  "organizations",
+  organizationId,
+  "tasks",
+  "my-assigned",
+];
+
+const useInvalidateMyAssigned = () => {
+  const queryClient = useQueryClient();
+
+  return (organizationId: string) => {
+    queryClient.invalidateQueries({ queryKey: myAssignedKey(organizationId) });
+  };
+};
+
+const useInvalidateTaskDetailAndList = () => {
+  const queryClient = useQueryClient();
+
+  return (organizationId: string, projectId: string, taskId: string) => {
+    queryClient.invalidateQueries({
+      queryKey: taskKey(organizationId, projectId, taskId),
+    });
+    queryClient.invalidateQueries({
+      queryKey: taskKey(organizationId, projectId),
+    });
+  };
+};
+
 export function useCreateTask(organizationId: string, projectId: string) {
   const queryClient = useQueryClient();
+  const invalidateMyAssigned = useInvalidateMyAssigned();
 
   return useMutation({
     mutationFn: (payload: CreateTaskPayload) =>
@@ -55,6 +82,7 @@ export function useCreateTask(organizationId: string, projectId: string) {
       queryClient.invalidateQueries({
         queryKey: taskKey(organizationId, projectId),
       });
+      invalidateMyAssigned(organizationId);
     },
   });
 }
@@ -71,23 +99,12 @@ export function useTasks(
   });
 }
 
-export function useSuspenseTasks(
-  organizationId: string,
-  projectId: string,
-  params: TaskListParams,
-) {
-  return useSuspenseQuery({
-    queryKey: [...taskKey(organizationId, projectId), params],
-    queryFn: () => getTasks(organizationId, projectId, params),
-  });
-}
-
 export function useMyAssignedTasks(
   organizationId: string,
   params: MyAssignedParams,
 ) {
   return useQuery({
-    queryKey: ["organizations", organizationId, "tasks", "my-assigned", params],
+    queryKey: [...myAssignedKey(organizationId), params],
     queryFn: () => getMyAssignedTasks(organizationId, params),
     enabled: !!organizationId,
   });
@@ -128,6 +145,7 @@ export function useUpdateTask(
 
 export function useDeleteTask(organizationId: string, projectId: string) {
   const queryClient = useQueryClient();
+  const invalidateMyAssigned = useInvalidateMyAssigned();
 
   return useMutation({
     mutationFn: (taskId: string) =>
@@ -136,6 +154,7 @@ export function useDeleteTask(organizationId: string, projectId: string) {
       queryClient.invalidateQueries({
         queryKey: taskKey(organizationId, projectId),
       });
+      invalidateMyAssigned(organizationId);
     },
   });
 }
@@ -187,6 +206,9 @@ export function useChangeTaskStatus(
       queryClient.invalidateQueries({
         queryKey: taskKey(organizationId, projectId),
       });
+      queryClient.invalidateQueries({
+        queryKey: myAssignedKey(organizationId),
+      });
     },
   });
 }
@@ -208,6 +230,9 @@ export function useAssignTask(
       queryClient.invalidateQueries({
         queryKey: taskKey(organizationId, projectId),
       });
+      queryClient.invalidateQueries({
+        queryKey: myAssignedKey(organizationId),
+      });
     },
   });
 }
@@ -217,14 +242,16 @@ export function useCreateSubtask(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: CreateSubtaskPayload) =>
       createSubtask(organizationId, projectId, taskId, payload),
     onSuccess: () => {
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
+        queryKey: [...taskKey(organizationId, projectId, taskId), "subtasks"],
       });
     },
   });
@@ -247,6 +274,7 @@ export function useUpdateSubtask(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -258,9 +286,7 @@ export function useUpdateSubtask(
       payload: UpdateSubtaskPayload;
     }) => updateSubtask(organizationId, projectId, taskId, subtaskId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
-      });
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
         queryKey: [...taskKey(organizationId, projectId, taskId), "subtasks"],
       });
@@ -273,15 +299,14 @@ export function useDeleteSubtask(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (subtaskId: string) =>
       deleteSubtask(organizationId, projectId, taskId, subtaskId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
-      });
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
         queryKey: [...taskKey(organizationId, projectId, taskId), "subtasks"],
       });
@@ -294,15 +319,14 @@ export function useCreateComment(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: CreateCommentPayload) =>
       createComment(organizationId, projectId, taskId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
-      });
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
         queryKey: [...taskKey(organizationId, projectId, taskId), "comments"],
       });
@@ -332,15 +356,14 @@ export function useDeleteComment(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (commentId: string) =>
       deleteComment(organizationId, projectId, taskId, commentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
-      });
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
         queryKey: [...taskKey(organizationId, projectId, taskId), "comments"],
       });
@@ -353,15 +376,14 @@ export function useUploadAttachment(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (formData: FormData) =>
       uploadAttachment(organizationId, projectId, taskId, formData),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
-      });
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
         queryKey: [
           ...taskKey(organizationId, projectId, taskId),
@@ -389,15 +411,14 @@ export function useDeleteAttachment(
   projectId: string,
   taskId: string,
 ) {
+  const invalidate = useInvalidateTaskDetailAndList();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (attachmentId: string) =>
       deleteAttachment(organizationId, projectId, taskId, attachmentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: taskKey(organizationId, projectId, taskId),
-      });
+      invalidate(organizationId, projectId, taskId);
       queryClient.invalidateQueries({
         queryKey: [
           ...taskKey(organizationId, projectId, taskId),

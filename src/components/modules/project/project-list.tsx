@@ -69,6 +69,10 @@ export default function ProjectList({
   const urlSearch = searchParams.get("search") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlSearch);
+
+  useEffect(() => {
+    setSearchInput((prev) => (prev === urlSearch ? prev : urlSearch));
+  }, [urlSearch]);
   const debouncedSearch = useDebounce(searchInput);
 
   useEffect(() => {

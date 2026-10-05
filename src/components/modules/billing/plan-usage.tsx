@@ -80,7 +80,9 @@ export default function PlanUsage({
               "h-full transition-all",
               reached ? "bg-amber-500" : "bg-teal-500",
             )}
-            style={{ width: `${Math.min(100, (used / max) * 100)}%` }}
+            style={{
+              width: `${max > 0 ? Math.min(100, (used / max) * 100) : 0}%`,
+            }}
           />
         </div>
       </div>

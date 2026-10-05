@@ -1,6 +1,7 @@
 import { XCircle } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import ClearPendingOnCancel from "@/components/modules/billing/clear-pending-on-cancel";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
 export default function PaymentCancelPage() {
   return (
     <div className="flex min-h-svh items-center justify-center bg-muted/30 p-6">
+      <ClearPendingOnCancel />
       <Card className="w-full max-w-md">
         <CardHeader className="items-center text-center">
           <span className="flex size-14 items-center justify-center rounded-full bg-muted">

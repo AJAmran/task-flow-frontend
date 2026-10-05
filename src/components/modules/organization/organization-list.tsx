@@ -33,9 +33,12 @@ export default function OrganizationList() {
   const urlSearch = searchParams.get("search") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlSearch);
+
+  useEffect(() => {
+    setSearchInput((prev) => (prev === urlSearch ? prev : urlSearch));
+  }, [urlSearch]);
   const debouncedSearch = useDebounce(searchInput);
 
-  // Sync the debounced filter to the URL (?search=) so views are shareable.
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     const current = params.get("search") ?? "";
@@ -55,6 +58,7 @@ export default function OrganizationList() {
   const { data, isPending, isError, refetch } = useOrganizations({
     page,
     limit: PAGE_SIZE,
+    ...(debouncedSearch.trim() && { search: debouncedSearch.trim() }),
   });
 
   const setParams = (next: { page?: number; search?: string }) => {
@@ -80,13 +84,7 @@ export default function OrganizationList() {
   const memberships = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 0;
 
-  const visible = debouncedSearch.trim().toLowerCase()
-    ? memberships.filter((m) =>
-        m.organization.name
-          .toLowerCase()
-          .includes(debouncedSearch.trim().toLowerCase()),
-      )
-    : memberships;
+  const visible = memberships;
 
   if (isPending) {
     return <OrganizationListLoading />;

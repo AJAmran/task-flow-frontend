@@ -24,7 +24,6 @@ export interface UpdateProjectPayload {
 
 export interface AddProjectMemberPayload {
   userId: string;
-  role?: OrgRole;
 }
 
 export interface ProjectListParams extends ListParams {

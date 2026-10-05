@@ -1,7 +1,8 @@
 "use client";
 
 import { CalendarRange, Pencil, Play, Plus, SearchX } from "lucide-react";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import CreateSprintForm from "@/components/form/create-sprint-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -248,9 +249,58 @@ export default function SprintList({
   organizationId: string;
   projectId: string;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [createOpen, setCreateOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<"ALL" | SprintStatus>("ALL");
-  const [searchInput, setSearchInput] = useState("");
+
+  const statusParam = searchParams.get("sprintStatus");
+  const statusFilter: "ALL" | SprintStatus =
+    statusParam === "PLANNED" ||
+    statusParam === "ACTIVE" ||
+    statusParam === "COMPLETED"
+      ? statusParam
+      : "ALL";
+  const urlSearch = searchParams.get("sprintSearch") ?? "";
+  const [searchInput, setSearchInput] = useState(urlSearch);
+
+  useEffect(() => {
+    setSearchInput((prev) => (prev === urlSearch ? prev : urlSearch));
+  }, [urlSearch]);
+
+  const setParam = (key: "sprintStatus" | "sprintSearch", value?: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
+
+  const setStatusFilter = (next: "ALL" | SprintStatus) =>
+    setParam("sprintStatus", next === "ALL" ? undefined : next);
+
+  useEffect(() => {
+    const trimmed = searchInput.trim();
+    if (trimmed === urlSearch) {
+      return;
+    }
+    const t = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (trimmed) {
+        params.set("sprintSearch", trimmed);
+      } else {
+        params.delete("sprintSearch");
+      }
+      const query = params.toString();
+      router.push(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchInput, urlSearch, pathname, router, searchParams]);
 
   const { data, isPending, isError, refetch } = useSprints(
     organizationId,

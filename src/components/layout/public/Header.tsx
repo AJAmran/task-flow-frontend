@@ -37,7 +37,7 @@ export default function Header() {
     logout(undefined, {
       onSuccess: () => {
         clearSession();
-        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.clear();
         toast.add({
           title: "Logged out",
           description: "You have been logged out successfully",

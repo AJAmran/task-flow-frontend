@@ -24,8 +24,14 @@ import type {
 } from "@/types";
 
 export function useAcceptInvitation() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: acceptInvitation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    },
   });
 }
 
@@ -44,13 +50,6 @@ export function useCreateOrganization() {
 
 export function useOrganizations(params: ListParams) {
   return useQuery({
-    queryKey: ["organizations", params],
-    queryFn: () => getOrganizations(params),
-  });
-}
-
-export function useSuspenseOrganizations(params: ListParams) {
-  return useSuspenseQuery({
     queryKey: ["organizations", params],
     queryFn: () => getOrganizations(params),
   });
@@ -80,9 +79,17 @@ export function useUpdateOrganization(organizationId: string) {
 }
 
 export function useInviteMember(organizationId: string) {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: InviteMemberPayload) =>
       inviteMember(organizationId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["organizations", organizationId, "members"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["organizations", organizationId] });
+    },
   });
 }
 

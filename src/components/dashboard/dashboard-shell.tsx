@@ -10,6 +10,8 @@ import {
 import { useGetMe } from "@/hooks";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import type { SidebarItems } from "@/types";
+import { adminRoutes } from "@/routes/admin.routes";
+import { ownerRoutes } from "@/routes/owner.routes";
 import {
   orgSidebarRoutes,
   projectSidebarRoutes,
@@ -30,10 +32,17 @@ function contextItems(pathname: string): SidebarItems | null {
 
 export default function DashboardShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  // AuthGuard (in layout) guarantees a user; cached profile resolves instantly.
   const { data } = useGetMe();
   const role = data?.data?.platformRole ?? "USER";
-  const items = contextItems(pathname);
+  const isAdminSection =
+    pathname === "/admin" || pathname.startsWith("/admin/");
+  const items =
+    contextItems(pathname) ??
+    (isAdminSection
+      ? role === "SUPER_ADMIN"
+        ? adminRoutes
+        : ownerRoutes
+      : ownerRoutes);
 
   return (
     <SidebarProvider>

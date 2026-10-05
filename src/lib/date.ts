@@ -16,16 +16,21 @@ export const toISODateTime = (dateOnly: string): string =>
 
 export const isDateOnly = (value: string): boolean => DATE_ONLY.test(value);
 
-/**
- * Sprint and project schedules are stored as UTC midnight so the picked
- * calendar day never shifts. Rendering must therefore also be pinned to UTC,
- * otherwise a date-only value shows the previous day west of UTC.
- */
 export const formatDayUTC = (value?: string | null): string =>
   value
     ? new Intl.DateTimeFormat("en", {
         month: "short",
         day: "numeric",
+        timeZone: "UTC",
+      }).format(new Date(value))
+    : "—";
+
+export const formatFullUTC = (value?: string | null): string =>
+  value
+    ? new Intl.DateTimeFormat("en", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
         timeZone: "UTC",
       }).format(new Date(value))
     : "—";

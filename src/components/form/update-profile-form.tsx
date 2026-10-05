@@ -37,8 +37,8 @@ export default function UpdateProfileForm({
           ...(value.name.trim() !== currentName && {
             name: value.name.trim(),
           }),
-          ...(value.profileImage?.trim() && {
-            profileImage: value.profileImage.trim(),
+          ...(value.profileImage?.trim() !== (currentImage ?? "") && {
+            profileImage: value.profileImage?.trim() || null,
           }),
         },
         {

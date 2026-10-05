@@ -2,6 +2,7 @@
 
 import { Plus } from "lucide-react";
 import { use, useState } from "react";
+import AuthGuard from "@/components/auth/auth-guard";
 import TaskCreateWizard from "@/components/form/task-create-wizard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,9 +88,11 @@ export default function ProjectLayout({
   const { organizationId, projectId } = use(params);
 
   return (
-    <div className="-m-6 flex flex-1 flex-col">
-      <ProjectNav organizationId={organizationId} projectId={projectId} />
-      <div className="flex flex-1 flex-col gap-4 p-6">{children}</div>
-    </div>
+    <AuthGuard>
+      <div className="-m-6 flex flex-1 flex-col">
+        <ProjectNav organizationId={organizationId} projectId={projectId} />
+        <div className="flex flex-1 flex-col gap-4 p-6">{children}</div>
+      </div>
+    </AuthGuard>
   );
 }

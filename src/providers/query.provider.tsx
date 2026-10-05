@@ -6,12 +6,20 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { getApiErrorStatus } from "@/lib/apiError";
 
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
+        retry: (failureCount, error) => {
+          const status = getApiErrorStatus(error);
+          if (status !== null && status >= 400 && status < 500) {
+            return false;
+          }
+          return failureCount < 2;
+        },
       },
     },
   });

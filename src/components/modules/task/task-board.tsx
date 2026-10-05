@@ -8,8 +8,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragStartEvent,
-  DragEndEvent,
+  type DragStartEvent,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import { useDroppable, useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
@@ -215,6 +215,7 @@ export default function TaskBoard({
 
   const tasks = data?.data ?? [];
   const sprints = sprintsData?.data ?? [];
+  const total = data?.meta?.total ?? tasks.length;
 
   const setSprint = (value?: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -310,6 +311,12 @@ export default function TaskBoard({
           <Plus /> New task
         </Button>
       </div>
+      {total > tasks.length && (
+        <p className="text-xs text-muted-foreground">
+          Showing {tasks.length} of {total} tasks. Narrow by sprint or use the
+          List view with pagination to see the rest.
+        </p>
+      )}
 
       {tasks.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-12 text-center">

@@ -37,8 +37,14 @@ behind secure role-based access and real **bKash sandbox billing**.
 
 ```bash
 bun install
-cp .env.example .env.local   # then fill the two keys below
 bun run dev                  # http://localhost:3000
+```
+
+Create `.env.local` (no `.env.example` is shipped — copy these two keys):
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=*.apps.googleusercontent.com
 ```
 
 ### Environment
@@ -55,11 +61,16 @@ bun run lint     # biome check
 
 ## 🔑 Demo Accounts
 
+The login page has one-click **Quick demo login** buttons wired to these
+accounts (seeded by the backend `db:seed`):
+
 | Role | Email | Password | Lands on |
 |---|---|---|---|
 | Super Admin | `superadmin@gmail.com` | `Super@admin12345` | `/admin` |
 | Org Owner | `amran.xgroup@gmail.com` | `Owner@123` | `/dashboard` |
-| Member | `firoz03dec@gmail.com` | `Member@123` | `/dashboard` |
+| Member | `mdamranhossen77@gmail.com` | `Member@123` | `/dashboard` |
+
+Extra seeded member: `firoz03dec@gmail.com` / `Member@123`.
 
 > Sandbox wallets for payment testing live in [`testguide.md`](../testguide.md).
 
@@ -79,23 +90,28 @@ src/
 │   ├── layout/   # marketing header / footer
 │   └── ui/       # shadcn primitives (+ auto Link-button fix)
 ├── routes/       # sidebar route configs incl. workspace builders
-├── lib/          # apiClient, session marker, formatting utils
-├── providers/    # query, google-auth, theme composition
+├── lib/          # apiClient (401 auto-refresh), session marker, date/error utils
+├── providers/    # query (4xx-no-retry), google-auth, theme composition
+├── proxy.ts      # cookie-presence route protection (Next 16 proxy)
 └── app/
     ├── (marketing)/  # home, features, pricing, about, contact
     ├── (auth)/       # login, register, verify, forgot, reset, invitation
     ├── (dashboard)/  # dashboard, workspaces, projects, tasks
     ├── admin/        # platform overview, users, orgs, audit logs
     ├── payment/      # success + cancel redirects
-    └── proxy.ts      # cookie-presence route protection
 ```
 
 ### Conventions (must-follow)
 
 - Server Components by default; `"use client"` only for interactivity
-- Every data page: `loading.tsx` skeleton (or Suspense fallback) + error
-  boundary + empty state; filters/sort/search/page live in the URL
+- Every data view: skeleton (`loading.tsx` on key segments, Suspense
+  fallbacks per module) + error boundary + empty state;
+  filters/sort/search/page live in the URL
 - Mutations invalidate scoped query keys and toast success/error
+- Task assignment: any project member can assign/unassign (unassign via
+  `userId: null`); team/project roster changes are owner-only in UI + API
+- Org/team search runs server-side (`?search=`); due dates render pinned
+  to UTC so the picked day never shifts
 - No mock data, no fake payments, no `any` types
 
 ## 🧪 Testing

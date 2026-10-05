@@ -22,8 +22,37 @@ export function GlobalActivitySkeleton() {
 }
 
 function OrgTaskList({ organizationId }: { organizationId: string }) {
-  const { data } = useMyAssignedTasks(organizationId, { page: 1, limit: 10 });
+  const { data, isPending, isError, refetch } = useMyAssignedTasks(
+    organizationId,
+    { page: 1, limit: 10 },
+  );
+
+  if (isPending) {
+    return (
+      <li className="pb-1">
+        <Skeleton className="h-24 w-full" />
+      </li>
+    );
+  }
+
+  if (isError) {
+    return (
+      <li className="rounded-xl border border-dashed p-4 text-center text-sm text-muted-foreground">
+        Could not load activity for this workspace.
+        <Button
+          variant="link"
+          size="sm"
+          className="h-auto w-fit p-0"
+          onClick={() => refetch()}
+        >
+          Retry
+        </Button>
+      </li>
+    );
+  }
+
   const tasks = data?.data ?? [];
+  const total = data?.meta?.total ?? tasks.length;
 
   return (
     <>
@@ -56,6 +85,18 @@ function OrgTaskList({ organizationId }: { organizationId: string }) {
           </div>
         </li>
       ))}
+      {total > tasks.length && (
+        <li className="pb-1 text-center text-xs text-muted-foreground">
+          Showing latest {tasks.length} of {total} assigned tasks in this
+          workspace.{" "}
+          <Link
+            href={`/organizations/${organizationId}/tasks`}
+            className="font-medium underline underline-offset-4 hover:text-primary"
+          >
+            View all
+          </Link>
+        </li>
+      )}
     </>
   );
 }

@@ -1,9 +1,9 @@
-import { format, isPast } from "date-fns";
 import { CalendarDays, MessageSquare, Paperclip } from "lucide-react";
 import Link from "next/link";
 import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatDayUTC, isPastDayUTC } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import type { Task, TaskPriority, TaskStatus } from "@/types";
 
@@ -55,8 +55,7 @@ export function DueBadge({ dueDate }: { dueDate: string | null }) {
   if (!dueDate) {
     return null;
   }
-  const date = new Date(dueDate);
-  const overdue = isPast(date);
+  const overdue = isPastDayUTC(dueDate);
 
   return (
     <span
@@ -66,7 +65,7 @@ export function DueBadge({ dueDate }: { dueDate: string | null }) {
       )}
     >
       <CalendarDays className="size-3" />
-      {format(date, "MMM d")}
+      {formatDayUTC(dueDate)}
       {overdue && " · overdue"}
     </span>
   );

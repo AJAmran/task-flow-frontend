@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import AccessDenied from "@/components/auth/access-denied";
 import AuthGuard from "@/components/auth/auth-guard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useOrganization } from "@/hooks";
@@ -27,6 +28,42 @@ function OrgHeader({ organizationId }: { organizationId: string }) {
   );
 }
 
+function OrgGate({
+  organizationId,
+  children,
+}: {
+  organizationId: string;
+  children: React.ReactNode;
+}) {
+  const { isPending, isError } = useOrganization(organizationId);
+
+  if (isPending) {
+    return (
+      <div className="flex flex-1 flex-col">
+        <div className="flex items-center gap-3 border-b px-6 py-4">
+          <Skeleton className="size-10 rounded-full" />
+          <Skeleton className="h-6 w-48" />
+        </div>
+        <div className="flex flex-1 flex-col gap-4 p-6">
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <AccessDenied />;
+  }
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <OrgHeader organizationId={organizationId} />
+      <div className="flex flex-1 flex-col gap-4 p-6">{children}</div>
+    </div>
+  );
+}
+
 export default function OrganizationLayout({
   children,
   params,
@@ -38,10 +75,7 @@ export default function OrganizationLayout({
 
   return (
     <AuthGuard>
-      <div className="flex flex-1 flex-col">
-        <OrgHeader organizationId={organizationId} />
-        <div className="flex flex-1 flex-col gap-4 p-6">{children}</div>
-      </div>
+      <OrgGate organizationId={organizationId}>{children}</OrgGate>
     </AuthGuard>
   );
 }

@@ -19,7 +19,10 @@ export function userLogin(payload: ILoginPayload) {
 }
 
 export function verifyAccount(payload: IVerifyEmailPayload) {
-  return apiClient("/auth/verify-email", { method: "POST", body: payload });
+  return apiClient<ApiResponse<LoginResponse>>("/auth/verify-email", {
+    method: "POST",
+    body: payload,
+  });
 }
 
 export function userRegistration(payload: IRegisterPayload) {
@@ -35,7 +38,10 @@ export function getMe() {
 }
 
 export function googleOAuth(payload: IGoogleLoginPayload) {
-  return apiClient("/auth/google", { method: "POST", body: payload });
+  return apiClient<ApiResponse<LoginResponse>>("/auth/google", {
+    method: "POST",
+    body: payload,
+  });
 }
 
 export function resendOtp(payload: { email: string }) {

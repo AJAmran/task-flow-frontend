@@ -24,6 +24,7 @@ import { toast } from "@/components/ui/toast";
 import { getApiErrorMessage } from "@/lib/apiError";
 import {
   useAddProjectMember,
+  useOrganization,
   useOrganizationMembers,
   useProject,
   useRemoveProjectMember,
@@ -49,6 +50,8 @@ export default function ProjectMembers({
   const [selectedUserId, setSelectedUserId] = useState("");
 
   const { data, isPending } = useProject(organizationId, projectId);
+  const { data: orgData } = useOrganization(organizationId);
+  const canManage = orgData?.data?.myRole === "ORG_OWNER";
   const { data: orgMembersData } = useOrganizationMembers(organizationId, {
     page: 1,
     limit: 100,
@@ -157,22 +160,24 @@ export default function ProjectMembers({
                   <Badge variant={isOwner ? "default" : "secondary"}>
                     {isOwner ? "Owner" : "Member"}
                   </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    disabled={removePending}
-                    onClick={() => handleRemove(member.userId)}
-                    aria-label={`Remove ${member.user.name}`}
-                  >
-                    <Trash2 />
-                  </Button>
+                  {canManage && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={removePending}
+                      onClick={() => handleRemove(member.userId)}
+                      aria-label={`Remove ${member.user.name}`}
+                    >
+                      <Trash2 />
+                    </Button>
+                  )}
                 </span>
               </div>
             );
           })
         )}
 
-        {candidates.length > 0 && (
+        {canManage && candidates.length > 0 && (
           <div className="flex gap-2 pt-2">
             <Select
               value={selectedUserId}

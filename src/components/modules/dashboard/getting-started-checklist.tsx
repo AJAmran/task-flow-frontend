@@ -47,9 +47,7 @@ export default function GettingStartedChecklist({
   const dismiss = () => {
     try {
       sessionStorage.setItem(DISMISS_KEY, "1");
-    } catch {
-      // Ignore storage errors.
-    }
+    } catch {}
     setDismissed(true);
   };
 
@@ -58,7 +56,7 @@ export default function GettingStartedChecklist({
   }
 
   const counts = data?.data?.counts;
-  const firstProjectId = data?.data?.recentProjects[0]?.id;
+  const firstProjectId = data?.data?.recentProjects?.[0]?.id;
 
   const steps = [
     {

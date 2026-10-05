@@ -1,6 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
 import { Plus, SearchX } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -33,6 +32,7 @@ import {
 import TablePagination from "@/components/ui/table-pagination";
 import { useSprints, useTasks } from "@/hooks";
 import useDebounce from "@/hooks/debounce.hook";
+import { formatFullUTC } from "@/lib/date";
 import type { TaskPriority, TaskSortBy, TaskStatus } from "@/types";
 import { DueBadge, PriorityBadge, StatusBadge } from "./task-shared";
 import TaskTableLoading from "./task-table-loading";
@@ -86,12 +86,16 @@ export default function TaskTable({
   const urlQ = searchParams.get("q") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlQ);
+
+  useEffect(() => {
+    setSearchInput((prev) => (prev === urlQ ? prev : urlQ));
+  }, [urlQ]);
   const debouncedQ = useDebounce(searchInput);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
     const current = params.get("q") ?? "";
-    if (debouncedQ === current) {
+    if (debouncedQ.trim() === current) {
       return;
     }
     if (debouncedQ.trim()) {
@@ -281,7 +285,7 @@ export default function TaskTable({
           </p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border bg-card">
+        <div className="overflow-x-auto rounded-xl border bg-card">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
@@ -334,7 +338,7 @@ export default function TaskTable({
                     )}
                     {task.dueDate && (
                       <span className="block text-xs text-muted-foreground">
-                        {format(new Date(task.dueDate), "MMM d, yyyy")}
+                        {formatFullUTC(task.dueDate)}
                       </span>
                     )}
                   </TableCell>

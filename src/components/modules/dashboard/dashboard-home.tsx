@@ -84,7 +84,7 @@ const onboardingSteps = [
 
 export default function DashboardHome() {
   const { data: meData } = useGetMe();
-  const { data: orgsData, isPending } = useOrganizations({
+  const { data: orgsData, isPending, isError, refetch } = useOrganizations({
     page: 1,
     limit: 6,
   });
@@ -101,6 +101,20 @@ export default function DashboardHome() {
     { label: "Owned by you", value: ownedCount, icon: Crown },
     { label: "Member of", value: memberCount, icon: User },
   ];
+
+  if (isError) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 p-10 text-center">
+        <p className="font-medium">Could not load your workspaces</p>
+        <p className="text-sm text-muted-foreground">
+          Something went wrong on our side. Your data is safe.
+        </p>
+        <Button variant="outline" onClick={() => refetch()}>
+          Retry
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -196,7 +210,7 @@ export default function DashboardHome() {
                       size="sm"
                       className="h-auto w-fit p-0"
                       nativeButton={false}
-                      render={<Link href={item.cta}>{item.cta}</Link>}
+                      render={<Link href={item.href}>{item.cta}</Link>}
                     >
                       {item.cta}
                     </Button>

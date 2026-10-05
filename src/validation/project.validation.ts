@@ -37,11 +37,7 @@ export const createProjectSchema = z
       message: "End date must be after start date",
       path: ["endDate"],
     },
-  )
-  .refine((data) => !data.endDate || Boolean(data.startDate), {
-    message: "Set a start date to complete the schedule",
-    path: ["startDate"],
-  });
+  );
 
 export const updateProjectSchema = z
 
@@ -60,9 +56,6 @@ export const updateProjectSchema = z
     status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
     startDate: optionalDateOnly,
     endDate: optionalDateOnly,
-    // Accepts a UUID, null (detach team), or the NO_TEAM sentinel used by the
-    // edit form ("__none__"). Values always come from the server team list, so
-    // the backend UUID check remains the source of truth.
     teamId: z.string().nullable().optional(),
   })
   .refine(
@@ -78,7 +71,6 @@ export const updateProjectSchema = z
 
 export const addProjectMemberSchema = z.object({
   userId: z.string().min(1, "Select a member"),
-  role: z.enum(["ORG_OWNER", "MEMBER"]).optional(),
 });
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

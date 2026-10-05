@@ -54,16 +54,6 @@ export function useProjects(organizationId: string, params: ProjectListParams) {
   });
 }
 
-export function useSuspenseProjects(
-  organizationId: string,
-  params: ProjectListParams,
-) {
-  return useSuspenseQuery({
-    queryKey: ["organizations", organizationId, "projects", params],
-    queryFn: () => getProjects(organizationId, params),
-  });
-}
-
 export function useProject(organizationId: string, projectId: string) {
   return useQuery({
     queryKey: projectKey(organizationId, projectId),

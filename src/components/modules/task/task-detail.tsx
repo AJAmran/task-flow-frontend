@@ -37,6 +37,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
+import { formatFullUTC } from "@/lib/date";
 import {
   useAssignTask,
   useAttachments,
@@ -407,6 +408,8 @@ function AttachmentSection({
   const isImage = (fileName: string) =>
     /\.(jpe?g|png|webp|gif)$/i.test(fileName);
 
+  const CLOUDINARY_HOST = /^https:\/\/res\.cloudinary\.com\//;
+
   return (
     <Card>
       <CardHeader>
@@ -433,7 +436,8 @@ function AttachmentSection({
                 key={attachment.id}
                 className="flex items-center gap-2 rounded-lg border p-2"
               >
-                {isImage(attachment.fileName) ? (
+                {isImage(attachment.fileName) &&
+                CLOUDINARY_HOST.test(attachment.url) ? (
                   <Image
                     src={attachment.url}
                     alt={attachment.fileName}
@@ -600,13 +604,13 @@ export default function TaskDetail({
       },
     );
 
-  const patchAssignee = (userId: string) =>
+  const patchAssignee = (userId: string | null) =>
     assignTask(
       { userId },
       {
         onSuccess: () =>
           toast.add({
-            title: "Assignee updated",
+            title: userId === null ? "Task unassigned" : "Assignee updated",
             type: "success",
             description: "",
           }),
@@ -726,7 +730,7 @@ export default function TaskDetail({
           {task.dueDate && (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <CalendarDays className="size-3" />
-              Due {new Date(task.dueDate).toLocaleDateString()}
+              Due {formatFullUTC(task.dueDate)}
             </span>
           )}
         </div>
@@ -739,13 +743,14 @@ export default function TaskDetail({
                 if (!val || val === (task.assigneeId ?? "__none__")) {
                   return;
                 }
-                patchAssignee(val);
+                patchAssignee(val === "__none__" ? null : val);
               }}
             >
               <SelectTrigger className="w-48" aria-label="Change assignee">
                 <SelectValue placeholder="Assign..." />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="__none__">Unassigned</SelectItem>
                 {members.map((member) => (
                   <SelectItem key={member.userId} value={member.userId}>
                     {member.user.name}

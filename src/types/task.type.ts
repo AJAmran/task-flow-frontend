@@ -29,7 +29,7 @@ export interface ChangeTaskStatusPayload {
 }
 
 export interface AssignTaskPayload {
-  userId: string;
+  userId: string | null;
 }
 
 export interface CreateSubtaskPayload {

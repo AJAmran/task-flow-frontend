@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
@@ -9,6 +10,7 @@ import AuthLoading from "./auth-loading";
 
 export default function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, isPending, isError } = useGetMe();
 
@@ -19,17 +21,15 @@ export default function AuthGuard({ children }: { children: ReactNode }) {
       return;
     }
     if (isError || !user) {
-      // Drop the frontend session hint so the proxy stops bouncing
-      // protected routes (expired backend session + stale marker = loop).
       clearSession();
-      // Preserve the full destination (incl. ?token=) for post-login return.
+      queryClient.clear();
       const dest =
         typeof window !== "undefined"
           ? window.location.pathname + window.location.search
           : "/login";
       router.replace(`/login?callbackUrl=${encodeURIComponent(dest)}`);
     }
-  }, [isPending, isError, user, router]);
+  }, [isPending, isError, user, router, queryClient]);
 
   if (isPending) {
     return <AuthLoading />;

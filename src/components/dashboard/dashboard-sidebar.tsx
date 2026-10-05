@@ -106,7 +106,7 @@ function SidebarAccount() {
     logout(undefined, {
       onSuccess: () => {
         clearSession();
-        queryClient.removeQueries({ queryKey: ["user"] });
+        queryClient.clear();
         toast.add({
           title: "Logged out",
           description: "You have been logged out successfully",
@@ -126,7 +126,7 @@ function SidebarAccount() {
 
   if (isLoadingUser) {
     return (
-      <div className="flex flex-col gap-2 px-2" aria-label="Loading account">
+      <div className="flex flex-col gap-2 px-2" aria-busy="true">
         <Skeleton className="h-4 w-3/4" />
         <Skeleton className="h-3 w-full" />
         <Skeleton className="h-8 w-full" />

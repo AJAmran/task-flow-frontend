@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useLogin } from "@/hooks";
-import { setSessionLanding } from "@/lib/session";
+import { resolveLanding, setSessionLanding } from "@/lib/session";
 import { loginSchema } from "@/validation/auth.validation";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import { Button } from "../ui/button";
@@ -29,21 +29,57 @@ export default function LoginForm() {
   const queryClient = useQueryClient();
 
   const { mutate: login, isPending: loginPending } = useLogin();
+  const [demoPending, setDemoPending] = useState<string | null>(null);
 
-  // Return to the page the proxy bounced (only safe local paths).
+  const demoAccounts = [
+    {
+      key: "admin",
+      label: "Admin",
+      hint: "Users, orgs & audit logs",
+      email: "superadmin@gmail.com",
+      password: "Super@admin12345",
+    },
+    {
+      key: "owner",
+      label: "Owner",
+      hint: "Orgs, teams & billing",
+      email: "amran.xgroup@gmail.com",
+      password: "Owner@123",
+    },
+    {
+      key: "member",
+      label: "Member",
+      hint: "Projects, sprints & tasks",
+      email: "mdamranhossen77@gmail.com",
+      password: "Member@123",
+    },
+  ] as const;
+
+  const handleDemoLogin = (account: (typeof demoAccounts)[number]) => {
+    setDemoPending(account.key);
+    login(
+      { email: account.email, password: account.password },
+      {
+        onSuccess: (res) => {
+          setDemoPending(null);
+          handleSuccess(res.data?.user?.platformRole);
+        },
+        onError: (err) => {
+          setDemoPending(null);
+          handleError(err as Error);
+        },
+      },
+    );
+  };
+
   const callbackUrl = searchParams.get("callbackUrl");
-  const safeCallback =
-    callbackUrl?.startsWith("/") && !callbackUrl.startsWith("//")
-      ? callbackUrl
-      : null;
+  const safeCallback = resolveLanding(callbackUrl);
 
-  const handleSuccess = (platformRole?: string, fallback = "/dashboard") => {
+  const handleSuccess = (platformRole?: string) => {
     const landing =
-      platformRole === "SUPER_ADMIN"
-        ? (safeCallback ?? "/admin")
-        : (safeCallback ?? fallback);
-    // Backend auth cookies live on the API domain (cross-site); the proxy
-    // needs this frontend-domain marker to let protected routes through.
+      platformRole === "SUPER_ADMIN" && safeCallback === "/dashboard"
+        ? "/admin"
+        : safeCallback;
     setSessionLanding(landing);
     queryClient.invalidateQueries({ queryKey: ["user"] });
     toast.add({
@@ -112,10 +148,11 @@ export default function LoginForm() {
                   <Input
                     id={field.name}
                     name={field.name}
+                    type="email"
                     onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
                     value={field.state.value}
-                    autoComplete="off"
+                    autoComplete="email"
                     aria-invalid={isInvalid}
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -140,14 +177,16 @@ export default function LoginForm() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       onBlur={field.handleBlur}
                       value={field.state.value}
-                      autoComplete="off"
+                      autoComplete="current-password"
                       aria-invalid={isInvalid}
                     />
                     <button
                       className="absolute right-3 top-1/2 -translate-y-1/2"
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
+type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-pressed={showPassword}
+          >
                       {showPassword ? (
                         <EyeClosed className="size-4" />
                       ) : (
@@ -176,6 +215,32 @@ export default function LoginForm() {
       <FieldSeparator>Or continue with</FieldSeparator>
 
       <GoogleLoginComponent />
+
+      <FieldSeparator>Quick demo login</FieldSeparator>
+
+      <fieldset className="grid grid-cols-3 gap-2">
+        <legend className="sr-only">Demo logins</legend>
+        {demoAccounts.map((account) => (
+          <Button
+            key={account.key}
+            type="button"
+            variant="outline"
+            size="sm"
+            className="flex h-auto flex-col items-center gap-0.5 py-2"
+            disabled={loginPending || demoPending !== null}
+            onClick={() => handleDemoLogin(account)}
+            aria-label={`Demo login as ${account.label}`}
+          >
+            <span className="flex items-center gap-1 font-semibold">
+              {demoPending === account.key && <Spinner />}
+              {account.label}
+            </span>
+            <span className="text-center text-[11px] leading-tight text-muted-foreground">
+              {account.hint}
+            </span>
+          </Button>
+        ))}
+      </fieldset>
 
       <div className="text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}

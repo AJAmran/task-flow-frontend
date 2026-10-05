@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getOrgDashboard } from "@/api";
 
 export function useOrgDashboard(organizationId: string) {
@@ -6,12 +6,5 @@ export function useOrgDashboard(organizationId: string) {
     queryKey: ["organizations", organizationId, "dashboard"],
     queryFn: () => getOrgDashboard(organizationId),
     enabled: !!organizationId,
-  });
-}
-
-export function useSuspenseOrgDashboard(organizationId: string) {
-  return useSuspenseQuery({
-    queryKey: ["organizations", organizationId, "dashboard"],
-    queryFn: () => getOrgDashboard(organizationId),
   });
 }

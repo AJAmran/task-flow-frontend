@@ -23,7 +23,3 @@ export function executePayment(paymentID: string) {
 export function getPaymentById(id: string) {
   return apiClient<ApiResponse<SubscriptionPayment>>(`/payments/${id}`);
 }
-
-// NOTE: GET /payments/callback drives gateway verification server-side and
-// mutates PENDING payments, so the frontend never polls it. Status reads use
-// getPaymentById; explicit confirmation uses executePayment.

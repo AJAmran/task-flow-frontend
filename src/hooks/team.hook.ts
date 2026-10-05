@@ -42,13 +42,6 @@ export function useTeams(organizationId: string, params: ListParams) {
   });
 }
 
-export function useSuspenseTeams(organizationId: string, params: ListParams) {
-  return useSuspenseQuery({
-    queryKey: ["organizations", organizationId, "teams", params],
-    queryFn: () => getTeams(organizationId, params),
-  });
-}
-
 export function useUpdateTeam(organizationId: string) {
   const queryClient = useQueryClient();
 

@@ -112,7 +112,7 @@ export default function InviteMemberForm({
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   placeholder="teammate@company.com"
-                  autoComplete="off"
+                  autoComplete="email"
                   aria-invalid={isInvalid}
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}

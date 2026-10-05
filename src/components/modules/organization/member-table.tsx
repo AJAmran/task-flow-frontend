@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { SearchX, Trash2, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import InviteMemberForm from "@/components/form/invite-member-form";
 import AvatarInitials from "@/components/ui/avatar-initials";
@@ -46,7 +47,22 @@ export default function MemberTable({
   myRole: OrgRole;
   currentUserId?: string;
 }) {
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const pageParam = Number(searchParams.get("membersPage") ?? "1");
+  const page =
+    Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
+  const setPage = (next: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next <= 1) {
+      params.delete("membersPage");
+    } else {
+      params.set("membersPage", String(next));
+    }
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
   const [inviteOpen, setInviteOpen] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
 
@@ -150,7 +166,7 @@ export default function MemberTable({
         </div>
       ) : (
         <>
-          <div className="overflow-hidden rounded-lg border bg-card">
+          <div className="overflow-x-auto rounded-lg border bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
@@ -279,7 +295,9 @@ export default function MemberTable({
             <TablePagination
               page={page}
               totalPages={totalPages}
-              handlePageChange={setPage}
+              handlePageChange={(next) =>
+                setPage(typeof next === "function" ? next(page) : next)
+              }
             />
           )}
         </>

@@ -7,7 +7,5 @@ export default async function InvitePage({
 }) {
   const { token } = await searchParams;
 
-  // Backend invitation emails link here; forward to the real accept page
-  // while preserving the token.
   redirect(`/accept-invitation${token ? `?token=${token}` : ""}`);
 }

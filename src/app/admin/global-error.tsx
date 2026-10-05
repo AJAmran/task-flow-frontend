@@ -1,5 +1,9 @@
 "use client";
 
+import { TriangleAlert } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
 export default function GlobalError({
   error,
   reset,
@@ -8,18 +12,25 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html>
-      <body>
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 min-h-screen">
-          <h2 className="text-xl font-semibold">Global Error</h2>
-          <p className="text-sm text-muted-foreground">{error.message}</p>
-          <button
-            type="button"
-            onClick={reset}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Try again
-          </button>
+    <html lang="en">
+      <body className="flex min-h-svh flex-col items-center justify-center gap-4 p-6 text-center">
+        <span className="flex size-16 items-center justify-center rounded-2xl bg-red-100">
+          <TriangleAlert className="size-8 text-red-600" />
+        </span>
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold tracking-tight">
+            Something went wrong
+          </h1>
+          <p className="max-w-sm text-sm text-muted-foreground">
+            {error.message || "An unexpected error stopped this page."} Try
+            again, or head back home.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button onClick={() => reset()}>Try again</Button>
+          <Button variant="outline" render={<Link href="/">Go home</Link>}>
+            Go home
+          </Button>
         </div>
       </body>
     </html>

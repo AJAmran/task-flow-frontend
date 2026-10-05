@@ -59,8 +59,6 @@ function VerifyEmailFormContent() {
 
       verify(verifyData, {
         onSuccess: (res) => {
-          // Backend sets auth cookies on success — mark the frontend session
-          // so the proxy lets protected routes through.
           const landing =
             res.data?.user?.platformRole === "SUPER_ADMIN"
               ? "/admin"
