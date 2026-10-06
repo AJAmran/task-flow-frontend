@@ -17,9 +17,11 @@ const plans: { plan: PaidPlan; blurb: string }[] = [
 export default function UpgradeButtons({
   organizationId,
   currentPlan,
+  highlightPlan,
 }: {
   organizationId: string;
   currentPlan: string;
+  highlightPlan?: PaidPlan;
 }) {
   const [activePlan, setActivePlan] = useState<PaidPlan | null>(null);
   const { mutate: initiate, isPending } = useInitiatePayment();
@@ -86,17 +88,24 @@ export default function UpgradeButtons({
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map(({ plan, blurb }) => {
           const loading = isPending && activePlan === plan;
+          const highlighted = highlightPlan === plan;
           return (
             <div
               key={plan}
               className={cn(
                 "flex items-center justify-between gap-2 rounded-lg border bg-card px-3 py-2",
+                highlighted && "border-teal-600 ring-1 ring-teal-600/40",
               )}
             >
               <span>
                 <span className="block text-sm font-bold">
                   {plan} · ৳{PLAN_PRICES[plan]}
                   <span className="font-normal text-muted-foreground">/mo</span>
+                  {highlighted && (
+                    <span className="ml-2 rounded-full bg-teal-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                      Selected
+                    </span>
+                  )}
                 </span>
                 <span className="block text-xs text-muted-foreground">
                   {blurb}

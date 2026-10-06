@@ -28,9 +28,14 @@ function PaymentSuccessContent() {
 
   useEffect(() => {
     const fromUrl =
-      searchParams.get("id") ?? searchParams.get("paymentID") ?? null;
+      searchParams.get("id") ??
+      searchParams.get("paymentID") ??
+      searchParams.get("paymentId") ??
+      null;
     if (fromUrl) {
-      setPaymentDbId(searchParams.get("id"));
+      const dbId =
+        searchParams.get("id") ?? searchParams.get("paymentId");
+      setPaymentDbId(dbId);
       setPaymentID(searchParams.get("paymentID"));
       setPendingOrgId(undefined);
       return;

@@ -1,5 +1,6 @@
 import { Check, Gift, Receipt, Rocket, ShieldCheck, Zap } from "lucide-react";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import CtaBand from "@/components/modules/homepage/CtaBand";
 import Reveal from "@/components/ui/reveal";
@@ -13,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { SESSION_COOKIE } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "Pricing — TaskFlow",
@@ -34,7 +36,7 @@ const plans = [
       "Community support",
     ],
     cta: "Start free",
-    href: "/register",
+    plan: null as string | null,
     highlight: false,
     badge: null as string | null,
   },
@@ -52,7 +54,7 @@ const plans = [
       "bKash subscription billing",
     ],
     cta: "Upgrade to Pro",
-    href: "/register?plan=PRO",
+    plan: "PRO",
     highlight: true,
     badge: "Most popular",
   },
@@ -69,7 +71,7 @@ const plans = [
       "Priority support",
     ],
     cta: "Upgrade to Team",
-    href: "/register?plan=TEAM",
+    plan: "TEAM",
     highlight: false,
     badge: null as string | null,
   },
@@ -93,7 +95,18 @@ const assurances = [
   },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const cookieStore = await cookies();
+  const loggedIn = cookieStore.has(SESSION_COOKIE);
+  const hrefFor = (plan: string | null) =>
+    loggedIn
+      ? plan
+        ? `/dashboard/payments?plan=${plan}`
+        : "/dashboard"
+      : plan
+        ? `/register?plan=${plan}`
+        : "/register";
+
   return (
     <div className="relative overflow-hidden">
       <div
@@ -193,7 +206,7 @@ export default function PricingPage() {
                       plan.highlight && "bg-teal-600 hover:bg-teal-700",
                     )}
                     variant={plan.highlight ? "default" : "outline"}
-                    render={<Link href={plan.href}>{plan.cta}</Link>}
+                    render={<Link href={hrefFor(plan.plan)}>{plan.cta}</Link>}
                   >
                     {plan.cta}
                   </Button>

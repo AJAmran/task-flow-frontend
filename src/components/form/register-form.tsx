@@ -2,7 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { Eye, EyeClosed } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useRegistration } from "@/hooks";
 import { registerSchema } from "@/validation/auth.validation";
@@ -16,6 +16,10 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get("plan");
+  const plan =
+    planParam === "PRO" || planParam === "TEAM" ? planParam : null;
 
   const { mutate: register, isPending: registerPending } = useRegistration();
 
@@ -40,10 +44,13 @@ export default function RegisterForm() {
         onSuccess: () => {
           toast.add({
             title: "Registration Success",
-            description: "Please check your email to verify your account",
+            description: plan
+              ? `Verify your email, then complete your ${plan} upgrade from billing`
+              : "Please check your email to verify your account",
             type: "success",
           });
-          router.push(`/verify-email?email=${encodeURIComponent(value.email)}`);
+          const next = `/verify-email?email=${encodeURIComponent(value.email)}${plan ? `&plan=${plan}` : ""}`;
+          router.push(next);
         },
         onError: (err) => {
           toast.add({

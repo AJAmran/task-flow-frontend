@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import registerImage from "@/assets/images/registerimg.png";
 import { Logo } from "@/assets/logo";
 import RegisterForm from "@/components/form/register-form";
+import { Spinner } from "@/components/ui/spinner";
 
 export const metadata: Metadata = {
   title: "Create Account — TaskFlow",
@@ -34,7 +36,15 @@ export default function RegisterPage() {
                   Enter your details below to create your account
                 </p>
               </div>
-              <RegisterForm />
+              <Suspense
+                fallback={
+                  <div className="flex justify-center py-10">
+                    <Spinner />
+                  </div>
+                }
+              >
+                <RegisterForm />
+              </Suspense>
               <p className="text-center text-sm text-muted-foreground">
                 Already have an account?{" "}
                 <Link

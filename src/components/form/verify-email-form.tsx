@@ -17,6 +17,8 @@ function VerifyEmailFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
+  const planParam = searchParams.get("plan");
+  const plan = planParam === "PRO" || planParam === "TEAM" ? planParam : null;
 
   const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
   const { mutate: resendOtp, isPending: resendPending } = useResendOtp();
@@ -59,9 +61,11 @@ function VerifyEmailFormContent() {
 
       verify(verifyData, {
         onSuccess: (res) => {
-          const landing =
-            res.data?.user?.platformRole === "SUPER_ADMIN"
-              ? "/admin"
+          const isAdmin = res.data?.user?.platformRole === "SUPER_ADMIN";
+          const landing = isAdmin
+            ? "/admin"
+            : plan
+              ? `/dashboard/payments?plan=${plan}`
               : "/dashboard";
           setSessionLanding(landing);
           queryClient.invalidateQueries({ queryKey: ["user"] });

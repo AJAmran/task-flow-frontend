@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { Lock, Receipt, Wallet } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import UpgradeButtons from "@/components/modules/billing/upgrade-buttons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,9 +34,11 @@ const paymentStyles: Record<string, string> = {
 function OrgBilling({
   organizationId,
   name,
+  highlightPlan,
 }: {
   organizationId: string;
   name: string;
+  highlightPlan?: "PRO" | "TEAM";
 }) {
   const { data, isPending, isError } = useSubscription(organizationId);
   const { data: orgData, isPending: orgPending } =
@@ -90,7 +93,7 @@ function OrgBilling({
       <CardContent className="flex flex-col gap-3">
         {sub.currentPeriodEnd && sub.plan !== "FREE" && (
           <p className="text-xs text-muted-foreground">
-            Renews {format(new Date(sub.currentPeriodEnd), "MMM d, yyyy")}
+            Active until {format(new Date(sub.currentPeriodEnd), "MMM d, yyyy")}
           </p>
         )}
         {sub.plan === "FREE" && isOwner && (
@@ -113,6 +116,7 @@ function OrgBilling({
           <UpgradeButtons
             organizationId={organizationId}
             currentPlan={sub.plan}
+            highlightPlan={highlightPlan}
           />
         )}
         {isOwner && (
@@ -165,6 +169,10 @@ export function BillingHistorySkeleton() {
 
 export default function BillingHistory() {
   const { data, isPending } = useOrganizations({ page: 1, limit: 50 });
+  const searchParams = useSearchParams();
+  const planParam = searchParams.get("plan");
+  const highlightPlan =
+    planParam === "PRO" || planParam === "TEAM" ? planParam : undefined;
   const memberships = data?.data ?? [];
 
   if (isPending) {
@@ -189,6 +197,7 @@ export default function BillingHistory() {
           key={m.membershipId}
           organizationId={m.organization.id}
           name={m.organization.name}
+          highlightPlan={highlightPlan}
         />
       ))}
     </div>
