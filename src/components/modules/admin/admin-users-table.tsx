@@ -11,9 +11,11 @@ import {
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import AvatarInitials from "@/components/ui/avatar-initials";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -36,7 +38,7 @@ import TablePagination from "@/components/ui/table-pagination";
 import { toast } from "@/components/ui/toast";
 import { useAdminUsers, useGetMe, useUpdateUserStatus } from "@/hooks";
 import useDebounce from "@/hooks/debounce.hook";
-import type { PlatformRole } from "@/types";
+import type { AdminUser, ApiResponse, PlatformRole } from "@/types";
 
 const PAGE_SIZE = 10;
 
@@ -121,7 +123,9 @@ export default function AdminUsersTable() {
     ...(platformRole && { platformRole }),
     ...(isActive !== undefined && { isActive }),
   });
-  const { mutate: setStatus, isPending: statusPending } = useUpdateUserStatus();
+  const queryClient = useQueryClient();
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const { mutate: setStatus } = useUpdateUserStatus();
   const { data: meData } = useGetMe();
   const myId = meData?.data?.id;
 
@@ -130,6 +134,21 @@ export default function AdminUsersTable() {
   const total = data?.meta?.total ?? 0;
 
   const handleToggle = (id: string, name: string, next: boolean) => {
+    setPendingId(id);
+    queryClient.setQueriesData<ApiResponse<AdminUser[]>>(
+      { queryKey: ["admin", "users"] },
+      (old) => {
+        if (!old?.data || !Array.isArray(old.data)) {
+          return old;
+        }
+        return {
+          ...old,
+          data: old.data.map((u) =>
+            u.id === id ? { ...u, isActive: next } : u,
+          ),
+        };
+      },
+    );
     setStatus(
       { id, isActive: next },
       {
@@ -139,12 +158,15 @@ export default function AdminUsersTable() {
             description: `${name} can${next ? " now" : " no longer"} sign in.`,
             type: "success",
           }),
-        onError: (err) =>
+        onError: (err) => {
+          queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
           toast.add({
             title: "Action failed",
             description: err.message || "Please try again",
             type: "error",
-          }),
+          });
+        },
+        onSettled: () => setPendingId(null),
       },
     );
   };
@@ -166,45 +188,55 @@ export default function AdminUsersTable() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Input
-          type="search"
-          placeholder="Search name or email..."
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="sm:max-w-56"
-          aria-label="Search users"
-        />
-        <Select
-          value={platformRole ?? "ALL"}
-          onValueChange={(val: string | null) =>
-            setParam("role", val === "ALL" ? undefined : (val ?? undefined))
-          }
-        >
-          <SelectTrigger className="w-36" aria-label="Filter by role">
-            <SelectValue placeholder="Role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All roles</SelectItem>
-            <SelectItem value="USER">User</SelectItem>
-            <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select
-          value={activeParam ?? "ALL"}
-          onValueChange={(val: string | null) =>
-            setParam("active", val === "ALL" ? undefined : (val ?? undefined))
-          }
-        >
-          <SelectTrigger className="w-32" aria-label="Filter by status">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All status</SelectItem>
-            <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Blocked</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex flex-wrap items-end gap-2">
+        <Field className="w-auto">
+          <FieldLabel htmlFor="admin-user-search">Search</FieldLabel>
+          <Input
+            id="admin-user-search"
+            type="search"
+            placeholder="Search name or email..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="sm:max-w-56"
+            aria-label="Search users"
+          />
+        </Field>
+        <Field className="w-auto">
+          <FieldLabel htmlFor="admin-user-role">Role</FieldLabel>
+          <Select
+            value={platformRole ?? "ALL"}
+            onValueChange={(val: string | null) =>
+              setParam("role", val === "ALL" ? undefined : (val ?? undefined))
+            }
+          >
+            <SelectTrigger id="admin-user-role" className="w-36" aria-label="Filter by role">
+              <SelectValue placeholder="Role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All roles</SelectItem>
+              <SelectItem value="USER">User</SelectItem>
+              <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field className="w-auto">
+          <FieldLabel htmlFor="admin-user-status">Status</FieldLabel>
+          <Select
+            value={activeParam ?? "ALL"}
+            onValueChange={(val: string | null) =>
+              setParam("active", val === "ALL" ? undefined : (val ?? undefined))
+            }
+          >
+            <SelectTrigger id="admin-user-status" className="w-32" aria-label="Filter by status">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All status</SelectItem>
+              <SelectItem value="true">Active</SelectItem>
+              <SelectItem value="false">Blocked</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
         <p className="ml-auto text-sm text-muted-foreground">
           {total} user{total === 1 ? "" : "s"}
         </p>
@@ -293,12 +325,12 @@ export default function AdminUsersTable() {
                         <Button
                           variant={user.isActive ? "destructive" : "outline"}
                           size="sm"
-                          disabled={statusPending}
+                          disabled={pendingId !== null}
                           onClick={() =>
                             handleToggle(user.id, user.name, !user.isActive)
                           }
                         >
-                          {statusPending ? (
+                          {pendingId === user.id ? (
                             <Spinner />
                           ) : user.isActive ? (
                             "Block"

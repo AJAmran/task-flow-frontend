@@ -37,6 +37,7 @@ export function useUpdateOrganizationStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "organizations"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "dashboard-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "audit-logs"] });
     },
   });
 }
@@ -57,6 +58,7 @@ export function useUpdateUserStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
       queryClient.invalidateQueries({ queryKey: ["admin", "dashboard-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "audit-logs"] });
     },
   });
 }

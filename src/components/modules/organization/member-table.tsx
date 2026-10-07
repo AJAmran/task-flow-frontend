@@ -65,6 +65,7 @@ export default function MemberTable({
   };
   const [inviteOpen, setInviteOpen] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [pendingRoleId, setPendingRoleId] = useState<string | null>(null);
 
   const isOwner = myRole === "ORG_OWNER";
 
@@ -74,7 +75,7 @@ export default function MemberTable({
   );
   const { data: orgData } = useOrganization(organizationId);
 
-  const { mutate: changeRole, isPending: rolePending } =
+  const { mutate: changeRole } =
     useUpdateMemberRole(organizationId);
   const { mutate: remove, isPending: removePending } =
     useRemoveMember(organizationId);
@@ -88,6 +89,7 @@ export default function MemberTable({
     maxMembers !== undefined && totalMembers >= maxMembers;
 
   const handleRoleChange = (userId: string, next: OrgRole) => {
+    setPendingRoleId(userId);
     changeRole(
       { userId, payload: { role: next } },
       {
@@ -106,6 +108,7 @@ export default function MemberTable({
             type: "error",
           });
         },
+        onSettled: () => setPendingRoleId(null),
       },
     );
   };
@@ -237,7 +240,7 @@ export default function MemberTable({
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  disabled={rolePending}
+                                  disabled={pendingRoleId !== null}
                                   onClick={() =>
                                     handleRoleChange(
                                       member.userId,
@@ -250,7 +253,7 @@ export default function MemberTable({
                                       : "Promote to owner"
                                   }
                                 >
-                                  {rolePending ? (
+                                  {pendingRoleId === member.userId ? (
                                     <Spinner />
                                   ) : memberIsOwner ? (
                                     "Demote"

@@ -2,8 +2,11 @@
 
 import { Building2, SearchX } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -24,7 +27,7 @@ import {
 import TablePagination from "@/components/ui/table-pagination";
 import { toast } from "@/components/ui/toast";
 import { useAdminOrganizations, useUpdateOrganizationStatus } from "@/hooks";
-import type { AdminOrgStatus } from "@/types";
+import type { AdminOrganization, AdminOrgStatus, ApiResponse } from "@/types";
 
 const PAGE_SIZE = 10;
 
@@ -78,14 +81,30 @@ export default function AdminOrgsTable() {
     limit: PAGE_SIZE,
     ...(status && { status }),
   });
-  const { mutate: setStatus, isPending: statusPending } =
-    useUpdateOrganizationStatus();
+  const queryClient = useQueryClient();
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const { mutate: setStatus } = useUpdateOrganizationStatus();
 
   const orgs = data?.data ?? [];
   const totalPages = data?.meta?.totalPages ?? 0;
   const total = data?.meta?.total ?? 0;
 
   const handleToggle = (id: string, name: string, next: AdminOrgStatus) => {
+    setPendingId(id);
+    queryClient.setQueriesData<ApiResponse<AdminOrganization[]>>(
+      { queryKey: ["admin", "organizations"] },
+      (old) => {
+        if (!old?.data || !Array.isArray(old.data)) {
+          return old;
+        }
+        return {
+          ...old,
+          data: old.data.map((o) =>
+            o.id === id ? { ...o, status: next } : o,
+          ),
+        };
+      },
+    );
     setStatus(
       { id, status: next },
       {
@@ -98,12 +117,17 @@ export default function AdminOrgsTable() {
             description: `${name} is now ${next.toLowerCase()}.`,
             type: "success",
           }),
-        onError: (err) =>
+        onError: (err) => {
+          queryClient.invalidateQueries({
+            queryKey: ["admin", "organizations"],
+          });
           toast.add({
             title: "Action failed",
             description: err.message || "Please try again",
             type: "error",
-          }),
+          });
+        },
+        onSettled: () => setPendingId(null),
       },
     );
   };
@@ -125,22 +149,25 @@ export default function AdminOrgsTable() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Select
-          value={status ?? "ALL"}
-          onValueChange={(val: string | null) =>
-            setParam("status", val === "ALL" ? undefined : (val ?? undefined))
-          }
-        >
-          <SelectTrigger className="w-40" aria-label="Filter by status">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All status</SelectItem>
-            <SelectItem value="ACTIVE">Active</SelectItem>
-            <SelectItem value="SUSPENDED">Suspended</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex flex-wrap items-end gap-2">
+        <Field className="w-auto">
+          <FieldLabel htmlFor="admin-org-status">Status</FieldLabel>
+          <Select
+            value={status ?? "ALL"}
+            onValueChange={(val: string | null) =>
+              setParam("status", val === "ALL" ? undefined : (val ?? undefined))
+            }
+          >
+            <SelectTrigger id="admin-org-status" className="w-40" aria-label="Filter by status">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All status</SelectItem>
+              <SelectItem value="ACTIVE">Active</SelectItem>
+              <SelectItem value="SUSPENDED">Suspended</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
         <p className="ml-auto text-sm text-muted-foreground">
           {total} organization{total === 1 ? "" : "s"}
         </p>
@@ -211,7 +238,7 @@ export default function AdminOrgsTable() {
                       <Button
                         variant={suspended ? "outline" : "destructive"}
                         size="sm"
-                        disabled={statusPending}
+                        disabled={pendingId !== null}
                         onClick={() =>
                           handleToggle(
                             org.id,
@@ -220,7 +247,7 @@ export default function AdminOrgsTable() {
                           )
                         }
                       >
-                        {statusPending ? (
+                        {pendingId === org.id ? (
                           <Spinner />
                         ) : suspended ? (
                           "Reactivate"

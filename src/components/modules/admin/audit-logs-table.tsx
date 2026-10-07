@@ -4,8 +4,10 @@ import { format } from "date-fns";
 import { ScrollText } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -88,7 +90,7 @@ export default function AuditLogsTable() {
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   };
 
-  const { data, isPending, isError, refetch } = useAuditLogs({
+  const { data, isPending, isError, isFetching, refetch } = useAuditLogs({
     page,
     limit: PAGE_SIZE,
     ...(debouncedAction.trim() && { action: debouncedAction.trim() }),
@@ -117,29 +119,51 @@ export default function AuditLogsTable() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Input
-          type="search"
-          placeholder="Filter by action, e.g. TASK_CREATED"
-          value={actionInput}
-          onChange={(e) => setActionInput(e.target.value)}
-          className="sm:max-w-56"
-          aria-label="Filter by action"
-        />
-        <Input
-          type="date"
-          defaultValue={from ?? ""}
-          onChange={(e) => setParam("from", e.target.value || undefined)}
-          className="w-auto"
-          aria-label="From date"
-        />
-        <Input
-          type="date"
-          defaultValue={to ?? ""}
-          onChange={(e) => setParam("to", e.target.value || undefined)}
-          className="w-auto"
-          aria-label="To date"
-        />
+      <div className="flex flex-wrap items-end gap-2">
+        <Field className="w-auto">
+          <FieldLabel htmlFor="audit-action">Action</FieldLabel>
+          <Input
+            id="audit-action"
+            type="search"
+            placeholder="Filter by action, e.g. TASK_CREATED"
+            value={actionInput}
+            onChange={(e) => setActionInput(e.target.value)}
+            className="sm:max-w-56"
+            aria-label="Filter by action"
+          />
+        </Field>
+        <Field className="w-auto">
+          <FieldLabel htmlFor="audit-from">From</FieldLabel>
+          <Input
+            id="audit-from"
+            type="date"
+            defaultValue={from ?? ""}
+            onChange={(e) => setParam("from", e.target.value || undefined)}
+            className="w-auto"
+            aria-label="From date"
+          />
+        </Field>
+        <Field className="w-auto">
+          <FieldLabel htmlFor="audit-to">To</FieldLabel>
+          <Input
+            id="audit-to"
+            type="date"
+            defaultValue={to ?? ""}
+            onChange={(e) => setParam("to", e.target.value || undefined)}
+            className="w-auto"
+            aria-label="To date"
+          />
+        </Field>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          disabled={isFetching}
+          aria-label="Refresh audit logs"
+        >
+          <RefreshCw className={isFetching ? "animate-spin" : ""} />
+          Refresh
+        </Button>
         <p className="ml-auto text-sm text-muted-foreground">
           {total} event{total === 1 ? "" : "s"}
         </p>
