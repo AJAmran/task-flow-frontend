@@ -184,6 +184,13 @@ export default function TaskTable({
           />
           <Select
             value={status ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All status" },
+              { value: "TODO", label: "Todo" },
+              { value: "IN_PROGRESS", label: "In Progress" },
+              { value: "IN_REVIEW", label: "In Review" },
+              { value: "DONE", label: "Done" },
+            ]}
             onValueChange={(val: string | null) =>
               setParam("status", val === "ALL" ? undefined : (val ?? undefined))
             }
@@ -201,6 +208,13 @@ export default function TaskTable({
           </Select>
           <Select
             value={priority ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All priorities" },
+              { value: "LOW", label: "Low" },
+              { value: "MEDIUM", label: "Medium" },
+              { value: "HIGH", label: "High" },
+              { value: "URGENT", label: "Urgent" },
+            ]}
             onValueChange={(val: string | null) =>
               setParam(
                 "priority",
@@ -221,6 +235,13 @@ export default function TaskTable({
           </Select>
           <Select
             value={sprintId ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All sprints" },
+              ...sprints.map((sprint) => ({
+                value: sprint.id,
+                label: sprint.name,
+              })),
+            ]}
             onValueChange={(val: string | null) =>
               setParam(
                 "sprintId",
@@ -242,6 +263,10 @@ export default function TaskTable({
           </Select>
           <Select
             value={`${sortBy}:${sortOrder}`}
+            items={sortOptions.map((opt) => ({
+              value: opt.value,
+              label: opt.label,
+            }))}
             onValueChange={(val: string | null) => {
               const [by, order] = (val ?? "updatedAt:desc").split(":");
               const params = new URLSearchParams(searchParams.toString());

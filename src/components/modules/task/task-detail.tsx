@@ -548,6 +548,33 @@ export default function TaskDetail({
   );
   const busy = updating || moving || assigning;
 
+  const assigneeItems: { value: string; label: string }[] = [
+    { value: "__none__", label: "Unassigned" },
+    ...members.map((m) => ({ value: m.userId, label: m.user.name })),
+  ];
+  if (
+    task?.assigneeId &&
+    task.assignee &&
+    !members.some((m) => m.userId === task.assigneeId)
+  ) {
+    assigneeItems.push({
+      value: task.assigneeId,
+      label: task.assignee.name,
+    });
+  }
+
+  const sprintItems: { value: string; label: string }[] = [
+    { value: "__none__", label: "Backlog (no sprint)" },
+    ...openSprints.map((s) => ({ value: s.id, label: s.name })),
+  ];
+  if (
+    task?.sprintId &&
+    task.sprint &&
+    !openSprints.some((s) => s.id === task.sprintId)
+  ) {
+    sprintItems.push({ value: task.sprintId, label: task.sprint.name });
+  }
+
   if (isPending) {
     return <TaskDetailLoading />;
   }
@@ -738,6 +765,7 @@ export default function TaskDetail({
           {members.length > 0 && (
             <Select
               value={task.assigneeId ?? "__none__"}
+              items={assigneeItems}
               disabled={busy}
               onValueChange={(val: string | null) => {
                 if (!val || val === (task.assigneeId ?? "__none__")) {
@@ -762,6 +790,7 @@ export default function TaskDetail({
           {openSprints.length > 0 && (
             <Select
               value={task.sprintId ?? "__none__"}
+              items={sprintItems}
               disabled={busy}
               onValueChange={(val: string | null) => {
                 if (!val || val === (task.sprintId ?? "__none__")) {

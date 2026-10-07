@@ -238,6 +238,13 @@ export default function TaskCreateWizard({
                   <FieldLabel htmlFor={field.name}>Sprint</FieldLabel>
                   <Select
                     value={field.state.value || NO_SELECT}
+                    items={[
+                      { value: NO_SELECT, label: "Backlog (no sprint)" },
+                      ...sprints.map((sprint) => ({
+                        value: sprint.id,
+                        label: `${sprint.name} (${sprint.status.toLowerCase()})`,
+                      })),
+                    ]}
                     onValueChange={(val: string | null) =>
                       field.handleChange(val === NO_SELECT ? "" : (val ?? ""))
                     }
@@ -266,6 +273,13 @@ export default function TaskCreateWizard({
                   <FieldLabel htmlFor={field.name}>Assignee</FieldLabel>
                   <Select
                     value={field.state.value || NO_SELECT}
+                    items={[
+                      { value: NO_SELECT, label: "Unassigned" },
+                      ...members.map((member) => ({
+                        value: member.userId,
+                        label: `${member.user.name} (${member.user.email})`,
+                      })),
+                    ]}
                     onValueChange={(val: string | null) =>
                       field.handleChange(val === NO_SELECT ? "" : (val ?? ""))
                     }

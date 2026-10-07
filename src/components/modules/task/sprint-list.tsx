@@ -334,6 +334,12 @@ export default function SprintList({
           />
           <Select
             value={statusFilter}
+            items={[
+              { value: "ALL", label: "All status" },
+              { value: "PLANNED", label: "Planned" },
+              { value: "ACTIVE", label: "Active" },
+              { value: "COMPLETED", label: "Completed" },
+            ]}
             onValueChange={(val: string | null) =>
               setStatusFilter((val ?? "ALL") as "ALL" | SprintStatus)
             }
