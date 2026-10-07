@@ -216,6 +216,10 @@ export default function UpdateProjectForm({
                   <FieldLabel htmlFor={field.name}>Status</FieldLabel>
                   <Select
                     value={field.state.value}
+                    items={[
+                      { value: "ACTIVE", label: "Active" },
+                      { value: "ARCHIVED", label: "Archived" },
+                    ]}
                     onValueChange={(val: string | null) =>
                       field.handleChange(
                         (val ?? "ACTIVE") as "ACTIVE" | "ARCHIVED",
@@ -246,6 +250,13 @@ export default function UpdateProjectForm({
                   <FieldLabel htmlFor={field.name}>Team</FieldLabel>
                   <Select
                     value={field.state.value ?? NO_TEAM}
+                    items={[
+                      { value: NO_TEAM, label: "No team" },
+                      ...teams.map((team) => ({
+                        value: team.id,
+                        label: team.name,
+                      })),
+                    ]}
                     onValueChange={(val: string | null) =>
                       field.handleChange(val ?? NO_TEAM)
                     }

@@ -153,7 +153,11 @@ export default function CreateProjectForm({
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Team (optional)</FieldLabel>
                 <Select
-                  value={field.state.value || undefined}
+                  value={field.state.value || null}
+                  items={teams.map((team) => ({
+                    value: team.id,
+                    label: team.name,
+                  }))}
                   onValueChange={(val: string | null) =>
                     field.handleChange(val ?? "")
                   }

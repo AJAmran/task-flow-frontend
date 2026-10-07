@@ -276,7 +276,11 @@ function TeamCard({
             {canManage && candidates.length > 0 && (
               <div className="flex gap-2 pt-1">
                 <Select
-                  value={selectedUserId || undefined}
+                  value={selectedUserId || null}
+                  items={candidates.map((candidate) => ({
+                    value: candidate.userId,
+                    label: `${candidate.user.name} (${candidate.user.email})`,
+                  }))}
                   onValueChange={(value: string | null) =>
                     setSelectedUserId(value ?? "")
                   }

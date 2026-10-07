@@ -154,6 +154,11 @@ export default function AdminOrgsTable() {
           <FieldLabel htmlFor="admin-org-status">Status</FieldLabel>
           <Select
             value={status ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All status" },
+              { value: "ACTIVE", label: "Active" },
+              { value: "SUSPENDED", label: "Suspended" },
+            ]}
             onValueChange={(val: string | null) =>
               setParam("status", val === "ALL" ? undefined : (val ?? undefined))
             }

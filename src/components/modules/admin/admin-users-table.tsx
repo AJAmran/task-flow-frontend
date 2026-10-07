@@ -205,6 +205,11 @@ export default function AdminUsersTable() {
           <FieldLabel htmlFor="admin-user-role">Role</FieldLabel>
           <Select
             value={platformRole ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All roles" },
+              { value: "USER", label: "User" },
+              { value: "SUPER_ADMIN", label: "Super Admin" },
+            ]}
             onValueChange={(val: string | null) =>
               setParam("role", val === "ALL" ? undefined : (val ?? undefined))
             }
@@ -223,6 +228,11 @@ export default function AdminUsersTable() {
           <FieldLabel htmlFor="admin-user-status">Status</FieldLabel>
           <Select
             value={activeParam ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All status" },
+              { value: "true", label: "Active" },
+              { value: "false", label: "Blocked" },
+            ]}
             onValueChange={(val: string | null) =>
               setParam("active", val === "ALL" ? undefined : (val ?? undefined))
             }

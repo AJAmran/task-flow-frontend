@@ -168,6 +168,11 @@ export default function ProjectList({
         <div className="flex flex-wrap gap-2">
           <Select
             value={status ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All status" },
+              { value: "ACTIVE", label: "Active" },
+              { value: "ARCHIVED", label: "Archived" },
+            ]}
             onValueChange={(val: string | null) =>
               setParam("status", val === "ALL" ? undefined : (val ?? undefined))
             }
@@ -183,6 +188,10 @@ export default function ProjectList({
           </Select>
           <Select
             value={teamId ?? "ALL"}
+            items={[
+              { value: "ALL", label: "All teams" },
+              ...teams.map((team) => ({ value: team.id, label: team.name })),
+            ]}
             onValueChange={(val: string | null) =>
               setParam("teamId", val === "ALL" ? undefined : (val ?? undefined))
             }
@@ -201,6 +210,10 @@ export default function ProjectList({
           </Select>
           <Select
             value={sortValue}
+            items={sortOptions.map((opt) => ({
+              value: opt.value,
+              label: opt.label,
+            }))}
             onValueChange={(val: string | null) => {
               const [by, order] = (val ?? "createdAt:desc").split(":");
               const params = new URLSearchParams(searchParams.toString());

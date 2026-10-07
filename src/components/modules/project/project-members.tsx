@@ -180,7 +180,11 @@ export default function ProjectMembers({
         {canManage && candidates.length > 0 && (
           <div className="flex gap-2 pt-2">
             <Select
-              value={selectedUserId}
+              value={selectedUserId || null}
+              items={candidates.map((candidate) => ({
+                value: candidate.userId,
+                label: `${candidate.user.name} (${candidate.user.email})`,
+              }))}
               onValueChange={(val: string | null) =>
                 setSelectedUserId(val ?? "")
               }
